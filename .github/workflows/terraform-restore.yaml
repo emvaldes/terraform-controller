@@ -1,0 +1,204 @@
+name: GitHub Actions - Terraform Restore
+on:
+
+####----------------------------------------------------------------------------
+  workflow_dispatch:
+    name: Manual Deployment
+    description: 'Triggering Manual Deployment'
+    inputs:
+      region:
+        description: 'Target AWS Region'
+        required: true
+        default: 'us-east-1'
+      credentials:
+        description: 'AWS Temporary Credentials'
+        required: true
+        default: ''
+      keypair-name:
+        description: 'Private Key-Pair Name'
+        required: true
+        default: 'devops'
+      keypair-secret:
+        description: 'Private Key-Pair Secret'
+        required: true
+        default: ''
+      restore-project:
+        description: 'Terraform Restore Project'
+        required: true
+        default: 'terraform-controller'
+      restore-shaindex:
+        description: 'Terraform Restore Index'
+        required: true
+        default: ''
+      ####----------------------------------------------------------------------
+      # logLevel:
+      #   description: 'Log level'
+      #   required: true
+      #   default: 'warning'
+      # tags:
+      #   description: 'Terraform Restore'
+####----------------------------------------------------------------------------
+  # push:
+  #   branches: [ master ]
+  #   paths:
+  #     - action.yaml
+####----------------------------------------------------------------------------
+env:
+  ## AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  ## AWS_DEFAULT_ACCOUNT: ${{ secrets.AWS_DEFAULT_ACCOUNT }}
+  ## AWS_DEFAULT_PROFILE: ${{ secrets.AWS_DEFAULT_PROFILE }}
+  ## AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  ## AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  ## Terraform Operations: Deploy, Destroy
+  ## BACKUP_TERRAFORM: ${{ secrets.BACKUP_TERRAFORM }}
+  ## DEPLOY_TERRAFORM: ${{ secrets.DEPLOY_TERRAFORM }}
+  ## DESTROY_TERRAFORM: ${{ secrets.DESTROY_TERRAFORM }}
+  ## DEVOPS_ASSUMEROLE_POLICY
+  ## DEVOPS_BOUNDARIES_POLICY
+  ## DEVOPS_ACCESS_POLICY
+  ## DEVOPS_ACCESS_ROLE: ${{ secrets.DEVOPS_ACCESS_ROLE }}
+  ## DEVOPS_ACCOUNT_NAME: ${{ secrets.DEVOPS_ACCOUNT_NAME }}
+  DYNAMODB_DEFAULT_REGION: us-east-1  ## ${{ secrets.DYNAMODB_DEFAULT_REGION }}
+  ## INSPECT_DEPLOYMENT
+  PRIVATE_KEYPAIR_FILE: .ssh/id_rsa  ## ${{ secrets.PRIVATE_KEYPAIR_FILE }}
+  ## PRIVATE_KEYPAIR_NAME: ${{ secrets.PRIVATE_KEYPAIR_NAME }}
+  ## PRIVATE_KEYPAIR_SECRET: ${{ secrets.PRIVATE_KEYPAIR_SECRET }}
+  ## PROVISION_TERRAFORM
+  S3BUCKET_CONTAINER: pipelines
+  S3BUCKET_DEFAULT_REGION: us-east-1  ## ${{ secrets.S3BUCKET_DEFAULT_REGION }}
+  ## TARGET_WORKSPACE: pipelines/${{ secrets.TARGET_WORKSPACE }}
+  ## UPDATE_PYTHON_LATEST
+  ## UPDATE_SYSTEM_LATEST
+  ##
+####----------------------------------------------------------------------------
+jobs:
+  terraform-restore:
+    runs-on: ubuntu-latest
+    steps:
+####----------------------------------------------------------------------------
+      - name: checkout
+        uses: actions/checkout@v2
+####----------------------------------------------------------------------------
+      ## Environment Variables
+      - name: Environment Variables
+        id: environment-variables
+        run: |
+          ####------------------------------------------------------------------
+          ## Parsing GitHub Action - Workflow dispatch (limited to 10 input-params)
+          echo -e "Processing File|Input-based Parameters ... [ 1-10 ]\n" ;
+          ####------------------------------------------------------------------
+          eval "echo '::set-env name=SESSION_TIMESTAMP::$(date +"%y%m%d%H%M%S")'" ;
+          ####------------------------------------------------------------------
+          cloud_region="${{ github.event.inputs.region }}" ;
+          if [[ (${#cloud_region} -gt 0 ) || (${cloud_region} != '') ]]; then
+            echo -e "   Target Cloud Region [input-based]: '${cloud_region}'" ;
+            eval "echo '::set-env name=AWS_DEFAULT_REGION::${cloud_region}'" ;
+          fi ;
+          ####------------------------------------------------------------------
+          declare -a credentials=($(
+              echo -e ${{ github.event.inputs.credentials }} \
+              | sed -e 's|\([[:space:]]\)\{1,\}| |g' \
+                    -e 's|\(\[\)\(.*\)\(\]\)\(.*\)$|\1default\3\4|' \
+                    -e 's| = |*=*|g'
+            )) ;
+          if [[ (${#credentials[@]} -gt 0 ) || (${credentials[@]} != '') ]]; then
+            echo -e " Temporary Credentials [input-based]: \n" ;
+            for xline in ${credentials[@]}; do
+              echo -e ${xline} ;
+            done | sed -e 's|\(\*\)\(\=\)\(\*\)| = |g' ; echo -e ;
+            eval "echo '::set-env name=TEMPORARY_CREDENTIALS::${credentials[@]}'" ;
+          fi ;
+          ####------------------------------------------------------------------
+          keypair_name="${{ github.event.inputs.keypair-name }}" ;
+          if [[ (${#keypair_name} -gt 0 ) || (${keypair_name} != '') ]]; then
+            echo -e "  Private KeyPair Name [input-based]: '${keypair_name}'" ;
+            eval "echo '::set-env name=PRIVATE_KEYPAIR_NAME::${keypair_name}'" ;
+          fi ;
+          ####------------------------------------------------------------------
+          keypair_secret="${{ github.event.inputs.keypair-secret }}" ;
+          if [[ (${#keypair_secret} -gt 0 ) || (${keypair_secret} != '') ]]; then
+            private_keypair_secret="$(
+                echo -e "${keypair_secret}*" \
+                | sed -e 's|\([[:space:]]\)\{1,\}|*|g'
+              )" ;
+            ## echo "::add-mask::${private_keypair_secret}" ;
+            echo -e "Private KeyPair Secret [input-based]: '***'";
+            eval "echo \"::set-env name=PRIVATE_KEYPAIR_SECRET::${private_keypair_secret[@]}\"" ;
+          fi ;
+          ####------------------------------------------------------------------
+          restore_project="${{ github.event.inputs.restore-project }}" ;
+          if [[ (${#restore_project} -gt 0) || (${restore_project} != false) ]]; then
+                  echo -e "    Restore Repository [input-based]: '${restore_project}'" ;
+                  eval "echo '::set-env name=RESTORE_PROJECT::${restore_project}'" ;
+            else  echo -e "\nWarning: Target Restore Project is invalid! " ;
+                  exit 1 ;
+          fi ;
+          ####------------------------------------------------------------------
+          restore_shaindex="${{ github.event.inputs.restore-shaindex }}" ;
+          if [[ (${#restore_shaindex} -gt 0) || (${restore_shaindex} != false) ]]; then
+                  echo -e "    Restore SHA Index  [input-based]: '${restore_shaindex}'" ;
+                  eval "echo '::set-env name=RESTORE_SHAINDEX::${restore_shaindex}'" ;
+            else  echo -e "\nWarning: Target Restore Point is invalid! " ;
+                  exit 2;
+          fi ;
+####----------------------------------------------------------------------------
+      ## System Requirements
+      - name: System Requirements
+        uses: emvaldes/system-requirements@master
+        id: system-requirements
+        with:
+          install-awscli-tool: true
+          install-default-tools: true
+          install-terraform-cli: latest
+          update-operating-system: true
+          update-python-version: true
+        continue-on-error: false
+####----------------------------------------------------------------------------
+      ## Installed Packages
+      - name: Installed Packages
+        id: installed-packages
+        shell: bash
+        run: |
+          jq --version;
+          tree --version;
+          aws --version;
+          terraform --version;
+####----------------------------------------------------------------------------
+      ## Requesting Credentials
+      - name: Requesting Credentials
+        uses: emvaldes/generate-credentials@master
+        id: request-credentials
+        with:
+          temporary-credentials: true
+          # aws-access-key-id: ${AWS_ACCESS_KEY_ID}
+          # aws-default-account: ${AWS_DEFAULT_ACCOUNT}
+          # aws-default-profile: ${AWS_DEFAULT_PROFILE}
+          # aws-default-region: ${AWS_DEFAULT_REGION}
+          # aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+          # devops-access-role: ${DEVOPS_ACCESS_ROLE}
+          # devops-account-name: ${DEVOPS_ACCOUNT_NAME}
+          # session-timestamp: "DevOpsPipeline--${SESSION_TIMESTAMP}"
+        continue-on-error: false
+####----------------------------------------------------------------------------
+      ## Provisioning Access
+      - name: Provisioning Access
+        uses: emvaldes/configure-access@master
+        id: provision-access
+        with:
+          private-keypair-file: ${PRIVATE_KEYPAIR_FILE}
+          private-keypair-secret: "${PRIVATE_KEYPAIR_SECRET}"
+        continue-on-error: false
+####----------------------------------------------------------------------------
+      ## Restore Terraform
+      - name: Restore Terraform
+        uses: ./
+        id: restore-terraform
+        with:
+          restore-terraform: true
+          restore-region: ${AWS_DEFAULT_REGION}
+          restore-project: ${RESTORE_PROJECT}
+          restore-shaindex: ${RESTORE_SHAINDEX}
+## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
+          terraform-loglevel: INFO
+        continue-on-error: false
+###----------------------------------------------------------------------------

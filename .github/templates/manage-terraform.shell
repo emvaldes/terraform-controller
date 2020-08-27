@@ -1,0 +1,47 @@
+#!/usr/bin/env bash ;
+
+read -p "Enter Target-Profile [ e.g.: default ] ?: " aws_default_profile ;
+read -p "Enter Target-Region  [ e.g.: us-east-1 ] ?: " aws_default_region ;
+
+export terraform_restore="{{ console.Restore_Folder }}" ;
+
+mkdir -p ${terraform_restore} ;
+cd ${terraform_restore} ;
+
+git clone {{ console.Remote_Origin }}.git ${terraform_restore} ;
+git checkout -b restore {{ console.Commit_SHAID }} ;
+
+[[ -d {{ github.workspace }} ]] && export HOME="{{ github.workspace }}" ;
+cp -pr ${HOME}/.ssh ${terraform_restore} ;
+
+export AWS_PROFILE="${aws_default_profile}";
+export AWS_DEFAULT_REGION="${aws_default_region}";
+
+echo -e "\nFetching Terraform components ... \n";
+aws --profile ${AWS_PROFILE} \
+    --region ${AWS_DEFAULT_REGION} \
+    s3 cp s3://{{ console.S3Bucket_Name }}/{{ console.Remote_Path }} \
+    ${terraform_restore} \
+    --recursive \
+  ;
+
+echo -e "\nDisplaying Terraform file-structure ...\n" ;
+tree -FCla --prune -I .git $(pwd) ;
+
+if [[ -f ${terraform_restore}/terraform.tfstate.d/dev/terraform.tfplan ]]; then
+        echo -e "\nInitializing Terraform ... \n" ;
+        eval {{ console.Verbosity }} \
+             terraform init ; echo -e ;
+        echo -e "\nTerraform Create|Select Workspace [{{ console.Target_Workspace }}] ... \n" ;
+        eval {{ console.Verbosity }} \
+             terraform workspace select {{ console.Target_Workspace }} || terraform workspace new {{ console.Target_Workspace }} ;
+        echo -e "\nTerraform Listing Workspaces ... \n" ;
+        eval {{ console.Verbosity }} \
+             terraform workspace list ;
+        echo -e "\nExecuting Terraform ..." ;
+        eval {{ console.Verbosity }} \
+             TF_VAR_region=${AWS_DEFAULT_REGION} \
+             terraform {{ console.Terraform_Action }} ;
+  else  echo -e "\nWarning: Unable to download Terraform components! \n" ;
+        exit 1 ;
+fi ;
