@@ -1,0 +1,159 @@
+name: 'AWS STS Generate Credentials'
+description: 'AWS STS Generate Credentials'
+####----------------------------------------------------------------------------
+inputs:
+  aws-access-key-id:
+    description: 'AWS Access Key-ID'
+    required: true
+    default: ''
+  aws-secret-access-key:
+    description: 'AWS Secret Access Key'
+    required: true
+    default: ''
+  aws-shared-credentials-file:
+    description: 'AWS Shared Credentials File'
+    required: false
+    default: '.aws/credentials'
+  aws-default-profile:
+    description: 'AWS Default Profile'
+    required: false
+    default: 'default'
+  aws-default-region:
+    description: 'AWS Default Region'
+    required: false
+    default: 'us-east-1'
+  aws-default-account:
+    description: 'AWS Default Account Number'
+    required: true
+    default: ''
+  session-timestamp:
+    description: 'Session Time-Stamp'
+    required: false
+    default: ''
+  devops-access-role:
+    description: 'DevOps Access Role'
+    required: true
+    default: 'DevOps--Custom-Access.Role'
+  devops-account-id:
+    description: 'DevOps Account ID'
+    required: false
+    default: ''
+  devops-account-name:
+    description: 'DevOps Account Name'
+    required: true
+    default: ''
+####----------------------------------------------------------------------------
+outputs:
+  credentials-file:
+    description: "Exporting AWS Credentials file-path"
+    value: ${{ steps.assume_credentials.outputs.credentials-file }}
+####----------------------------------------------------------------------------
+runs:
+  using: "composite"
+  steps: 
+    ####----------------------------------------------------------------------------
+    ## AWS STS Assume Role
+    - name: AWS STS Assume Role
+      id: assume_credentials
+      shell: bash
+      run: |
+        ####----------------------------------------------------------------------------
+        accountid="${{ inputs.devops-account-id }}" ;
+        if [[ ${#accountid} -gt 0 ]]; then
+          echo '::add-mask::${{ inputs.devops-account-id }}' ;
+        fi;
+        ####----------------------------------------------------------------------------
+        credentials="${{ inputs.aws-shared-credentials-file }}";
+        if [[ ${#credentials} -gt 0 ]]; then
+                export credentials="${{ github.workspace }}/${{ inputs.aws-shared-credentials-file }}" ;
+          else  export credentials="${{ github.workspace }}/.aws/credentials";
+        fi;
+        export AWS_SHARED_CREDENTIALS_FILE="${credentials}"; unset credentials;
+        mkdir -p ${AWS_SHARED_CREDENTIALS_FILE%\/*} ;
+        declare -a credsfile=() ;
+        credsfile+=("[default]") ;
+        credsfile+=("aws_access_key_id = ") ;
+        credsfile+=("aws_secret_access_key = ") ;
+        credsfile+=("aws_session_token = ") ;
+        credsfile+=("x_principal_arn = ") ;
+        credsfile+=("x_security_token_expires = ") ;
+        cat /dev/null > ${AWS_SHARED_CREDENTIALS_FILE} ;
+        oIFS="${IFS}"; IFS=$'\n' ;
+        for xline in ${credsfile[@]}; do
+          echo -e "${xline}" >> ${AWS_SHARED_CREDENTIALS_FILE} ;
+        done; IFS="${oIFS}" ;
+        ## cat ${AWS_SHARED_CREDENTIALS_FILE} ;
+        ####----------------------------------------------------------------------------
+        timestamp="${{ inputs.session-timestamp }}";
+        if [[ ${#timestamp} -gt 0 ]]; then
+                session_timestamp="${{ inputs.session-timestamp }}" ;
+          else  session_timestamp="SessionTimestamp--$(date +"%Y%m%d%H%M%S")" ;
+        fi; unset timestamp;
+        declare -a credentials=(
+            aws_access_key_id~${{ inputs.aws-access-key-id }}
+            aws_secret_access_key~${{ inputs.aws-secret-access-key }}
+          ) ;
+        echo -e "\nInjecting Default User-Credentials into AWS-Credentials file: ${AWS_SHARED_CREDENTIALS_FILE}\n" ;
+        for credential in ${credentials[@]}; do
+          sed -i -e "s|^\(${credential%\~*}\)\( =\)\(.*\)$|\1\2 ${credential#*\~}|g" ${AWS_SHARED_CREDENTIALS_FILE} ;
+        done ;
+        echo -e "Initiating STS Assume Role request ..." ;
+        echo aws --profile ${{ inputs.aws-default-profile }} \
+                  --region ${{ inputs.aws-default-region }} \
+                  sts assume-role \
+                  --role-arn arn:aws:iam::${{ inputs.aws-default-account }}:role/${{ inputs.devops-access-role }} \
+                  --role-session-name ${session_timestamp} ;
+        declare -a session_token=($(
+            aws --profile ${{ inputs.aws-default-profile }} \
+                --region ${{ inputs.aws-default-region }} \
+                sts assume-role \
+                --role-arn arn:aws:iam::${{ inputs.aws-default-account }}:role/${{ inputs.devops-access-role }} \
+                --role-session-name "${session_timestamp}" \
+                --query 'Credentials.{aki:AccessKeyId,sak:SecretAccessKey,stk:SessionToken,sts:Expiration}' \
+                --output text
+          )) ;
+        echo -e "\nFetched STS Assumed Role Values:" ;
+        declare -a session_items=(
+            AWS_ACCESS_KEY_ID
+            AWS_SECRET_ACCESS_KEY
+            AWS_SESSION_TOKEN
+            AWS_TOKEN_EXPIRES
+          ) ;
+        echo -e "\nConstructed Session Items [array]:\n${session_items[@]}\n" ;
+        counter=0; for xkey in "${session_token[@]}"; do
+          eval "export ${session_items[$((counter++))]}=${xkey}" ;
+        done ;
+        ####----------------------------------------------------------------------------
+        echo -e "Obtaining Caller Identity (Default-Role):" ;
+        aws --profile ${{ inputs.aws-default-profile }} \
+            --region ${{ inputs.aws-default-region }} \
+            sts get-caller-identity ;
+        ####----------------------------------------------------------------------------
+        ## Exporting AWS Shared-Credentials file:
+        declare -a credentials=(
+            aws_access_key_id~${AWS_ACCESS_KEY_ID}
+            aws_secret_access_key~${AWS_SECRET_ACCESS_KEY}
+            aws_session_token~${AWS_SESSION_TOKEN}
+            x_principal_arn~arn:aws:iam::${{ inputs.aws-default-account }}:user/${{ inputs.devops-account-name }}
+            x_security_token_expires~${AWS_TOKEN_EXPIRES}
+          ) ;
+        echo -e;
+        for credential in ${credentials[@]}; do
+          echo -e "Injecting Credential: -> ${credential%\~*} = ${credential#*\~}" ;
+          sed -i -e "s|^\(${credential%\~*}\)\( =\)\(.*\)$|\1\2 ${credential#*\~}|g" ${AWS_SHARED_CREDENTIALS_FILE} ;
+        done ;
+        ####----------------------------------------------------------------------------
+        echo -e "\nObtaining Caller Identity (Assumed-Role):" ;
+        aws --profile ${{ inputs.aws-default-profile }} \
+            --region ${{ inputs.aws-default-region }} \
+            sts get-caller-identity ;
+        ####----------------------------------------------------------------------------
+        echo "::set-output name=credentials-file::${AWS_SHARED_CREDENTIALS_FILE}" ;
+        ####----------------------------------------------------------------------------
+        echo "::set-env name=AWS_SHARED_CREDENTIALS_FILE::${AWS_SHARED_CREDENTIALS_FILE}" ;
+        echo "::set-env name=AWS_ACCESS_KEY_ID::${AWS_ACCESS_KEY_ID}" ;
+        echo "::set-env name=AWS_SECRET_ACCESS_KEY::${AWS_SECRET_ACCESS_KEY}" ;
+        echo "::set-env name=AWS_SESSION_TOKEN::${AWS_SESSION_TOKEN}" ;
+        ####----------------------------------------------------------------------------
+        echo -e "\nCompleted! ";
+
