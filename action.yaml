@@ -1,159 +1,223 @@
-name: 'AWS STS Generate Credentials'
-description: 'AWS STS Generate Credentials'
+name: 'Provision Terraform'
+description: 'Provision Terraform (DevOps)'
 ####----------------------------------------------------------------------------
 inputs:
+  target-account:
+    description: 'Define Terraform Target-Account'
+    required: false
+    default: false
+  target-region:
+    description: 'Define Terraform Target-Region'
+    required: false
+    default: false
+  target-workspace:
+    description: 'Define Terraform Workspace'
+    required: false
+    default: false
+  terraform-input-params:
+    description: 'Define Terraform Input Parameters'
+    required: false
+    default: false
+  terraform-input-tfvars:
+    description: 'Define Terraform Input Variables'
+    required: false
+    default: false
   aws-access-key-id:
-    description: 'AWS Access Key-ID'
-    required: true
-    default: ''
+    description: 'Terraform AWS Access Key-ID'
+    required: false
+    default: false
   aws-secret-access-key:
-    description: 'AWS Secret Access Key'
-    required: true
-    default: ''
-  aws-shared-credentials-file:
-    description: 'AWS Shared Credentials File'
+    description: 'Terraform AWS Secret Access Key'
     required: false
-    default: '.aws/credentials'
-  aws-default-profile:
-    description: 'AWS Default Profile'
+    default: false
+  provision-terraform:
+    description: 'Provision Terraform Provisioning'
     required: false
-    default: 'default'
-  aws-default-region:
-    description: 'AWS Default Region'
+    default: false
+  deploy-terraform:
+    description: 'Deploy Terraform Infrastructure'
     required: false
-    default: 'us-east-1'
-  aws-default-account:
-    description: 'AWS Default Account Number'
-    required: true
-    default: ''
-  session-timestamp:
-    description: 'Session Time-Stamp'
+    default: false
+  destroy-terraform:
+    description: 'Destroy Terraform Infrastructure'
     required: false
-    default: ''
-  devops-access-role:
-    description: 'DevOps Access Role'
-    required: true
-    default: 'DevOps--Custom-Access.Role'
-  devops-account-id:
-    description: 'DevOps Account ID'
+    default: false
+  private-keypair-name:
+    description: 'Terraform Private Key-Name'
     required: false
-    default: ''
-  devops-account-name:
-    description: 'DevOps Account Name'
-    required: true
-    default: ''
+    default: false
+  private-keypair-file:
+    description: 'Terraform Private Key-File'
+    required: false
+    default: false
+  terraform-loglevel:
+    description: 'Define Terraform Loglevel'
+    required: false
+    default: 'ERROR'
 ####----------------------------------------------------------------------------
-outputs:
-  credentials-file:
-    description: "Exporting AWS Credentials file-path"
-    value: ${{ steps.assume_credentials.outputs.credentials-file }}
+##  outputs:
 ####----------------------------------------------------------------------------
 runs:
   using: "composite"
-  steps: 
-    ####----------------------------------------------------------------------------
-    ## AWS STS Assume Role
-    - name: AWS STS Assume Role
-      id: assume_credentials
+  steps:
+    ####------------------------------------------------------------------------
+    ## System Requirements
+    - name: Provision Terraform
+      id: provision-terraform
       shell: bash
       run: |
-        ####----------------------------------------------------------------------------
-        accountid="${{ inputs.devops-account-id }}" ;
-        if [[ ${#accountid} -gt 0 ]]; then
-          echo '::add-mask::${{ inputs.devops-account-id }}' ;
+        ####--------------------------------------------------------------------
+        ##  Parsing AWS Credentials:
+        aws_access_key_id="${{ inputs.aws-access-key-id }}" ;
+        [[ ${aws_access_key_id} == false ]] && {
+            aws_access_key_id="${AWS_ACCESS_KEY_ID}" ;
+          } ;
+        aws_secret_access_key="${{ inputs.aws-secret-access-key }}" ;
+        [[ ${aws_secret_access_key} == false ]] && {
+            aws_secret_access_key="${AWS_SECRET_ACCESS_KEY}" ;
+          } ;
+        ####--------------------------------------------------------------------
+        ## Parsing Private KeyPair items:
+        private_keypair_name="${{ inputs.private-keypair-name }}" ;
+        [[ ${private_keypair_name} == false ]] && {
+            private_keypair_name="${PRIVATE_KEYPAIR_NAME}" ;
+          } ;
+        private_keypair_file="${{ inputs.private-keypair-file }}" ;
+        [[ ${private_keypair_file} == false ]] && {
+            private_keypair_file="${PRIVATE_KEYPAIR_FILE}" ;
+          } ;
+        ####--------------------------------------------------------------------
+        ## Terraform Infrastructure As Code (IaC):
+        target_account="${{ inputs.target-account }}" ;
+        [[ ${target_account} == false ]] && {
+            target_account="${AWS_DEFAULT_ACCOUNT}" ;
+          } ;
+        target_region="${{ inputs.target-region }}" ;
+        [[ ${target_region} == false ]] && {
+            target_region="${AWS_DEFAULT_REGION}" ;
+          } ;
+        target_workspace="${{ inputs.target-workspace }}" ;
+        [[ ${target_workspace} == false ]] && {
+            target_workspace="${TARGET_WORKSPACE}" ;
+          } ;
+        ####--------------------------------------------------------------------
+        export terraform_tfstate="${{ github.workspace }}/terraform.tfstate.d" ;
+        export terraform_s3bucket="terraform-states-${target_account}" ;
+        export terraform_planfile="terraform" ;
+        export terraform_tfplan="${terraform_tfstate}/${target_workspace}/${terraform_planfile}.tfplan" ;
+        ####--------------------------------------------------------------------
+        ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
+        export terraform_loglevel="${{ inputs.terraform-loglevel }}" ;
+        ####--------------------------------------------------------------------
+        if [[ ${{ inputs.provision-terraform }} == true ]]; then
+          TF_LOG=${{ inputs.terraform-logLevel}} \
+          terraform init ;
+          ####------------------------------------------------------------------
+          TF_LOG=${{ inputs.terraform-logLevel}} \
+          terraform workspace new ${target_workspace} ;
+          ####------------------------------------------------------------------
+          TF_LOG=${{ inputs.terraform-logLevel}} \
+          terraform fmt -check ;
+          ####------------------------------------------------------------------
+          TF_LOG=${{ inputs.terraform-logLevel}} \
+          terraform validate ;
         fi;
-        ####----------------------------------------------------------------------------
-        credentials="${{ inputs.aws-shared-credentials-file }}";
-        if [[ ${#credentials} -gt 0 ]]; then
-                export credentials="${{ github.workspace }}/${{ inputs.aws-shared-credentials-file }}" ;
-          else  export credentials="${{ github.workspace }}/.aws/credentials";
+        ####--------------------------------------------------------------------
+        if [[ ${{ inputs.provision-terraform }} == true ]]; then
+          input_params="${{ inputs.terraform-input-params }}";
+          [[ ${input_params} == false ]] && input_params='' ;
+          oIFS="${IFS}"; IFS='_';
+          if [[ ${#input_params[@]} -gt 0 ]]; then
+            echo -e "Terraform Custom Parameters:";
+            for encoded in ${input_params[@]}; do
+              decoded="$(echo -en ${encoded} | base64 --decode)";
+              echo -e "${encoded} -> ${decoded}";
+            done; echo -e;
+          fi;
+          IFS="${oIFS}" ;
+          ####------------------------------------------------------------------
+          input_tfvars="${{ inputs.terraform-input-tfvars }}";
+          [[ ${input_tfvars} == false ]] && input_tfvars='' ;
+          custom_tfvars='';
+          if [[ ${#input_tfvars} -gt 0 ]]; then
+            tfvars_file="${{ github.workspace }}/${input_tfvars}";
+            custom_message="Custom Terraform Variables file [${input_tfvars}]";
+            if [[ -e ${tfvars_file} ]]; then
+                    echo -e "Listing ${custom_message}:";
+                    ls -al ${tfvars_file}; echo -e;
+                    custom_tfvars="-var-file=\"${tfvars_file}\"" ;
+              else  echo -e "Notice: ${custom_message} does not exit! \n";
+            fi;
+          fi;
+          ####------------------------------------------------------------------
+          echo -e "Terraform Output Plan: ${terraform_tfplan}\n" ;
+          custom_message="Private-KeyPair File: [${private_keypair_file}]";
+          if [[ -e ${private_keypair_file} ]]; then
+                  echo -e "Listing ${custom_message}:";
+                  ls -al ${private_keypair_file} ; echo -e;
+            else  echo -e "Warning: ${custom_message} does not exit! \n";
+                  exit 1;
+          fi;
+          echo -e "Private-KeyPair Name: ${private_keypair_name}" ; echo -e;
+          eval TF_LOG=${{ inputs.terraform-logLevel}} \
+          terraform plan \
+                    -var="region=${target_region}" \
+                    -var="aws_access_key=${aws_access_key_id}" \
+                    -var="aws_secret_key=${aws_secret_access_key}" \
+                    -var="private_keypair_file=${private_keypair_file}" \
+                    -var="private_keypair_name=${private_keypair_name}" \
+                    $(
+                      oIFS="${IFS}"; IFS='_';
+                      for param in ${input_params[@]}; do
+                        echo "-var=\"$(echo -en ${param} | base64 --decode)\"";
+                      done;
+                      IFS="${oIFS}" ;
+                    ) \
+                    ${custom_tfvars} \
+                    -out ${terraform_tfplan} \
+          ;
+          export provisioned_terraform=${?};
+          ####------------------------------------------------------------------
+          echo "::set-output name=provisioned-terraform::${provisioned_terraform}" ;
+          echo "::set-env name=PROVISIONED_TERRAFORM::${provisioned_terraform}" ;
+          ####------------------------------------------------------------------
         fi;
-        export AWS_SHARED_CREDENTIALS_FILE="${credentials}"; unset credentials;
-        mkdir -p ${AWS_SHARED_CREDENTIALS_FILE%\/*} ;
-        declare -a credsfile=() ;
-        credsfile+=("[default]") ;
-        credsfile+=("aws_access_key_id = ") ;
-        credsfile+=("aws_secret_access_key = ") ;
-        credsfile+=("aws_session_token = ") ;
-        credsfile+=("x_principal_arn = ") ;
-        credsfile+=("x_security_token_expires = ") ;
-        cat /dev/null > ${AWS_SHARED_CREDENTIALS_FILE} ;
-        oIFS="${IFS}"; IFS=$'\n' ;
-        for xline in ${credsfile[@]}; do
-          echo -e "${xline}" >> ${AWS_SHARED_CREDENTIALS_FILE} ;
-        done; IFS="${oIFS}" ;
-        ## cat ${AWS_SHARED_CREDENTIALS_FILE} ;
-        ####----------------------------------------------------------------------------
-        timestamp="${{ inputs.session-timestamp }}";
-        if [[ ${#timestamp} -gt 0 ]]; then
-                session_timestamp="${{ inputs.session-timestamp }}" ;
-          else  session_timestamp="SessionTimestamp--$(date +"%Y%m%d%H%M%S")" ;
-        fi; unset timestamp;
-        declare -a credentials=(
-            aws_access_key_id~${{ inputs.aws-access-key-id }}
-            aws_secret_access_key~${{ inputs.aws-secret-access-key }}
-          ) ;
-        echo -e "\nInjecting Default User-Credentials into AWS-Credentials file: ${AWS_SHARED_CREDENTIALS_FILE}\n" ;
-        for credential in ${credentials[@]}; do
-          sed -i -e "s|^\(${credential%\~*}\)\( =\)\(.*\)$|\1\2 ${credential#*\~}|g" ${AWS_SHARED_CREDENTIALS_FILE} ;
-        done ;
-        echo -e "Initiating STS Assume Role request ..." ;
-        echo aws --profile ${{ inputs.aws-default-profile }} \
-                  --region ${{ inputs.aws-default-region }} \
-                  sts assume-role \
-                  --role-arn arn:aws:iam::${{ inputs.aws-default-account }}:role/${{ inputs.devops-access-role }} \
-                  --role-session-name ${session_timestamp} ;
-        declare -a session_token=($(
-            aws --profile ${{ inputs.aws-default-profile }} \
-                --region ${{ inputs.aws-default-region }} \
-                sts assume-role \
-                --role-arn arn:aws:iam::${{ inputs.aws-default-account }}:role/${{ inputs.devops-access-role }} \
-                --role-session-name "${session_timestamp}" \
-                --query 'Credentials.{aki:AccessKeyId,sak:SecretAccessKey,stk:SessionToken,sts:Expiration}' \
-                --output text
-          )) ;
-        echo -e "\nFetched STS Assumed Role Values:" ;
-        declare -a session_items=(
-            AWS_ACCESS_KEY_ID
-            AWS_SECRET_ACCESS_KEY
-            AWS_SESSION_TOKEN
-            AWS_TOKEN_EXPIRES
-          ) ;
-        echo -e "\nConstructed Session Items [array]:\n${session_items[@]}\n" ;
-        counter=0; for xkey in "${session_token[@]}"; do
-          eval "export ${session_items[$((counter++))]}=${xkey}" ;
-        done ;
-        ####----------------------------------------------------------------------------
-        echo -e "Obtaining Caller Identity (Default-Role):" ;
-        aws --profile ${{ inputs.aws-default-profile }} \
-            --region ${{ inputs.aws-default-region }} \
-            sts get-caller-identity ;
-        ####----------------------------------------------------------------------------
-        ## Exporting AWS Shared-Credentials file:
-        declare -a credentials=(
-            aws_access_key_id~${AWS_ACCESS_KEY_ID}
-            aws_secret_access_key~${AWS_SECRET_ACCESS_KEY}
-            aws_session_token~${AWS_SESSION_TOKEN}
-            x_principal_arn~arn:aws:iam::${{ inputs.aws-default-account }}:user/${{ inputs.devops-account-name }}
-            x_security_token_expires~${AWS_TOKEN_EXPIRES}
-          ) ;
-        echo -e;
-        for credential in ${credentials[@]}; do
-          echo -e "Injecting Credential: -> ${credential%\~*} = ${credential#*\~}" ;
-          sed -i -e "s|^\(${credential%\~*}\)\( =\)\(.*\)$|\1\2 ${credential#*\~}|g" ${AWS_SHARED_CREDENTIALS_FILE} ;
-        done ;
-        ####----------------------------------------------------------------------------
-        echo -e "\nObtaining Caller Identity (Assumed-Role):" ;
-        aws --profile ${{ inputs.aws-default-profile }} \
-            --region ${{ inputs.aws-default-region }} \
-            sts get-caller-identity ;
-        ####----------------------------------------------------------------------------
-        echo "::set-output name=credentials-file::${AWS_SHARED_CREDENTIALS_FILE}" ;
-        ####----------------------------------------------------------------------------
-        echo "::set-env name=AWS_SHARED_CREDENTIALS_FILE::${AWS_SHARED_CREDENTIALS_FILE}" ;
-        echo "::set-env name=AWS_ACCESS_KEY_ID::${AWS_ACCESS_KEY_ID}" ;
-        echo "::set-env name=AWS_SECRET_ACCESS_KEY::${AWS_SECRET_ACCESS_KEY}" ;
-        echo "::set-env name=AWS_SESSION_TOKEN::${AWS_SESSION_TOKEN}" ;
-        ####----------------------------------------------------------------------------
-        echo -e "\nCompleted! ";
-
+        ####--------------------------------------------------------------------
+        ## echo -e "Provisioned Terraform: ${PROVISIONED_TERRAFORM}" ;
+        if [[ ${{ inputs.deploy-terraform }} == true ]]; then
+          custom_message="Terraform Input Plan: [${terraform_tfplan}]";
+          if [[ -e ${terraform_tfplan} ]]; then
+                  echo -e "Listing ${custom_message}:";
+                  ls -al ${terraform_tfplan} ; echo -e;
+            else  echo -e "Notice: ${custom_message} does not exit! \n";
+                  exit 1;
+          fi;
+          ## Deploying Terraform Plan (infrastructure)
+          TF_LOG=${{ inputs.terraform-logLevel}} \
+          terraform apply \
+                    -auto-approve \
+                    -compact-warnings \
+                    ${terraform_tfplan} \
+          ;
+          export deployed_terraform=${?};
+          ####------------------------------------------------------------------
+          echo "::set-output name=deployed-terraform::${deployed_terraform}" ;
+          echo "::set-env name=DEPLOYED_TERRAFORM::${deployed_terraform}" ;
+          ####------------------------------------------------------------------
+        fi;
+        ####--------------------------------------------------------------------
+        ## echo -e "Deployed Terraform: ${DEPLOYED_TERRAFORM}" ;
+        if [[ ${{ inputs.destroy-terraform }} == true ]]; then
+          ## Destroying Terraform deployed infrastructure
+          TF_LOG=${{ inputs.terraform-logLevel}} \
+          terraform destroy \
+                    -auto-approve \
+          ;
+          export destroyed_terraform=${?};
+          ####------------------------------------------------------------------
+          echo "::set-output name=destroyed-terraform::${destroyed_terraform}" ;
+          echo "::set-env name=DESTROYED_TERRAFORM::${destroyed_terraform}" ;
+          ####------------------------------------------------------------------
+        fi;
+        ####--------------------------------------------------------------------
+        echo -e "\nCompleted! " ;

@@ -1,76 +1,176 @@
-name: GitHub Actions - AWS STS Assume Role
+name: GitHub Actions - Provision Terraform
 ## on: [push]
 on:
+####----------------------------------------------------------------------------
+  workflow_dispatch:
+    name: 'Manual Deployment'
+    description: 'Triggering Manual Deployment'
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Provision Terraform'
+####----------------------------------------------------------------------------
   push:
     branches: [ master ]
-    paths: 
+    paths:
       - action.yaml
 ####----------------------------------------------------------------------------
 env:
-  awscli_download: 'awscli.amazonaws.com'
-  awscli_package: "awscli-exe-linux-x86_64.zip"
-  ## AWS Enviroment variables
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  ## AWS Default variables
   AWS_DEFAULT_ACCOUNT: ${{ secrets.AWS_DEFAULT_ACCOUNT }}
-  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-  ## DevOps environment variables
+  AWS_DEFAULT_PROFILE: default
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  DEVOPS_ACCESS_ROLE: DevOps--Custom-Access.Role
   DEVOPS_ACCOUNT_NAME: ${{ secrets.DEVOPS_ACCOUNT_NAME }}
-  DEVOPS_ACCESS_ROLE: ${{ secrets.DEVOPS_ACCESS_ROLE }}
+  PRIVATE_KEYPAIR_FILE: .ssh/id_rsa
+  PRIVATE_KEYPAIR_NAME: terraform
+  PRIVATE_KEYPAIR_SECRET: ${{ secrets.PRIVATE_KEYPAIR_SECRET }}
+  TARGET_WORKSPACE: dev
+  TERRAFORM_DEPLOY_POLICY: true
+  TERRAFORM_DESTROY_POLICY: true
+  TERRAFORM_INPUT_PARAMS: ''
 ####----------------------------------------------------------------------------
 jobs:
-  generate-credentials:
+  provision-terraform:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v2
 ####----------------------------------------------------------------------------
-      ## Updating AWS CLI (latest)
-      - name: Updating AWS CLI (lastest)
-        id: update_awscli
-        run: |
-          aws --version >/dev/null 2>&1 && {
-              echo -e >&2 "AWS CLI is Installed ... Ok! ";
-              which terraform ;
-              aws --version ;
-            } ;
-          echo -e "Upgrading AWS-CLI to version 2.0.40" ;
-          ## https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html
-          cd /tmp ;
-          wget --quiet "https://${awscli_download}/${awscli_package}" \
-               --directory-prefix=/tmp/ --output-document=awscliv2.zip ;
-          unzip awscliv2.zip 1>/dev/null ;
-          ls -l /usr/local/bin/aws ;
-          sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update ;
-          aws --version ;
-####----------------------------------------------------------------------------
-      - name: AWS STS Assume Role
-        uses: ./
-        id: request_credentials
+      ## Requesting Credentials
+      - name: Requesting Credentials
+        uses: emvaldes/generate-credentials@master
+        id: request-credentials
         with:
+          aws-access-key-id: ${AWS_ACCESS_KEY_ID}
+          aws-default-account: ${AWS_DEFAULT_ACCOUNT}
+          aws-default-profile: ${AWS_DEFAULT_PROFILE}
+          aws-default-region: ${AWS_DEFAULT_REGION}
+          aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+          devops-access-role: ${DEVOPS_ACCESS_ROLE}
+          devops-account-name: ${DEVOPS_ACCOUNT_NAME}
           session-timestamp: 'DevOpsPipeline--20200827193000'
-          aws-default-account: ${{ env.AWS_DEFAULT_ACCOUNT }}
-          aws-default-region: ${{ env.AWS_DEFAULT_REGION }}
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          devops-access-role: ${{ env.DEVOPS_ACCESS_ROLE }}
-          devops-account-name: ${{ env.DEVOPS_ACCOUNT_NAME }}
-####----------------------------------------------------------------------------
-      ## Display Environment
-      - name: Display Environment
-        id: display_environment
+        continue-on-error: false
+      - name: Check On Failures
+        if: steps.request-credentials.outputs.status == 'failure'
         run: |
-          echo -e "Displaying Enviroment Settings ..." ;
-          echo -e "AWS Access Key-ID: ${AWS_ACCESS_KEY_ID}" ;
-          echo -e "AWS Secret Access Key: ${AWS_SECRET_ACCESS_KEY}" ;
-          echo -e "AWS Session Token: ${AWS_SESSION_TOKEN}" ;
+          echo -e "Warning: Requesting Credentials Failed [Status]: ${{ steps.request-credentials.outputs.status }}" ;
 ####----------------------------------------------------------------------------
-      ## Display IAM List-Users
-      - name: Display IAM List-Users
-        id: display_listusers
+      ## Provisioning Access
+      - name: Provisioning Access
+        uses: emvaldes/configure-access@master
+        id: provision-access
+        with:
+          private-keypair-file: ${PRIVATE_KEYPAIR_FILE}
+          private-keypair-secret: ${PRIVATE_KEYPAIR_SECRET}
+        continue-on-error: false
+      - name: Check On Failures
+        if: steps.provision-access.outputs.status == 'failure'
         run: |
-          aws --profile default \
-          --region ${AWS_DEFAULT_REGION} \
-          iam list-users \
-          --query 'Users[?UserName==`'${DEVOPS_ACCOUNT_NAME}'`]' ;
+          echo -e "Warning: Provisioning Access Failed [Status]: ${{ steps.provision-access.outputs.status }}" ;
+####----------------------------------------------------------------------------
+      ## System Requirements
+      - name: System Requirements
+        uses: emvaldes/system-requirements@master
+        id: system-requirements
+        with:
+          install-awscli-tool: true
+          # install-custom-tools: 'netcat'
+          # install-default-tools: true
+          install-terraform-cli: latest
+          # update-operating-system: true
+          # update-python-version: true
+        continue-on-error: false
+      - name: Check On Failures
+        if: steps.system-requirements.outputs.status == 'failure'
+        run: |
+          echo -e "Warning: System Requirements Failed [Status]: ${{ steps.system-requirements.outputs.status }}" ;
+####----------------------------------------------------------------------------
+      ## Installed Packages
+      - name: Installed Packages
+        id: installed-packages
+        shell: bash
+        run: |
+          jq --version;
+          terraform --version;
+####----------------------------------------------------------------------------
+      ## Terraform Parameters
+      - name: Terraform Parameters
+        id: terraform-parameters
+        shell: bash
+        run: |
+          oIFS="${IFS}" ; IFS=$'\n' ;
+          declare -a custom_params=(
+              custom_timestamp=$(date +'%y%m%d%H%M%S')
+              custom_engineer='Eduardo Valdes'
+              custom_contact=emvaldes@hotmail.com
+              custom_listset='["ami-abc123","ami-def456"]'
+              custom_mapset='{"us-east-1":"ami-abc123","us-east-2":"ami-def456"}'
+            ) ;
+          echo -e "\nListing Encoding entries: ..." ;
+          for xitem in ${custom_params[@]}; do
+            encrypted=$(echo -en ${xitem} | base64 -w0 | tr -d '\n\r') ;
+            decrypted=$(echo -en "${encrypted}" | base64 --decode) ;
+            echo -e "${encrypted} -> ${decrypted}" ;
+          done ;
+          eval "echo '::set-env name=TERRAFORM_INPUT_PARAMS::$(
+              for xitem in ${custom_params[@]}; do
+                echo -en "`echo -en ${xitem} | base64 -w0 | tr -d '\n\r'`_" ;
+              done | sed -e 's|\(.*\)\(\_\)$|\1|' ;
+            )'" ;
+          IFS="${oIFS}" ;
+          eval "echo '::set-env name=TERRAFORM_INPUT_TFVARS::configs/${TARGET_WORKSPACE}-configs.tfvars'" ;
+        continue-on-error: false
+      - name: Check On Failures
+        if: steps.terraform-parameters.outputs.status == 'failure'
+        run: |
+          echo -e "Warning: Terraform Parameters Failed [Status]: ${{ steps.terraform-parameters.outputs.status }}" ;
+####----------------------------------------------------------------------------
+      ## Provision Terraform
+      - name: Provision Terraform
+        uses: ./
+        id: provision-terraform
+        with:
+          provision-terraform: true
+          terraform-input-params: "${TERRAFORM_INPUT_PARAMS}"
+          terraform-input-tfvars: "${TERRAFORM_INPUT_TFVARS}"
+## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
+          terraform-loglevel: INFO
+        continue-on-error: false
+      - name: Check On Failures
+        if: steps.provision-terraform.outputs.status == 'failure'
+        run: |
+          echo -e "Warning: Provision Terraform Failed [Status]: ${{ steps.provision-terraform.outputs.status }}" ;
+####----------------------------------------------------------------------------
+      ## Deploy Terraform
+      - name: Deploy Terraform
+        uses: ./
+        id: deploy-terraform
+        with:
+          deploy-terraform: true
+## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
+          terraform-loglevel: INFO
+        continue-on-error: false
+      - name: Check On Failures
+        if: steps.deploy-terraform.outputs.status == 'failure'
+        run: |
+          echo -e "Warning: Deploy Terraform Failed [Status]: ${{ steps.deploy-terraform.outputs.status }}" ;
+####----------------------------------------------------------------------------
+      ## Destroy Terraform
+      - name: Destroy Terraform
+        uses: ./
+        id: destroy-terraform
+        with:
+          destroy-terraform: true
+## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
+          terraform-loglevel: INFO
+        continue-on-error: false
+      - name: Check On Failures
+        if: steps.destroy-terraform.outputs.status == 'failure'
+        run: |
+          echo -e "Warning: Destroy Terraform Failed [Status]: ${{ steps.destroy-terraform.outputs.status }}" ;
+###----------------------------------------------------------------------------
