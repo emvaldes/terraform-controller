@@ -55,10 +55,10 @@ jobs:
           devops-account-name: ${DEVOPS_ACCOUNT_NAME}
           session-timestamp: 'DevOpsPipeline--20200827193000'
         continue-on-error: false
-      - name: Check On Failures
-        if: steps.request-credentials.outputs.status == 'failure'
-        run: |
-          echo -e "Warning: Requesting Credentials Failed [Status]: ${{ steps.request-credentials.outputs.status }}" ;
+#       - name: Check On Failures
+#         if: steps.request-credentials.outputs.status == 'failure'
+#         run: |
+#           echo -e "Warning: Requesting Credentials Failed [Status]: ${{ steps.request-credentials.outputs.status }}" ;
 ####----------------------------------------------------------------------------
       ## Provisioning Access
       - name: Provisioning Access
@@ -68,10 +68,10 @@ jobs:
           private-keypair-file: ${PRIVATE_KEYPAIR_FILE}
           private-keypair-secret: ${PRIVATE_KEYPAIR_SECRET}
         continue-on-error: false
-      - name: Check On Failures
-        if: steps.provision-access.outputs.status == 'failure'
-        run: |
-          echo -e "Warning: Provisioning Access Failed [Status]: ${{ steps.provision-access.outputs.status }}" ;
+#       - name: Check On Failures
+#         if: steps.provision-access.outputs.status == 'failure'
+#         run: |
+#           echo -e "Warning: Provisioning Access Failed [Status]: ${{ steps.provision-access.outputs.status }}" ;
 ####----------------------------------------------------------------------------
       ## System Requirements
       - name: System Requirements
@@ -85,10 +85,10 @@ jobs:
           # update-operating-system: true
           # update-python-version: true
         continue-on-error: false
-      - name: Check On Failures
-        if: steps.system-requirements.outputs.status == 'failure'
-        run: |
-          echo -e "Warning: System Requirements Failed [Status]: ${{ steps.system-requirements.outputs.status }}" ;
+#       - name: Check On Failures
+#         if: steps.system-requirements.outputs.status == 'failure'
+#         run: |
+#           echo -e "Warning: System Requirements Failed [Status]: ${{ steps.system-requirements.outputs.status }}" ;
 ####----------------------------------------------------------------------------
       ## Installed Packages
       - name: Installed Packages
@@ -125,10 +125,10 @@ jobs:
           IFS="${oIFS}" ;
           eval "echo '::set-env name=TERRAFORM_INPUT_TFVARS::configs/${TARGET_WORKSPACE}-configs.tfvars'" ;
         continue-on-error: false
-      - name: Check On Failures
-        if: steps.terraform-parameters.outputs.status == 'failure'
-        run: |
-          echo -e "Warning: Terraform Parameters Failed [Status]: ${{ steps.terraform-parameters.outputs.status }}" ;
+#       - name: Check On Failures
+#         if: steps.terraform-parameters.outputs.status == 'failure'
+#         run: |
+#           echo -e "Warning: Terraform Parameters Failed [Status]: ${{ steps.terraform-parameters.outputs.status }}" ;
 ####----------------------------------------------------------------------------
       ## Provision Terraform
       - name: Provision Terraform
@@ -141,10 +141,10 @@ jobs:
 ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
           terraform-loglevel: INFO
         continue-on-error: false
-      - name: Check On Failures
-        if: steps.provision-terraform.outputs.status == 'failure'
-        run: |
-          echo -e "Warning: Provision Terraform Failed [Status]: ${{ steps.provision-terraform.outputs.status }}" ;
+#       - name: Check On Failures
+#         if: steps.provision-terraform.outputs.status == 'failure'
+#         run: |
+#           echo -e "Warning: Provision Terraform Failed [Status]: ${{ steps.provision-terraform.outputs.status }}" ;
 ####----------------------------------------------------------------------------
       ## Deploy Terraform
       - name: Deploy Terraform
@@ -155,10 +155,10 @@ jobs:
 ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
           terraform-loglevel: INFO
         continue-on-error: false
-      - name: Check On Failures
-        if: steps.deploy-terraform.outputs.status == 'failure'
-        run: |
-          echo -e "Warning: Deploy Terraform Failed [Status]: ${{ steps.deploy-terraform.outputs.status }}" ;
+#       - name: Check On Failures
+#         if: steps.deploy-terraform.outputs.status == 'failure'
+#         run: |
+#           echo -e "Warning: Deploy Terraform Failed [Status]: ${{ steps.deploy-terraform.outputs.status }}" ;
 ####----------------------------------------------------------------------------
       ## Destroy Terraform
       - name: Destroy Terraform
@@ -169,8 +169,8 @@ jobs:
 ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
           terraform-loglevel: INFO
         continue-on-error: false
-      - name: Check On Failures
-        if: steps.destroy-terraform.outputs.status == 'failure'
-        run: |
-          echo -e "Warning: Destroy Terraform Failed [Status]: ${{ steps.destroy-terraform.outputs.status }}" ;
+#       - name: Check On Failures
+#         if: steps.destroy-terraform.outputs.status == 'failure'
+#         run: |
+#           echo -e "Warning: Destroy Terraform Failed [Status]: ${{ steps.destroy-terraform.outputs.status }}" ;
 ###----------------------------------------------------------------------------
