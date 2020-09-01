@@ -123,16 +123,16 @@ runs:
         export terraform_loglevel="${{ inputs.terraform-loglevel }}" ;
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.provision-terraform }} == true ]]; then
-          ${terraform_verbosity} \
+          eval ${terraform_verbosity} \
           terraform init ;
           ####------------------------------------------------------------------
-          ${terraform_verbosity} \
+          eval ${terraform_verbosity} \
           terraform workspace new ${target_workspace} ;
           ####------------------------------------------------------------------
-          ${terraform_verbosity} \
+          eval ${terraform_verbosity} \
           terraform fmt -check ;
           ####------------------------------------------------------------------
-          ${terraform_verbosity} \
+          eval ${terraform_verbosity} \
           terraform validate ;
         fi;
         ####--------------------------------------------------------------------
@@ -172,8 +172,7 @@ runs:
                   exit 1;
           fi;
           echo -e "Private-KeyPair Name: ${private_keypair_name}" ; echo -e;
-          eval \
-          ${terraform_verbosity} \
+          eval ${terraform_verbosity} \
           terraform plan \
                     -var="region=${target_region}" \
                     -var="aws_access_key=${aws_access_key_id}" \
@@ -206,7 +205,7 @@ runs:
                   exit 1;
           fi;
           ## Deploying Terraform Plan (infrastructure)
-          ${terraform_verbosity} \
+          eval ${terraform_verbosity} \
           terraform apply \
                     -auto-approve \
                     -compact-warnings \
@@ -220,7 +219,7 @@ runs:
         fi;
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.terraform-config }} == true ]]; then
-          ${terraform_verbosity} \
+          eval ${terraform_verbosity} \
           terraform show | tee ${terraform_tfstate}/${target_workspace}/terraform.show ;
         fi;
         ####--------------------------------------------------------------------
@@ -233,7 +232,7 @@ runs:
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.destroy-terraform }} == true ]]; then
           ## Destroying Terraform deployed infrastructure
-          ${terraform_verbosity} \
+          eval ${terraform_verbosity} \
           terraform destroy \
                     -auto-approve \
           ;
