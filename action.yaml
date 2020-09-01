@@ -180,9 +180,11 @@ runs:
                     ${custom_tfvars} \
                     -out ${terraform_tfplan} \
           ;
+          ####------------------------------------------------------------------
           export provisioned_terraform=${?};
           echo "::set-output name=provisioned-terraform::${provisioned_terraform}" ;
           echo "::set-env name=PROVISIONED_TERRAFORM::${provisioned_terraform}" ;
+          ####------------------------------------------------------------------
         fi;
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.deploy-terraform }} == true ]]; then
@@ -200,9 +202,11 @@ runs:
                     -compact-warnings \
                     ${terraform_tfplan} \
           ;
+          ####------------------------------------------------------------------
           export deployed_terraform=${?};
           echo "::set-output name=deployed-terraform::${deployed_terraform}" ;
           echo "::set-env name=DEPLOYED_TERRAFORM::${deployed_terraform}" ;
+          ####------------------------------------------------------------------
         fi;
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.terraform-configuration }} == true ]]; then
