@@ -2,10 +2,6 @@ name: 'Provision Terraform'
 description: 'Provision Terraform (DevOps)'
 ####----------------------------------------------------------------------------
 inputs:
-  display-configuration:
-    description: 'Display Terraform Configuration'
-    required: false
-    default: false
   target-account:
     description: 'Define Terraform Target-Account'
     required: false
@@ -16,6 +12,14 @@ inputs:
     default: false
   target-workspace:
     description: 'Define Terraform Workspace'
+    required: false
+    default: false
+  terraform-config:
+    description: 'Define Terraform Configuration'
+    required: false
+    default: false
+  terraform-tfstate:
+    description: 'Define Terraform System-State'
     required: false
     default: false
   terraform-input-params:
@@ -209,7 +213,7 @@ runs:
           ####------------------------------------------------------------------
         fi;
         ####--------------------------------------------------------------------
-        if [[ ${{ inputs.terraform-configuration }} == true ]]; then
+        if [[ ${{ inputs.terraform-config }} == true ]]; then
           TF_LOG=${terraform_loglevel} \
           terraform show | tee ${terraform_tfstate}/${target_workspace}/terraform.show ;
         fi;
