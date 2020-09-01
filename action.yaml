@@ -116,7 +116,8 @@ runs:
         ####--------------------------------------------------------------------
         export terraform_verbosity="${{ inputs.terraform-loglevel }}" ;
         [[ ${terraform_verbosity} != false ]] && {
-            terraform_verbosity="TF_LOG=${{ inputs.terraform-logLevel }}";
+                  terraform_verbosity="TF_LOG=${{ inputs.terraform-logLevel }}";
+            else  terraform_verbosity='';
           } ; echo -e "\nTerraform Loglevel: ${terraform_verbosity}";
         ####--------------------------------------------------------------------
         ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
