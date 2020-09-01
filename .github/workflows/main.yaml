@@ -139,7 +139,7 @@ jobs:
           terraform-input-params: "${TERRAFORM_INPUT_PARAMS}"
           terraform-input-tfvars: "${TERRAFORM_INPUT_TFVARS}"
 ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
-          terraform-loglevel: INFO
+          terraform-loglevel: false
         continue-on-error: false
 #       - name: Check On Failures
 #         if: steps.provision-terraform.outputs.status == 'failure'
@@ -153,7 +153,7 @@ jobs:
         with:
           deploy-terraform: true
 ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
-          terraform-loglevel: INFO
+          terraform-loglevel: false
         continue-on-error: false
 #       - name: Check On Failures
 #         if: steps.deploy-terraform.outputs.status == 'failure'
@@ -167,7 +167,7 @@ jobs:
         with:
           destroy-terraform: true
 ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
-          terraform-loglevel: INFO
+          terraform-loglevel: false
         continue-on-error: false
 #       - name: Check On Failures
 #         if: steps.destroy-terraform.outputs.status == 'failure'
