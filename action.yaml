@@ -2,6 +2,10 @@ name: 'Provision Terraform'
 description: 'Provision Terraform (DevOps)'
 ####----------------------------------------------------------------------------
 inputs:
+  display-configuration:
+    description: 'Display Terraform Configuration'
+    required: false
+    default: false
   target-account:
     description: 'Define Terraform Target-Account'
     required: false
@@ -177,13 +181,10 @@ runs:
                     -out ${terraform_tfplan} \
           ;
           export provisioned_terraform=${?};
-          ####------------------------------------------------------------------
           echo "::set-output name=provisioned-terraform::${provisioned_terraform}" ;
           echo "::set-env name=PROVISIONED_TERRAFORM::${provisioned_terraform}" ;
-          ####------------------------------------------------------------------
         fi;
         ####--------------------------------------------------------------------
-        ## echo -e "Provisioned Terraform: ${PROVISIONED_TERRAFORM}" ;
         if [[ ${{ inputs.deploy-terraform }} == true ]]; then
           custom_message="Terraform Input Plan: [${terraform_tfplan}]";
           if [[ -e ${terraform_tfplan} ]]; then
@@ -200,13 +201,22 @@ runs:
                     ${terraform_tfplan} \
           ;
           export deployed_terraform=${?};
-          ####------------------------------------------------------------------
           echo "::set-output name=deployed-terraform::${deployed_terraform}" ;
           echo "::set-env name=DEPLOYED_TERRAFORM::${deployed_terraform}" ;
-          ####------------------------------------------------------------------
         fi;
         ####--------------------------------------------------------------------
-        ## echo -e "Deployed Terraform: ${DEPLOYED_TERRAFORM}" ;
+        if [[ ${{ inputs.terraform-configuration }} == true ]]; then
+          TF_LOG=${terraform_loglevel} \
+          terraform show | tee ${terraform_tfstate}/${target_workspace}/terraform.show ;
+        fi;
+        ####--------------------------------------------------------------------
+        if [[ ${{ inputs.terraform-tfstate }} == true ]]; then
+          tree ${terraform_tfstate} ;
+          target_state="$(find ${terraform_tfstate} -type f -name terraform.tfstate | head -n1)" ;
+          echo -e "\nDisplaying Terraform State: ${target_state}" ;
+          cat ${target_state} ;
+        fi;
+        ####--------------------------------------------------------------------
         if [[ ${{ inputs.destroy-terraform }} == true ]]; then
           ## Destroying Terraform deployed infrastructure
           TF_LOG=${{ inputs.terraform-logLevel}} \
