@@ -74,6 +74,7 @@ runs:
       id: provision-terraform
       shell: bash
       run: |
+        export completion="Skipping ...! ";
         ####--------------------------------------------------------------------
         ##  Parsing AWS Credentials:
         aws_access_key_id="${{ inputs.aws-access-key-id }}" ;
@@ -118,7 +119,7 @@ runs:
         if [[ ${terraform_verbosity} != false ]]; then
                   terraform_verbosity="TF_LOG=${{ inputs.terraform-logLevel }}";
             else  terraform_verbosity='';
-        fi; echo -e "\nTerraform Loglevel: ${terraform_verbosity}";
+        fi; ## echo -e "\nTerraform Loglevel: ${terraform_verbosity}";
         ####--------------------------------------------------------------------
         ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
         export terraform_loglevel="${{ inputs.terraform-loglevel }}" ;
@@ -135,6 +136,8 @@ runs:
           ####------------------------------------------------------------------
           eval ${terraform_verbosity} \
           terraform validate ;
+          ####------------------------------------------------------------------
+          completion="Completed!";
         fi;
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.provision-terraform }} == true ]]; then
@@ -195,6 +198,7 @@ runs:
           echo "::set-output name=provisioned-terraform::${provisioned_terraform}" ;
           echo "::set-env name=PROVISIONED_TERRAFORM::${provisioned_terraform}" ;
           ####------------------------------------------------------------------
+          completion="Completed!";
         fi;
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.deploy-terraform }} == true ]]; then
@@ -217,11 +221,14 @@ runs:
           echo "::set-output name=deployed-terraform::${deployed_terraform}" ;
           echo "::set-env name=DEPLOYED_TERRAFORM::${deployed_terraform}" ;
           ####------------------------------------------------------------------
+          completion="Completed!";
         fi;
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.terraform-config }} == true ]]; then
           eval ${terraform_verbosity} \
           terraform show | tee ${terraform_tfstate}/${target_workspace}/terraform.show ;
+          ####------------------------------------------------------------------
+          completion="Completed!";
         fi;
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.terraform-tfstate }} == true ]]; then
@@ -229,6 +236,8 @@ runs:
           target_state="$(find ${terraform_tfstate} -type f -name terraform.tfstate | head -n1)" ;
           echo -e "\nDisplaying Terraform State: ${target_state}" ;
           cat ${target_state} ;
+          ####------------------------------------------------------------------
+          completion="Completed!";
         fi;
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.destroy-terraform }} == true ]]; then
@@ -242,6 +251,7 @@ runs:
           echo "::set-output name=destroyed-terraform::${destroyed_terraform}" ;
           echo "::set-env name=DESTROYED_TERRAFORM::${destroyed_terraform}" ;
           ####------------------------------------------------------------------
+          completion="Completed!";
         fi;
         ####--------------------------------------------------------------------
-        echo -e "\nCompleted! " ;
+        echo -e "\n${completion} " ;
