@@ -61,7 +61,7 @@ inputs:
   terraform-loglevel:
     description: 'Define Terraform Loglevel'
     required: false
-    default: 'ERROR'
+    default: false
 ####----------------------------------------------------------------------------
 ##  outputs:
 ####----------------------------------------------------------------------------
@@ -114,20 +114,25 @@ runs:
         export terraform_planfile="terraform" ;
         export terraform_tfplan="${terraform_tfstate}/${target_workspace}/${terraform_planfile}.tfplan" ;
         ####--------------------------------------------------------------------
+        terraform_verbosity="${{ inputs.terraform-loglevel }}" ;
+        [[ ${terraform_verbosity} != false ]] && {
+            export terraform_verbosity="TF_LOG=${{ inputs.terraform-logLevel}}";
+          } ;
+        ####--------------------------------------------------------------------
         ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
         export terraform_loglevel="${{ inputs.terraform-loglevel }}" ;
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.provision-terraform }} == true ]]; then
-          TF_LOG=${{ inputs.terraform-logLevel}} \
+          ${terraform_verbosity} \
           terraform init ;
           ####------------------------------------------------------------------
-          TF_LOG=${{ inputs.terraform-logLevel}} \
+          ${terraform_verbosity} \
           terraform workspace new ${target_workspace} ;
           ####------------------------------------------------------------------
-          TF_LOG=${{ inputs.terraform-logLevel}} \
+          ${terraform_verbosity} \
           terraform fmt -check ;
           ####------------------------------------------------------------------
-          TF_LOG=${{ inputs.terraform-logLevel}} \
+          ${terraform_verbosity} \
           terraform validate ;
         fi;
         ####--------------------------------------------------------------------
@@ -167,7 +172,8 @@ runs:
                   exit 1;
           fi;
           echo -e "Private-KeyPair Name: ${private_keypair_name}" ; echo -e;
-          eval TF_LOG=${{ inputs.terraform-logLevel}} \
+          eval \
+          ${terraform_verbosity} \
           terraform plan \
                     -var="region=${target_region}" \
                     -var="aws_access_key=${aws_access_key_id}" \
@@ -200,7 +206,7 @@ runs:
                   exit 1;
           fi;
           ## Deploying Terraform Plan (infrastructure)
-          TF_LOG=${{ inputs.terraform-logLevel}} \
+          ${terraform_verbosity} \
           terraform apply \
                     -auto-approve \
                     -compact-warnings \
@@ -214,7 +220,7 @@ runs:
         fi;
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.terraform-config }} == true ]]; then
-          TF_LOG=${terraform_loglevel} \
+          ${terraform_verbosity} \
           terraform show | tee ${terraform_tfstate}/${target_workspace}/terraform.show ;
         fi;
         ####--------------------------------------------------------------------
@@ -227,7 +233,7 @@ runs:
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.destroy-terraform }} == true ]]; then
           ## Destroying Terraform deployed infrastructure
-          TF_LOG=${{ inputs.terraform-logLevel}} \
+          ${terraform_verbosity} \
           terraform destroy \
                     -auto-approve \
           ;
