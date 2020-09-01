@@ -114,10 +114,10 @@ runs:
         export terraform_planfile="terraform" ;
         export terraform_tfplan="${terraform_tfstate}/${target_workspace}/${terraform_planfile}.tfplan" ;
         ####--------------------------------------------------------------------
-        terraform_verbosity="${{ inputs.terraform-loglevel }}" ;
+        export terraform_verbosity="${{ inputs.terraform-loglevel }}" ;
         [[ ${terraform_verbosity} != false ]] && {
-            export terraform_verbosity="TF_LOG=${{ inputs.terraform-logLevel}}";
-          } ;
+            terraform_verbosity="TF_LOG=${{ inputs.terraform-logLevel }}";
+          } ; echo -e "\nTerraform Loglevel: ${terraform_verbosity}";
         ####--------------------------------------------------------------------
         ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
         export terraform_loglevel="${{ inputs.terraform-loglevel }}" ;
