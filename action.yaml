@@ -54,6 +54,10 @@ inputs:
     description: 'Deploy Terraform Infrastructure'
     required: false
     default: false
+  backup-terraform:
+    description: 'Backup Terraform Infrastructure'
+    required: false
+    default: false
   destroy-terraform:
     description: 'Destroy Terraform Infrastructure'
     required: false
