@@ -17,6 +17,7 @@ on:
     branches: [ master ]
     paths:
       - action.yaml
+      - '*.config'
 ####----------------------------------------------------------------------------
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
