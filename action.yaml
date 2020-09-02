@@ -2,16 +2,12 @@ name: 'Provision Terraform'
 description: 'Provision Terraform (DevOps)'
 ####----------------------------------------------------------------------------
 inputs:
-  target-account:
-    description: 'Define Terraform Target-Account'
-    required: false
-    default: false
-  target-region:
-    description: 'Define Terraform Target-Region'
-    required: false
-    default: false
   target-workspace:
     description: 'Define Terraform Workspace'
+    required: false
+    default: false
+  target-timestamp:
+    description: 'Define Terraform Time-Stamp'
     required: false
     default: false
   terraform-config:
@@ -28,6 +24,18 @@ inputs:
     default: false
   terraform-input-tfvars:
     description: 'Define Terraform Input Variables'
+    required: false
+    default: false
+  aws-default-account:
+    description: 'Terraform AWS Default Account'
+    required: false
+    default: false
+  aws-default-profile:
+    description: 'Terraform AWS Default Profile'
+    required: false
+    default: false
+  aws-default-region:
+    description: 'Terraform AWS Default Region'
     required: false
     default: false
   aws-access-key-id:
@@ -76,6 +84,20 @@ runs:
       run: |
         export completion="Skipping ...! ";
         ####--------------------------------------------------------------------
+        ## Parsing AWS Default values:
+        aws_default_profile="${{ inputs.aws-default-profile }}" ;
+        [[ ${aws_default_profile} == false ]] && {
+            aws_default_profile="${AWS_DEFAULT_PROFILE}" ;
+          } ;
+        aws_default_account="${{ inputs.aws-default-account }}" ;
+        [[ ${aws_default_account} == false ]] && {
+            aws_default_account="${AWS_DEFAULT_ACCOUNT}" ;
+          } ;
+        aws_default_region="${{ inputs.aws-default-region }}" ;
+        [[ ${aws_default_region} == false ]] && {
+            aws_default_region="${AWS_DEFAULT_REGION}" ;
+          } ;
+        ####--------------------------------------------------------------------
         ##  Parsing AWS Credentials:
         aws_access_key_id="${{ inputs.aws-access-key-id }}" ;
         [[ ${aws_access_key_id} == false ]] && {
@@ -97,21 +119,17 @@ runs:
           } ;
         ####--------------------------------------------------------------------
         ## Terraform Infrastructure As Code (IaC):
-        target_account="${{ inputs.target-account }}" ;
-        [[ ${target_account} == false ]] && {
-            target_account="${AWS_DEFAULT_ACCOUNT}" ;
-          } ;
-        target_region="${{ inputs.target-region }}" ;
-        [[ ${target_region} == false ]] && {
-            target_region="${AWS_DEFAULT_REGION}" ;
-          } ;
         target_workspace="${{ inputs.target-workspace }}" ;
         [[ ${target_workspace} == false ]] && {
             target_workspace="${TARGET_WORKSPACE}" ;
           } ;
+        xtimestamp="${{ inputs.target-timestamp }}" ;
+        [[ ${xtimestamp} == false ]] && {
+            xtimestamp="$(date +"%y%m%d%H%M%S")" ;
+          } ;
         ####--------------------------------------------------------------------
         export terraform_tfstate="${{ github.workspace }}/terraform.tfstate.d" ;
-        export terraform_s3bucket="terraform-states-${target_account}" ;
+        export terraform_s3bucket="terraform-states-${aws_default_account}" ;
         export terraform_planfile="terraform" ;
         export terraform_tfplan="${terraform_tfstate}/${target_workspace}/${terraform_planfile}.tfplan" ;
         ####--------------------------------------------------------------------
@@ -178,7 +196,7 @@ runs:
           echo -e "Private-KeyPair Name: ${private_keypair_name}" ; echo -e;
           eval ${terraform_verbosity} \
           terraform plan \
-                    -var="region=${target_region}" \
+                    -var="region=${aws_default_region}" \
                     -var="aws_access_key=${aws_access_key_id}" \
                     -var="aws_secret_key=${aws_secret_access_key}" \
                     -var="private_keypair_file=${private_keypair_file}" \
@@ -238,6 +256,42 @@ runs:
           cat ${target_state} ;
           ####------------------------------------------------------------------
           completion="Completed!";
+        fi;
+        ####--------------------------------------------------------------------
+        if [[ ${{ inputs.backup-terraform }} == true ]]; then
+          terraform_s3bucket="terraform-states-${aws_default_account}";
+          terraform_tfstate="${{ github.workspace }}/terraform.tfstate.d";
+          terraform_modules="${{ github.workspace }}/.terraform";
+          custom_filepath="${xtimestamp:0:2}/${xtimestamp:2:2}/${xtimestamp:4:2}/${xtimestamp:6}";
+          target_buildset="${target_workspace}/${custom_filepath}";
+          echo -e "\nCreating Target Build-Set Container ... [ ${target_buildset} ]";
+          mkdir -p ${target_buildset} ;
+          echo -e "\nTransferring terraform components to container ...\n";
+          cp -r ${terraform_tfstate} ${target_buildset}/ | cut -d ' ' -f2- ;
+          cp -r ${terraform_modules} ${target_buildset}/ | cut -d ' ' -f2- ;
+          rm -rf ${target_buildset}/.terraform/modules;
+          tree ${target_buildset};
+          s3bucket_remotepath="${target_buildset}" ;
+          echo -e "\nTransferring Terraform State @ Local-Storage ... ${terraform_s3bucket}" ;
+          aws --profile ${aws_default_profile} \
+              --region ${aws_default_region} \
+              s3 cp ${target_buildset} s3://${terraform_s3bucket}/${s3bucket_remotepath}/ \
+              --recursive &1>/dev/null;
+          echo -e "\nListing Terraform State @ AWS S3 Bucket ... ${terraform_s3bucket}\n" ;
+          aws --profile ${aws_default_profile} \
+              --region ${aws_default_region} \
+              s3 ls s3://${terraform_s3bucket}/${s3bucket_remotepath}/ \
+              --recursive ;
+          oIFS="${IFS}"; IFS=$'\n';
+          terraform_restore="/tmp/terraform/restore/${target_buildset}";
+          declare -a restore_state=();
+          restore_state+=("\nHow-To Restore Terraform Infrastructure State:\n");
+          restore_state+=("> mkdir -p ${terraform_restore}");
+          restore_state+=("> aws --profile ${aws_default_profile} --region ${aws_default_region} s3 cp s3://${terraform_s3bucket}/${target_buildset} --recursive ${terraform_restore}");
+          restore_state+=("> cd ${terraform_restore}");
+          restore_state+=("> terraform apply ${terraform_restore}/terraform.tfstate.d/${target_workspace}/terraform.tfplan");
+          for xline in ${restore_state[@]}; do echo -e "${xline}"; done;
+          IFS="${oIFS}";
         fi;
         ####--------------------------------------------------------------------
         if [[ ${{ inputs.destroy-terraform }} == true ]]; then
