@@ -285,8 +285,8 @@ runs:
           terraform_s3bucket="terraform-states-${aws_default_account}";
           terraform_tfstate="${{ github.workspace }}/terraform.tfstate.d";
           terraform_modules="${{ github.workspace }}/.terraform";
-          custom_filepath="${target_timestamp:0:2}/${target_timestamp:2:2}/${target_timestamp:4:2}/${target_timestamp:6}";
-          target_buildset="${target_workspace}/${custom_filepath}";
+          custom_filepath="${target_timestamp:0:2}/${target_timestamp:2:2}/${target_timestamp:4:2}/${target_timestamp:6:6}";
+          target_buildset="${target_workspace}/${custom_filepath}/${target_timestamp:10}";
           echo -e "\nCreating Target Build-Set Container ... [ ${target_buildset} ]";
           mkdir -p ${target_buildset} ;
           echo -e "\nTransferring terraform components to container ...\n";
