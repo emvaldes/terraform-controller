@@ -285,7 +285,7 @@ runs:
           aws --profile ${aws_default_profile} \
               --region ${aws_default_region} \
               s3 ls s3://${terraform_s3bucket}/${s3bucket_remotepath}/ \
-              --recursive ;
+              --recursive &1>/dev/null;
           oIFS="${IFS}"; IFS=$'\n';
           terraform_restore="/tmp/terraform/restore/${target_buildset}";
           declare -a restore_state=();
