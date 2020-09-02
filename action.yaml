@@ -316,6 +316,7 @@ runs:
           restore_state+=("> cd ${terraform_restore} ;");
           restore_state+=("> git checkout -b restore $(git rev-parse HEAD) ;");
           restore_state+=("> aws --profile ${aws_default_profile} --region ${aws_default_region} s3 cp s3://${terraform_s3bucket}/${target_buildset} . --recursive ;");
+          restore_state+=("> terraform init ;");
           restore_state+=("> terraform apply ${terraform_restore}/terraform.tfstate.d/${target_workspace}/terraform.tfplan ;");
           for xline in ${restore_state[@]}; do echo -e "${xline}"; done;
           IFS="${oIFS}";
