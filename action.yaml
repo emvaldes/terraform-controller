@@ -127,9 +127,9 @@ runs:
         [[ ${target_workspace} == false ]] && {
             target_workspace="${TARGET_WORKSPACE}" ;
           } ;
-        xtimestamp="${{ inputs.target-timestamp }}" ;
-        [[ ${xtimestamp} == false ]] && {
-            xtimestamp="$(date +"%y%m%d%H%M%S")" ;
+        target_timestamp="${{ inputs.target-timestamp }}" ;
+        [[ ${target_timestamp} == false ]] && {
+            target_timestamp="$(date +"%y%m%d%H%M%S")" ;
           } ;
         ####--------------------------------------------------------------------
         export terraform_tfstate="${{ github.workspace }}/terraform.tfstate.d" ;
@@ -286,7 +286,7 @@ runs:
           terraform_s3bucket="terraform-states-${aws_default_account}";
           terraform_tfstate="${{ github.workspace }}/terraform.tfstate.d";
           terraform_modules="${{ github.workspace }}/.terraform";
-          custom_filepath="${xtimestamp:0:2}/${xtimestamp:2:2}/${xtimestamp:4:2}/${xtimestamp:6}";
+          custom_filepath="${target_timestamp:0:2}/${target_timestamp:2:2}/${target_timestamp:4:2}/${target_timestamp:6}";
           target_buildset="${target_workspace}/${custom_filepath}";
           echo -e "\nCreating Target Build-Set Container ... [ ${target_buildset} ]";
           mkdir -p ${target_buildset} ;
