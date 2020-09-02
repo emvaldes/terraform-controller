@@ -88,6 +88,15 @@ runs:
       run: |
         export completion="Skipping ...! ";
         ####--------------------------------------------------------------------
+        target_timestamp="${{ inputs.target-timestamp }}" ;
+        [[ ${target_timestamp} == false ]] && {
+            target_timestamp="$(date +"%y%m%d%H%M%S")" ;
+          } ;
+        target_workspace="${{ inputs.target-workspace }}" ;
+        [[ ${target_workspace} == false ]] && {
+            target_workspace="${TARGET_WORKSPACE}" ;
+          } ;
+        ####--------------------------------------------------------------------
         ## Parsing AWS Default values:
         aws_default_profile="${{ inputs.aws-default-profile }}" ;
         [[ ${aws_default_profile} == false ]] && {
@@ -120,16 +129,6 @@ runs:
         keypair_file="${{ inputs.private-keypair-file }}" ;
         [[ ${keypair_file} == false ]] && {
             keypair_file="${PRIVATE_KEYPAIR_FILE}" ;
-          } ;
-        ####--------------------------------------------------------------------
-        ## Terraform Infrastructure As Code (IaC):
-        target_workspace="${{ inputs.target-workspace }}" ;
-        [[ ${target_workspace} == false ]] && {
-            target_workspace="${TARGET_WORKSPACE}" ;
-          } ;
-        target_timestamp="${{ inputs.target-timestamp }}" ;
-        [[ ${target_timestamp} == false ]] && {
-            target_timestamp="$(date +"%y%m%d%H%M%S")" ;
           } ;
         ####--------------------------------------------------------------------
         export terraform_tfstate="${{ github.workspace }}/terraform.tfstate.d" ;
