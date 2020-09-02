@@ -30,9 +30,7 @@ env:
   PRIVATE_KEYPAIR_NAME: terraform
   PRIVATE_KEYPAIR_SECRET: ${{ secrets.PRIVATE_KEYPAIR_SECRET }}
   TARGET_WORKSPACE: dev
-  TERRAFORM_DEPLOY_POLICY: true
-  TERRAFORM_DESTROY_POLICY: true
-  TERRAFORM_INPUT_PARAMS: ''
+  terraform_input_params: ''
 ####----------------------------------------------------------------------------
 jobs:
   provision-terraform:
@@ -53,7 +51,7 @@ jobs:
           aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY}
           devops-access-role: ${DEVOPS_ACCESS_ROLE}
           devops-account-name: ${DEVOPS_ACCOUNT_NAME}
-          session-timestamp: 'DevOpsPipeline--20200827193000'
+          session-timestamp: 'DevOpsPipeline--12345678901234'
         continue-on-error: false
 #       - name: Check On Failures
 #         if: steps.request-credentials.outputs.status == 'failure'
@@ -105,7 +103,7 @@ jobs:
         run: |
           oIFS="${IFS}" ; IFS=$'\n' ;
           declare -a custom_params=(
-              custom_timestamp=$(date +'%y%m%d%H%M%S')
+              custom_timestamp=12345678901234
               custom_engineer='Eduardo Valdes'
               custom_contact=emvaldes@hotmail.com
               custom_listset='["ami-abc123","ami-def456"]'
@@ -117,13 +115,13 @@ jobs:
             decrypted=$(echo -en "${encrypted}" | base64 --decode) ;
             echo -e "${encrypted} -> ${decrypted}" ;
           done ;
-          eval "echo '::set-env name=TERRAFORM_INPUT_PARAMS::$(
+          eval "echo '::set-env name=terraform_input_params::$(
               for xitem in ${custom_params[@]}; do
                 echo -en "`echo -en ${xitem} | base64 -w0 | tr -d '\n\r'`_" ;
               done | sed -e 's|\(.*\)\(\_\)$|\1|' ;
             )'" ;
           IFS="${oIFS}" ;
-          eval "echo '::set-env name=TERRAFORM_INPUT_TFVARS::configs/${TARGET_WORKSPACE}-configs.tfvars'" ;
+          eval "echo '::set-env name=terraform_input_tfvars::configs/${TARGET_WORKSPACE}-configs.tfvars'" ;
         continue-on-error: false
 #       - name: Check On Failures
 #         if: steps.terraform-parameters.outputs.status == 'failure'
@@ -136,8 +134,8 @@ jobs:
         id: provision-terraform
         with:
           provision-terraform: true
-          terraform-input-params: "${TERRAFORM_INPUT_PARAMS}"
-          terraform-input-tfvars: "${TERRAFORM_INPUT_TFVARS}"
+          terraform-input-params: "${terraform_input_params}"
+          terraform-input-tfvars: "${terraform_input_tfvars}"
 ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
           terraform-loglevel: false
         continue-on-error: false
