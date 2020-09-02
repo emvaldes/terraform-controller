@@ -198,6 +198,26 @@ runs:
                   exit 1;
           fi;
           echo -e "Private-KeyPair Name: ${private_keypair_name}" ; echo -e;
+          ####------------------------------------------------------------------
+          ## Displaying Terraform Plan request:
+          echo -e "Terraform Plan Syntax:";
+          echo terraform plan \
+                    -var="region=${aws_default_region}" \
+                    -var="aws_access_key=${aws_access_key_id}" \
+                    -var="aws_secret_key=${aws_secret_access_key}" \
+                    -var="private_keypair_file=${private_keypair_file}" \
+                    -var="private_keypair_name=${private_keypair_name}" \
+                    $(
+                      oIFS="${IFS}"; IFS='_';
+                      for param in ${input_params[@]}; do
+                        echo "-var=\"$(echo -en ${param} | base64 --decode)\"";
+                      done;
+                      IFS="${oIFS}" ;
+                    ) \
+                    ${custom_tfvars} \
+                    -out ${terraform_tfplan} \
+          ;
+          ####------------------------------------------------------------------
           eval ${terraform_verbosity} \
           terraform plan \
                     -var="region=${aws_default_region}" \
