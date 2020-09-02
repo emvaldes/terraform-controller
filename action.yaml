@@ -280,12 +280,12 @@ runs:
           aws --profile ${aws_default_profile} \
               --region ${aws_default_region} \
               s3 cp ${target_buildset} s3://${terraform_s3bucket}/${s3bucket_remotepath}/ \
-              --recursive --no-progress --only-show-errors;
+              --recursive --only-show-errors;
           echo -e "\nListing Terraform State @ AWS S3 Bucket ... ${terraform_s3bucket}\n" ;
           aws --profile ${aws_default_profile} \
               --region ${aws_default_region} \
               s3 ls s3://${terraform_s3bucket}/${s3bucket_remotepath}/ \
-              --recursive --no-progress --only-show-errors;
+              --recursive;
           oIFS="${IFS}"; IFS=$'\n';
           terraform_restore="/tmp/terraform/restore/${target_buildset}";
           declare -a restore_state=();
