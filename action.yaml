@@ -273,7 +273,7 @@ runs:
           echo -e "\nTransferring terraform components to container ...\n";
           cp -r ${terraform_tfstate} ${target_buildset}/ | cut -d ' ' -f2- ;
           cp -r ${terraform_modules} ${target_buildset}/ | cut -d ' ' -f2- ;
-          rm -rf ${target_buildset}/.terraform/modules;
+          ## rm -rf ${target_buildset}/.terraform/modules;
           tree ${target_buildset};
           s3bucket_remotepath="${target_buildset}" ;
           echo -e "\nTransferring Terraform State @ Local-Storage ... ${terraform_s3bucket}" ;
