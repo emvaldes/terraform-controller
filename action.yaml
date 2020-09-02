@@ -117,9 +117,9 @@ runs:
         [[ ${private_keypair_name} == false ]] && {
             private_keypair_name="${PRIVATE_KEYPAIR_NAME}" ;
           } ;
-        private_keypair_file="${{ inputs.private-keypair-file }}" ;
-        [[ ${private_keypair_file} == false ]] && {
-            private_keypair_file="${PRIVATE_KEYPAIR_FILE}" ;
+        keypair_file="${{ inputs.private-keypair-file }}" ;
+        [[ ${keypair_file} == false ]] && {
+            keypair_file="${PRIVATE_KEYPAIR_FILE}" ;
           } ;
         ####--------------------------------------------------------------------
         ## Terraform Infrastructure As Code (IaC):
@@ -190,10 +190,10 @@ runs:
           fi;
           ####------------------------------------------------------------------
           echo -e "Terraform Output Plan: ${terraform_tfplan}\n" ;
-          custom_message="Private-KeyPair File: [${private_keypair_file}]";
-          if [[ -e ${private_keypair_file} ]]; then
+          custom_message="Private-KeyPair File: [${keypair_file}]";
+          if [[ -e ${keypair_file} ]]; then
                   echo -e "Listing ${custom_message}:";
-                  ls -al ${private_keypair_file} ; echo -e;
+                  ls -al ${keypair_file} ; echo -e;
             else  echo -e "Warning: ${custom_message} does not exit! \n";
                   exit 1;
           fi;
@@ -205,7 +205,7 @@ runs:
                     -var="region=${aws_default_region}" \
                     -var="aws_access_key=${aws_access_key_id}" \
                     -var="aws_secret_key=${aws_secret_access_key}" \
-                    -var="private_keypair_file=${private_keypair_file}" \
+                    -var="private_keypair_file=${keypair_file}" \
                     -var="private_keypair_name=${private_keypair_name}" \
                     $(
                       oIFS="${IFS}"; IFS='_';
@@ -223,7 +223,7 @@ runs:
                     -var="region=${aws_default_region}" \
                     -var="aws_access_key=${aws_access_key_id}" \
                     -var="aws_secret_key=${aws_secret_access_key}" \
-                    -var="private_keypair_file=${private_keypair_file}" \
+                    -var="private_keypair_file=${keypair_file}" \
                     -var="private_keypair_name=${private_keypair_name}" \
                     $(
                       oIFS="${IFS}"; IFS='_';
