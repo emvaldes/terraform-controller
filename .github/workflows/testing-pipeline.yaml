@@ -165,7 +165,6 @@ jobs:
         uses: emvaldes/provision-terraform@master
         id: backup-terraform
         with:
-          target-timestamp: $(date +"%y/%m/%d/%H%M%S")
           backup-terraform: true
         continue-on-error: false
 #       - name: Check On Failures
