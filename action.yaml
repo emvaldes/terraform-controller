@@ -199,8 +199,8 @@ runs:
           fi;
           echo -e "Private-KeyPair Name: ${private_keypair_name}" ; echo -e;
           ####------------------------------------------------------------------
-          ## Displaying Terraform Plan request:
-          echo -e "Terraform Plan Syntax:";
+          ## Displaying Terraform Plan comand:
+          echo -e "Listing Terraform Plan command:\n";
           echo terraform plan \
                     -var="region=${aws_default_region}" \
                     -var="aws_access_key=${aws_access_key_id}" \
@@ -216,7 +216,7 @@ runs:
                     ) \
                     ${custom_tfvars} \
                     -out ${terraform_tfplan} \
-          ;
+          ; echo -e;
           ####------------------------------------------------------------------
           eval ${terraform_verbosity} \
           terraform plan \
