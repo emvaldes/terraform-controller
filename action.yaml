@@ -311,7 +311,8 @@ runs:
           declare -a restore_state=();
           restore_state+=("\nHow-To Restore Terraform Infrastructure State:\n");
           restore_state+=("> mkdir -p ${terraform_restore} ;");
-          restore_state+=("> git clone $(git config --get remote.origin.url) ${terraform_restore} ;");
+          remote_origin="$(git config --get remote.origin.url)";
+          restore_state+=("> git clone ${remote_origin/https:/git:}.git ${terraform_restore} ;");
           restore_state+=("> cd ${terraform_restore} ;");
           restore_state+=("> git checkout -b restore $(git rev-parse HEAD) ;");
           restore_state+=("> aws --profile ${aws_default_profile} --region ${aws_default_region} s3 cp s3://${terraform_s3bucket}/${target_buildset} . --recursive ;");
