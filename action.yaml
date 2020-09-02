@@ -113,9 +113,9 @@ runs:
           } ;
         ####--------------------------------------------------------------------
         ## Parsing Private KeyPair items:
-        private_keypair_name="${{ inputs.private-keypair-name }}" ;
-        [[ ${private_keypair_name} == false ]] && {
-            private_keypair_name="${PRIVATE_KEYPAIR_NAME}" ;
+        keypair_name="${{ inputs.private-keypair-name }}" ;
+        [[ ${keypair_name} == false ]] && {
+            keypair_name="${PRIVATE_KEYPAIR_NAME}" ;
           } ;
         keypair_file="${{ inputs.private-keypair-file }}" ;
         [[ ${keypair_file} == false ]] && {
@@ -197,7 +197,7 @@ runs:
             else  echo -e "Warning: ${custom_message} does not exit! \n";
                   exit 1;
           fi;
-          echo -e "Private-KeyPair Name: ${private_keypair_name}" ; echo -e;
+          echo -e "Private-KeyPair Name: ${keypair_name}" ; echo -e;
           ####------------------------------------------------------------------
           ## Displaying Terraform Plan comand:
           echo -e "Listing Terraform Plan command:\n";
@@ -206,7 +206,7 @@ runs:
                     -var="aws_access_key=${aws_access_key_id}" \
                     -var="aws_secret_key=${aws_secret_access_key}" \
                     -var="private_keypair_file=${keypair_file}" \
-                    -var="private_keypair_name=${private_keypair_name}" \
+                    -var="private_keypair_name=${keypair_name}" \
                     $(
                       oIFS="${IFS}"; IFS='_';
                       for param in ${input_params[@]}; do
@@ -224,7 +224,7 @@ runs:
                     -var="aws_access_key=${aws_access_key_id}" \
                     -var="aws_secret_key=${aws_secret_access_key}" \
                     -var="private_keypair_file=${keypair_file}" \
-                    -var="private_keypair_name=${private_keypair_name}" \
+                    -var="private_keypair_name=${keypair_name}" \
                     $(
                       oIFS="${IFS}"; IFS='_';
                       for param in ${input_params[@]}; do
