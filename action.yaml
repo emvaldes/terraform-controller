@@ -286,7 +286,7 @@ runs:
           terraform_tfstate="${{ github.workspace }}/terraform.tfstate.d";
           terraform_modules="${{ github.workspace }}/.terraform";
           custom_filepath="${target_timestamp:0:2}/${target_timestamp:2:2}/${target_timestamp:4:2}/${target_timestamp:6:6}";
-          target_buildset="${target_workspace}/${custom_filepath}/${target_timestamp:10}";
+          target_buildset="${target_workspace}/${custom_filepath}/$(git rev-parse --short HEAD)";
           echo -e "\nCreating Target Build-Set Container ... [ ${target_buildset} ]";
           mkdir -p ${target_buildset} ;
           echo -e "\nTransferring terraform components to container ...\n";
@@ -311,8 +311,10 @@ runs:
           declare -a restore_state=();
           restore_state+=("\nHow-To Restore Terraform Infrastructure State:\n");
           restore_state+=("> mkdir -p ${terraform_restore} ;");
-          restore_state+=("> aws --profile ${aws_default_profile} --region ${aws_default_region} s3 cp s3://${terraform_s3bucket}/${target_buildset} ${terraform_restore} --recursive ;");
+          restore_state+=("> git clone $(git config --get remote.origin.url) ${terraform_restore} ;");
           restore_state+=("> cd ${terraform_restore} ;");
+          restore_state+=("> git checkout -b restore $(git rev-parse HEAD) ;");
+          restore_state+=("> aws --profile ${aws_default_profile} --region ${aws_default_region} s3 cp s3://${terraform_s3bucket}/${target_buildset} . --recursive ;");
           restore_state+=("> terraform apply ${terraform_restore}/terraform.tfstate.d/${target_workspace}/terraform.tfplan ;");
           for xline in ${restore_state[@]}; do echo -e "${xline}"; done;
           IFS="${oIFS}";
