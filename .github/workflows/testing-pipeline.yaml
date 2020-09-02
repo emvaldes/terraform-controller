@@ -160,6 +160,19 @@ jobs:
 #         run: |
 #           echo -e "Warning: Deploy Terraform Failed [Status]: ${{ steps.deploy-terraform.outputs.status }}" ;
 ####----------------------------------------------------------------------------
+      ## Backup Terraform
+      - name: Backup Terraform
+        uses: emvaldes/provision-terraform@master
+        id: backup-terraform
+        with:
+          target-timestamp: $(date +"%y/%m/%d/%H%M%S")
+          backup-terraform: true
+        continue-on-error: false
+#       - name: Check On Failures
+#         if: steps.deploy-terraform.outputs.status == 'failure'
+#         run: |
+#           echo -e "Warning: Deploy Terraform Failed [Status]: ${{ steps.deploy-terraform.outputs.status }}" ;
+####----------------------------------------------------------------------------
       ## Destroy Terraform
       - name: Destroy Terraform
         uses: ./
