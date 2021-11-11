@@ -10,10 +10,10 @@ on:
         description: 'Target AWS Region'
         required: true
         default: 'us-east-1'
-      credentials:
+      temporary-credentials:
         description: 'AWS Temporary Credentials'
-        required: true
-        default: ''
+        required: false
+        default: false
       keypair-name:
         description: 'Private Key-Pair Name'
         required: true
@@ -30,6 +30,10 @@ on:
         description: 'Terraform Restore Index'
         required: true
         default: ''
+      terraform-version:
+        description: 'Terraform CLI Version (latest)'
+        required: false
+        default: '1.0.11'
       ####----------------------------------------------------------------------
       # logLevel:
       #   description: 'Log level'
@@ -66,6 +70,7 @@ env:
   ## PROVISION_TERRAFORM
   S3BUCKET_CONTAINER: pipelines
   S3BUCKET_DEFAULT_REGION: us-east-1  ## ${{ secrets.S3BUCKET_DEFAULT_REGION }}
+  ## TERRAFORM_VERSION
   ## TARGET_WORKSPACE: pipelines/${{ secrets.TARGET_WORKSPACE }}
   ## UPDATE_PYTHON_LATEST
   ## UPDATE_SYSTEM_LATEST
@@ -87,59 +92,79 @@ jobs:
           ## Parsing GitHub Action - Workflow dispatch (limited to 10 input-params)
           echo -e "Processing File|Input-based Parameters ... [ 1-10 ]\n" ;
           ####------------------------------------------------------------------
-          eval "echo '::set-env name=SESSION_TIMESTAMP::$(date +"%y%m%d%H%M%S")'" ;
+          echo "SESSION_TIMESTAMP=$(date +"%y%m%d%H%M%S")" >> ${GITHUB_ENV} ;
           ####------------------------------------------------------------------
           cloud_region="${{ github.event.inputs.region }}" ;
           if [[ (${#cloud_region} -gt 0 ) || (${cloud_region} != '') ]]; then
             echo -e "   Target Cloud Region [input-based]: '${cloud_region}'" ;
-            eval "echo '::set-env name=AWS_DEFAULT_REGION::${cloud_region}'" ;
+            echo "AWS_DEFAULT_REGION=${cloud_region}" >> ${GITHUB_ENV} ;
           fi ;
           ####------------------------------------------------------------------
-          declare -a credentials=($(
-              echo -e ${{ github.event.inputs.credentials }} \
-              | sed -e 's|\([[:space:]]\)\{1,\}| |g' \
-                    -e 's|\(\[\)\(.*\)\(\]\)\(.*\)$|\1default\3\4|' \
-                    -e 's| = |*=*|g'
+          ## Correcting single-lined parameter spacing issues.
+          declare -a temporary_credentials=($(
+              echo -en "${{ github.event.inputs.temporary-credentials }}" \
+              | sed -e 's|[[:space:]]|*|g' \
+              | sed -e 's|\*=\*|~=~|g'
             )) ;
-          if [[ (${#credentials[@]} -gt 0 ) || (${credentials[@]} != '') ]]; then
-            echo -e " Temporary Credentials [input-based]: \n" ;
-            for xline in ${credentials[@]}; do
-              echo -e ${xline} ;
-            done | sed -e 's|\(\*\)\(\=\)\(\*\)| = |g' ; echo -e ;
-            eval "echo '::set-env name=TEMPORARY_CREDENTIALS::${credentials[@]}'" ;
+          if [[ ${temporary_credentials} != false ]]; then
+                  echo -e " Temporary Credentials [input-based]:" ;
+                  export TEMPORARY_CREDENTIALS="$(
+                      echo -en "${temporary_credentials[@]}" \
+                      | tr '\*' '\n' | tr '~' ' ' \
+                      | base64 -w0
+                    )" ;
+                  echo -e "${TEMPORARY_CREDENTIALS}\n" | base64 --decode ; echo -e ;
+                  echo -e "TEMPORARY_CREDENTIALS=${TEMPORARY_CREDENTIALS}" >> ${GITHUB_ENV} ;
+            else  echo -e "TEMPORARY_CREDENTIALS=false" >> ${GITHUB_ENV} ;
           fi ;
           ####------------------------------------------------------------------
           keypair_name="${{ github.event.inputs.keypair-name }}" ;
           if [[ (${#keypair_name} -gt 0 ) || (${keypair_name} != '') ]]; then
             echo -e "  Private KeyPair Name [input-based]: '${keypair_name}'" ;
-            eval "echo '::set-env name=PRIVATE_KEYPAIR_NAME::${keypair_name}'" ;
+            echo "PRIVATE_KEYPAIR_NAME=${keypair_name}" >> ${GITHUB_ENV} ;
           fi ;
           ####------------------------------------------------------------------
-          keypair_secret="${{ github.event.inputs.keypair-secret }}" ;
-          if [[ (${#keypair_secret} -gt 0 ) || (${keypair_secret} != '') ]]; then
-            private_keypair_secret="$(
-                echo -e "${keypair_secret}*" \
-                | sed -e 's|\([[:space:]]\)\{1,\}|*|g'
-              )" ;
-            ## echo "::add-mask::${private_keypair_secret}" ;
-            echo -e "Private KeyPair Secret [input-based]: '***'";
-            eval "echo \"::set-env name=PRIVATE_KEYPAIR_SECRET::${private_keypair_secret[@]}\"" ;
+          ## Correcting single-lined parameter spacing issues.
+          declare -a private_keypair_secret=($(
+              echo -en "${{ github.event.inputs.keypair-secret }}" \
+              | sed -e 's|BEGIN RSA PRIVATE KEY|BEGIN~RSA~PRIVATE~KEY|' \
+                    -e 's|END RSA PRIVATE KEY|END~RSA~PRIVATE~KEY|' \
+                    -e 's|[[:space:]]|*|g'
+            )) ;
+          if [[ ${private_keypair_secret} != false ]]; then
+                  ## Enforcing masking on Private KeyPair Secret content:
+                  echo '::add-mask::${PRIVATE_KEYPAIR_SECRET}' ;
+                  echo -e "Private KeyPair Secret [input-based]: '***'";
+                  export PRIVATE_KEYPAIR_SECRET="$(
+                      echo -en "${private_keypair_secret[@]}" \
+                      | tr '\*' '\n' | tr '~' ' ' \
+                      | base64 -w0
+                    )" ;
+                  ## echo "${PRIVATE_KEYPAIR_SECRET}" | base64 --decode ; echo -e ;
+                  echo "PRIVATE_KEYPAIR_SECRET=${PRIVATE_KEYPAIR_SECRET}" >> ${GITHUB_ENV} ;
+            else  echo "TEMPORARY_CREDENTIALS=false" >> ${GITHUB_ENV} ;
           fi ;
           ####------------------------------------------------------------------
           restore_project="${{ github.event.inputs.restore-project }}" ;
           if [[ (${#restore_project} -gt 0) || (${restore_project} != false) ]]; then
                   echo -e "    Restore Repository [input-based]: '${restore_project}'" ;
-                  eval "echo '::set-env name=RESTORE_PROJECT::${restore_project}'" ;
+                  echo "RESTORE_PROJECT=${restore_project}" >> ${GITHUB_ENV} ;
             else  echo -e "\nWarning: Target Restore Project is invalid! " ;
                   exit 1 ;
           fi ;
           ####------------------------------------------------------------------
           restore_shaindex="${{ github.event.inputs.restore-shaindex }}" ;
           if [[ (${#restore_shaindex} -gt 0) || (${restore_shaindex} != false) ]]; then
-                  echo -e "    Restore SHA Index  [input-based]: '${restore_shaindex}'" ;
-                  eval "echo '::set-env name=RESTORE_SHAINDEX::${restore_shaindex}'" ;
+                  echo -e "     Restore SHA Index [input-based]: '${restore_shaindex}'" ;
+                  echo "RESTORE_SHAINDEX=${restore_shaindex}" >> ${GITHUB_ENV} ;
             else  echo -e "\nWarning: Target Restore Point is invalid! " ;
                   exit 2;
+          fi ;
+          ####------------------------------------------------------------------
+          terraform_version="${{ github.event.inputs.terraform-version }}" ;
+          if [[ (${#terraform_version} -gt 0 ) || (${terraform_version} != '') ]]; then
+            echo -e "     Terraform Version [input-based]: '${terraform_version}'" ;
+            echo "TERRAFORM_VERSION=${terraform_version}" >> ${GITHUB_ENV} ;
           fi ;
 ####----------------------------------------------------------------------------
       ## System Requirements
@@ -148,8 +173,10 @@ jobs:
         id: system-requirements
         with:
           install-awscli-tool: true
+          # install-custom-tools: 'netcat'
           install-default-tools: true
-          install-terraform-cli: latest
+          install-terraform-cli: true
+          target-terraform-version: ${TERRAFORM_VERSION}
           update-operating-system: true
           update-python-version: true
         continue-on-error: false
@@ -159,17 +186,18 @@ jobs:
         id: installed-packages
         shell: bash
         run: |
-          jq --version;
-          tree --version;
-          aws --version;
-          terraform --version;
+          jq --version 2>/dev/null ;
+          tree --version 2>/dev/null ;
+          python --version 2>/dev/null ;
+          aws --version 2>/dev/null ;
+          terraform --version 2>/dev/null ;
 ####----------------------------------------------------------------------------
       ## Requesting Credentials
       - name: Requesting Credentials
         uses: emvaldes/generate-credentials@master
         id: request-credentials
         with:
-          temporary-credentials: true
+          temporary-credentials: "${TEMPORARY_CREDENTIALS}"
           # aws-access-key-id: ${AWS_ACCESS_KEY_ID}
           # aws-default-account: ${AWS_DEFAULT_ACCOUNT}
           # aws-default-profile: ${AWS_DEFAULT_PROFILE}

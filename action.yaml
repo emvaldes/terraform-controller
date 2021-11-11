@@ -171,22 +171,25 @@ runs:
         ####--------------------------------------------------------------------
         completion="Skipping ...! " ;
         ####--------------------------------------------------------------------
+        github_workspace="${{ github.workspace }}";
+        ####--------------------------------------------------------------------
         github_usercontent="https://raw.githubusercontent.com" ;
         usercontent_repository="${github_usercontent}/${{ inputs.repository--manage-profiles }}/master" ;
         usercontent_controller="${github_usercontent}/${{ inputs.repository--terraform-controller }}/master" ;
         ####--------------------------------------------------------------------
         manage_terraform_script="${{ inputs.manage-terraform-script }}" ;
-        manage_terraform_template="${{ github.workspace }}/${manage_terraform_script}" ;
+        manage_terraform_template="${github_workspace}/${manage_terraform_script}" ;
+        echo -e "Downloading Terraform Management Script: ${manage_terraform_template} ..." ;
         wget --quiet --output-document=${manage_terraform_template} ${usercontent_controller}/.github/templates/${manage_terraform_script} ;
         ####--------------------------------------------------------------------
+        echo -e "\nDownloading Terraform Controller Functions: ${{ inputs.controller-functions }} ..." ;
         wget --quiet --output-document=./${{ inputs.controller-functions }} ${usercontent_controller}/${{ inputs.controller-functions }} ;
+        echo -e "Sourcing Terraform Controller Functions ..." ;
         source ${{ inputs.controller-functions }} ;
         ####--------------------------------------------------------------------
         remote_origin="$(git config --get remote.origin.url)" ;
         github_repository="${remote_origin##*\/}" ;
         commit_shaid="$(git rev-parse HEAD)" ;
-        ####--------------------------------------------------------------------
-        github_workspace="${{ github.workspace }}";
         ####--------------------------------------------------------------------
         dynamodb_default_region="${{ inputs.dynamodb-default-region }}" ;
         dynamodb_github_table="${{ inputs.dynamodb-github-table }}" ;
@@ -214,7 +217,7 @@ runs:
         custom_filepath="${target_timestamp:0:2}/${target_timestamp:2:2}/${target_timestamp:4:2}/${target_timestamp:6:6}" ;
         target_buildset="${target_workspace}/${custom_filepath}/$(git rev-parse --short HEAD)" ;
         ####--------------------------------------------------------------------
-        terraform_tfstate="${{ github.workspace }}/terraform.tfstate.d" ;
+        terraform_tfstate="${github_workspace}/terraform.tfstate.d" ;
         terraform_tfplan="${terraform_tfstate}/${target_workspace}/${{ inputs.terraform-planfile }}.tfplan" ;
         ####--------------------------------------------------------------------
         terraform_verbosity="${{ inputs.terraform-loglevel }}" ;
@@ -229,6 +232,11 @@ runs:
         aws_default_profile="${{ inputs.aws-default-profile }}" ;
         [[ "${aws_default_profile}" == false ]] && {
             aws_default_profile="${AWS_DEFAULT_PROFILE}" ;
+          } ;
+        [[  ${#AWS_DEFAULT_ACCOUNT} -eq 0 ]] && {
+            export AWS_DEFAULT_ACCOUNT="$(
+                grep 'x_principal_arn'  ${github_workspace}/.aws/credentials | cut -d':' -f5
+              )" ;
           } ;
         aws_default_account="${{ inputs.aws-default-account }}" ;
         [[ "${aws_default_account}" == false ]] && {
@@ -247,8 +255,7 @@ runs:
             aws_secret_access_key="${AWS_SECRET_ACCESS_KEY}" ;
           } ;
         ####--------------------------------------------------------------------
-        s3bucket_nameset="${{ inputs.s3bucket-nameset }}" ;
-        terraform_s3bucket="${s3bucket_nameset}${aws_default_account}" ;
+        terraform_s3bucket="${{ inputs.s3bucket-nameset }}${aws_default_account}" ;
         ####--------------------------------------------------------------------
         target_container="${{ inputs.target-container }}" ;
         [[ "${target_container}" == false ]] && {
@@ -269,7 +276,7 @@ runs:
             keypair_file="${PRIVATE_KEYPAIR_FILE}" ;
           } ;
         target_keypair_file="$(
-            echo ${keypair_file} | sed -e "s|${{ github.workspace }}/||g"
+            echo ${keypair_file} | sed -e "s|${github_workspace}/||g"
           )" ;
         keypair_name="${{ inputs.private-keypair-name }}" ;
         [[ "${keypair_name}" == false ]] && {
@@ -324,7 +331,7 @@ runs:
           input_tfvars="${{ inputs.terraform-input-tfvars }}" ;
           [[ "${input_tfvars}" == false ]] && input_tfvars='' ;
           if [[ ${#input_tfvars} -gt 0 ]]; then
-            tfvars_file="${{ github.workspace }}/${input_tfvars}" ;
+            tfvars_file="${github_workspace}/${input_tfvars}" ;
             custom_message="Custom Terraform Variables file [${input_tfvars}]" ;
             if [[ -e ${tfvars_file} ]]; then
                     echo -e "Listing ${custom_message}:" ;
@@ -343,12 +350,12 @@ runs:
           echo -e "Private-KeyPair File: ${keypair_file}" ; echo -e ;
           echo -e "Private-KeyPair Name: ${keypair_name}" ; echo -e ;
           target_custom_tfvars="$(
-              echo ${tfvars_file} | sed -e "s|${{ github.workspace }}/||g"
+              echo ${tfvars_file} | sed -e "s|${github_workspace}/||g"
             )" ;
           custom_tfvars='';
           [[ ${#target_custom_tfvars} -gt 0 ]] && custom_tfvars="-var-file=\"${target_custom_tfvars}\"" ;
           target_terraform_tfplan="$(
-              echo ${terraform_tfplan} | sed -e "s|${{ github.workspace }}/||g"
+              echo ${terraform_tfplan} | sed -e "s|${github_workspace}/||g"
             )" ;
           declare -a terraform_parameters=();
           terraform_parameters+=("-var=\"region=${aws_default_region}\"") ;
@@ -441,7 +448,7 @@ runs:
           restore_shaindex="${{ inputs.restore-shaindex }}" ;
           restore_region="${{ inputs.restore-region }}" ;
           restore_project="${{ inputs.restore-project }}" ;
-          restore_s3bucket="${{ inputs.s3bucket-nameset }}${aws_default_account}" ;
+          restore_s3bucket="${terraform_s3bucket}" ;
           restore_terraform_state ;
           completion="Completed! " ;
         fi ;

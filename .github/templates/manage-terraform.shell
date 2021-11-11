@@ -1,4 +1,4 @@
-#!/usr/bin/env bash ;
+#!/bin/bash
 
 read -p "Enter Target-Profile [ e.g.: default ] ?: " aws_default_profile ;
 read -p "Enter Target-Region  [ e.g.: us-east-1 ] ?: " aws_default_region ;
