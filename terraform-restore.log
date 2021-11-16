@@ -1,0 +1,1885 @@
+terraform-restore - 2m 9s
+
+Set up job - 5s
+
+Current runner version: '2.284.0'
+Operating System
+  Ubuntu
+  20.04.3
+  LTS
+Virtual Environment
+  Environment: ubuntu-20.04
+  Version: 20211108.1
+  Included Software: https://github.com/actions/virtual-environments/blob/ubuntu20/20211108.1/images/linux/Ubuntu2004-README.md
+  Image Release: https://github.com/actions/virtual-environments/releases/tag/ubuntu20%2F20211108.1
+Virtual Environment Provisioner
+  1.0.0.0-master-20211108-1
+GITHUB_TOKEN Permissions
+  Actions: write
+  Checks: write
+  Contents: write
+  Deployments: write
+  Discussions: write
+  Issues: write
+  Metadata: read
+  Packages: write
+  Pages: write
+  PullRequests: write
+  RepositoryProjects: write
+  SecurityEvents: write
+  Statuses: write
+Prepare workflow directory
+Prepare all required actions
+Getting action download info
+Download action repository 'actions/checkout@v2' (SHA:ec3a7ce113134d7a93b817d10a8272cb61118579)
+Download action repository 'emvaldes/system-requirements@master' (SHA:f3cfb4bf5dca1ff8515d8b526d8cdb43edb99b6f)
+Download action repository 'emvaldes/generate-credentials@master' (SHA:8543934e21de4444e3f1c0a3a0aef3f981639070)
+Download action repository 'emvaldes/configure-access@master' (SHA:250651a71b4842d70f40dad44e969ce15d27e140)
+
+checkout - 0s
+
+Run actions/checkout@v2
+  with:
+    repository: emvaldes/terraform-controller
+    token: ***
+    ssh-strict: true
+    persist-credentials: true
+    clean: true
+    fetch-depth: 1
+    lfs: false
+    submodules: false
+  env:
+    DYNAMODB_DEFAULT_REGION: us-east-1
+    PRIVATE_KEYPAIR_FILE: .ssh/id_rsa
+    S3BUCKET_CONTAINER: pipelines
+    S3BUCKET_DEFAULT_REGION: us-east-1
+Syncing repository: emvaldes/terraform-controller
+Getting Git version info
+  Working directory is '/home/runner/work/terraform-controller/terraform-controller'
+  /usr/bin/git version
+  git version 2.33.1
+Deleting the contents of '/home/runner/work/terraform-controller/terraform-controller'
+Initializing the repository
+  /usr/bin/git init /home/runner/work/terraform-controller/terraform-controller
+  hint: Using 'master' as the name for the initial branch. This default branch name
+  hint: is subject to change. To configure the initial branch name to use in all
+  hint: of your new repositories, which will suppress this warning, call:
+  hint:
+  hint: 	git config --global init.defaultBranch <name>
+  hint:
+  hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+  hint: 'development'. The just-created branch can be renamed via this command:
+  hint:
+  hint: 	git branch -m <name>
+  Initialized empty Git repository in /home/runner/work/terraform-controller/terraform-controller/.git/
+  /usr/bin/git remote add origin https://github.com/emvaldes/terraform-controller
+Disabling automatic garbage collection
+  /usr/bin/git config --local gc.auto 0
+Setting up auth
+  /usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+  /usr/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :
+  /usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+  /usr/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :
+  /usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Fetching the repository
+Determining the checkout info
+Checking out the ref
+  /usr/bin/git checkout --progress --force -B master refs/remotes/origin/master
+  Reset branch 'master'
+  Branch 'master' set up to track remote branch 'master' from 'origin'.
+/usr/bin/git log -1 --format='%H'
+'fc085d22760149ba48725016e10e823dc2d51a51'
+
+Environment Variables - 1s
+
+Run ####------------------------------------------------------------------
+Processing File|Input-based Parameters ... [ 1-10 ]
+
+   Target Cloud Region [input-based]: 'us-east-1'
+ Temporary Credentials [input-based]:
+[default]
+aws_access_key_id = ASIA2XV4BKOYJ4KYBT4D
+aws_secret_access_key = hsBwkoMkUW8e0BeksnyZtB9g0iGk4QvZB+0EbRmA
+aws_session_token = IQoJb3JpZ2luX2VjEMz//////////wEaCXVzLWVhc3QtMSJHMEUCIQCJ93U0ASl+cAMCZnXYM+ghek7nI7M9ZxVYMdw/GsoxZAIgCN1JtaGiQJBUZ4aJhr+z5uFJYz1cYR7foAE+d9ATlksqtwIIhP//////////ARAAGgw3MzgwNTQ5ODQ2MjQiDABSS/7zxwpL6Hq+fiqLAopPals6gyLJts3R2xnCOuuy1BemJ1EFldPWDbf1uMVnAp0nTahLes5n/CQskLiWqyJM8Y+BGwA9AKcwvwxNWzpZViZ57Nnd7ke6TzYpUj9L/aZrqEQQBCKPoDbHj+28mHTE6Rf+laJqVK7b7a2snVNzErjuboTU8TLwV1f8zCKwe+6KPnG8Kit+z2/QQZJAV6kvCnciu5vr0jI12yUki18xRq1jk3XxyD7vWy29n2hEuOyUsg8ouVxa/VwOUWP6ix3e2wsBk/JoUHyhZzsU8SC6NHWyW1oWA2S744kBKTYI1V3s67/iJ4ojp4/Onr9eb4hpjDDPZr58P6KSt+lxIyIWMyAo0u8lLIM0kzCmxMyMBjqdAdefsh0PXkulDJZOGWZwMRu3XpWkNFtKTpi0WxOaxdEQ+/0h8N1Rg6dSlasLwixKfobp3DPz95uQw8vJVpWU46r6fFvlhNnYjMGkV9P8Ea0J50LYoh/Eu63TVMqZiFR85K8wl8W6qiQPDFRYrxc/vk9mQ4kX8XhaTS1UsQgq7CoPIXkgSwINZ+63GrCxDnqRE3kLPVy4EPtWUaobsbE=
+x_principal_arn = arn:aws:iam::123456789012:user/devops
+x_security_token_expires = 2021-11-16T04:14:46+00:00
+  Private KeyPair Name [input-based]: 'devops'
+Private KeyPair Secret [input-based]: '***'
+    Restore Repository [input-based]: 'terraform-controller'
+     Restore SHA Index [input-based]: 'fc085d22760149ba48725016e10e823dc2d51a51'
+     Terraform Version [input-based]: '0.13.1'
+
+System Requirements - 22s
+
+Run emvaldes/system-requirements@master
+Run ####----------------------------------------------------------------------------
+
+Updating/Upgrading Operating System ...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+lsb-release is already the newest version (11.1.0ubuntu2).
+0 upgraded, 0 newly installed, 0 to remove and 41 not upgraded.
+
+No LSB modules are available.
+Distributor ID:	Ubuntu
+Description:	Ubuntu 20.04.3 LTS
+Release:	20.04
+Codename:	focal
+
+Linking Python (latest: 3.x) ... -> Python 3.8.10
+
+Installing Default Tools ...
+Package: jq ...
+Package: tree ...
+
+AWS CLI is Installed ... Ok!
+/usr/local/bin/aws
+aws-cli/2.3.4 Python/3.8.8 Linux/5.11.0-1020-azure exe/x86_64.ubuntu.20 prompt/off
+
+Upgrading AWS-CLI to version 2.0.40
+lrwxrwxrwx 1 root root 37 Nov  8 11:06 /usr/local/bin/aws -> /usr/local/aws-cli/v2/current/bin/aws
+You can now run: /usr/local/bin/aws --version
+aws-cli/2.3.6 Python/3.8.8 Linux/5.11.0-1020-azure exe/x86_64.ubuntu.20 prompt/off
+
+HashiCorp Terraform is Installed ... Ok!
+
+Isolating exiting Terraform 1.0.10 binary [/usr/local/bin/terraform] ...
+renamed '/usr/local/bin/terraform' -> '/usr/local/bin/terraform-1.0.10'
+
+Terraform Source: releases.hashicorp.com/terraform/0.13.1/terraform_0.13.1_linux_amd64.zip
+-rw-r--r-- 1 runner docker 34860186 Feb 15  2021 /tmp/terraform_0.13.1_linux_amd64.zip
+Archive:  /tmp/terraform_0.13.1_linux_amd64.zip
+  inflating: terraform
+
+Listing current Terraform version:
+Terraform v0.13.1
+
+Your version of Terraform is out of date! The latest version
+is 1.0.11. You can update by downloading from https://www.terraform.io/downloads.html
+
+Completed!
+
+Installed Packages - 1s
+
+Run jq --version 2>/dev/null ;
+jq-1.6
+tree v1.8.0 (c) 1996 - 2018 by Steve Baker, Thomas Moore, Francesc Rocher, Florian Sesser, Kyosuke Tokoro
+Python 3.8.10
+aws-cli/2.3.6 Python/3.8.8 Linux/5.11.0-1020-azure exe/x86_64.ubuntu.20 prompt/off
+Terraform v0.13.1
+
+Your version of Terraform is out of date! The latest version
+is 1.0.11. You can update by downloading from https://www.terraform.io/downloads.html
+
+Requesting Credentials - 2s
+
+Run emvaldes/generate-credentials@master
+Run ####--------------------------------------------------------------------
+
+Fetched STS Assumed Role Values:
+Obtaining Caller Identity (Assumed-Role):
+{
+    "UserId": "AROA2XV4BKOYLAX3Z52SQ:ControllerPipeline-20211115201445",
+    "Account": "123456789012",
+    "Arn": "arn:aws:sts::123456789012:assumed-role/DevOps--Custom-Access.Role/ControllerPipeline-20211115201445"
+}
+
+Completed!
+
+Provisioning Access - 2s
+
+Run emvaldes/configure-access@master
+Run ####--------------------------------------------------------------------
+Downloading Action-Functions: action.functions ...
+Sourcing Action-Functions ...
+-r-------- 1 runner docker 2233 Nov 16 03:15 /home/runner/work/terraform-controller/terraform-controller/.ssh/id_rsa
+
+Listing SSH Private-Key:
+-r-------- 1 runner docker 1674 Nov 16 03:15 /home/runner/work/terraform-controller/terraform-controller/.ssh/id_rsa
+
+Generating SSH Public-Key ...
+-rw-r--r-- 1 runner docker 381 Nov 16 03:15 /home/runner/work/terraform-controller/terraform-controller/.ssh/id_rsa.pub
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCnqYFzfsIDEiGjLdYDwBLng2QhNhN07xSaPi1Ou1SU2mF17ec0vXvEcPeMnNA1vcfJpp0Pz9o2+viClEkRQRz/gJUh9IDpyTogPrxGQpGtwNT4wwTyAZbUFnSKG5C+D5jKelvA3xerEsGY5KxT63SlMCCGAM2Kbe4E6J36f1/GUAimmGn5beuYt0xYFg1IxUG4WbHRN/tqAz+Y2/J1tg9OqWG3pmwlAHJH50Wd36sBk+N1TSmiaOuHx1nHXjDpw4Wqdud5bI0w5Db9DTtCxxkiT2wTl4umxBC+dE6JPt4QN3kYctNJAIRt5E2f7X4inuF6nRbUxsbFM9UEU0gSle6V
+
+/home/runner/work/terraform-controller/terraform-controller/.ssh
+├── id_rsa
+└── id_rsa.pub
+
+0 directories, 2 files
+
+Inspecting SSH Public-Key Fingerprint ...
+2048 MD5:12:2d:b0:b2:8d:96:42:97:56:10:f9:83:91:b0:fd:f3 no comment (RSA)
+
+Fetching AWS EC2 Key-Pair Fingerprint ... f1:8b:cc:31:67:c9:ea:f3:35:58:ed:9a:19:1a:a6:d9 ?
+
+aws --profile default \
+    --region us-east-1 \
+    ec2 describe-key-pairs \
+    --key-name devops
+{
+  "KeyPairs": [
+    {
+      "KeyPairId": "key-0ba9d8c80d6b6b7e8",
+      "KeyFingerprint": "f1:8b:cc:31:67:c9:ea:f3:35:58:ed:9a:19:1a:a6:d9",
+      "KeyName": "devops",
+      "KeyType": "rsa",
+      "Tags": [
+        {
+          "Key": "Name",
+          "Value": "DevOps Keypair"
+        }
+      ]
+    }
+  ]
+}
+
+Completed validating access-key!
+AWS Access Key-Pair file length: [2233] ...
+
+Completed!
+
+Restore Terraform - 1m 36s
+
+Prepare all required actions
+Run ./
+Run ####--------------------------------------------------------------------
+Downloading Terraform Management Script: /home/runner/work/terraform-controller/terraform-controller/manage-terraform.shell ...
+
+Downloading Terraform Controller Functions: action.functions ...
+Sourcing Terraform Controller Functions ...
+
+> aws --profile default \
+      --region us-east-1 \
+      dynamodb get-item \
+      --table-name github-pipelines \
+      --key '{ "shaindex": { "S": "fc085d22760149ba48725016e10e823dc2d51a51" }, "repository": { "S": "terraform-controller" } }' \
+      --query 'Item.{organization:organization.S,repository:repository.S}'
+
+> aws --profile default \
+      --region us-east-1 \
+      dynamodb get-item \
+      --table-name terraform-pipelines \
+      --key '{ "shaindex": { "S": "fc085d22760149ba48725016e10e823dc2d51a51" }, "repository": { "S": "terraform-controller" } }' \
+      --query 'Item.{location:location.S,workspace:environment.M.target.S}'
+
+Restore Environment: 'dev'
+
+Target Location: 'pipelines/dev/21/11/16/022346/fc085d2'
+
+Restoring Terraform State @ emvaldes/terraform-controller -> fc085d22760149ba48725016e10e823dc2d51a51 [dev] = pipelines/dev/21/11/16/022346/fc085d2 :
+
+Restore Terraform Script:
+#!/bin/bash
+
+export terraform_restore="/home/runner/work/terraform-controller/terraform-controller/restore/fc085d2" ;
+
+mkdir -p ${terraform_restore} ;
+cd ${terraform_restore} ;
+
+git clone git://github.com/emvaldes/terraform-controller.git ${terraform_restore} ;
+git checkout -b restore fc085d22760149ba48725016e10e823dc2d51a51 ;
+
+[[ -d /home/runner/work/terraform-controller/terraform-controller ]] && export HOME="/home/runner/work/terraform-controller/terraform-controller" ;
+cp -pr ${HOME}/.ssh ${terraform_restore} ;
+
+export AWS_PROFILE='default';
+export AWS_DEFAULT_REGION='us-east-1';
+
+echo -e "\nFetching Terraform components ... \n";
+aws --profile ${AWS_PROFILE} \
+    --region ${AWS_DEFAULT_REGION} \
+    s3 cp s3://terraform--states--123456789012/pipelines/dev/21/11/16/022346/fc085d2 \
+    ${terraform_restore} \
+    --recursive \
+  ;
+
+echo -e "\nDisplaying Terraform file-structure ...\n" ;
+tree -FCla --prune -I .git $(pwd) ;
+
+if [[ -f ${terraform_restore}/terraform.tfstate.d/dev/terraform.tfplan ]]; then
+        echo -e "\nInitializing Terraform ... \n" ;
+        eval TF_LOG=INFO \
+             terraform init ; echo -e ;
+        echo -e "\nTerraform Create|Select Workspace [dev] ... \n" ;
+        eval TF_LOG=INFO \
+             terraform workspace select dev || terraform workspace new dev ;
+        echo -e "\nTerraform Listing Workspaces ... \n" ;
+        eval TF_LOG=INFO \
+             terraform workspace list ;
+        echo -e "\nExecuting Terraform ..." ;
+        eval TF_LOG=INFO \
+             TF_VAR_region=${AWS_DEFAULT_REGION} \
+             terraform apply -auto-approve ${terraform_restore}/terraform.tfstate.d/dev/terraform.tfplan ;
+  else  echo -e "\nWarning: Unable to download Terraform components! \n" ;
+        exit 1 ;
+fi ;
+
+Cloning into '/home/runner/work/terraform-controller/terraform-controller/restore/fc085d2'...
+Switched to a new branch 'restore'
+
+Fetching Terraform components ...
+
+Completed 1.8 KiB/61.6 KiB (4.8 KiB/s) with 5 file(s) remaining
+download: s3://terraform--states--123456789012/pipelines/dev/21/11/16/022346/fc085d2/scripts/destroy.shell to scripts/destroy.shell
+Completed 1.8 KiB/61.6 KiB (4.8 KiB/s) with 4 file(s) remaining
+Completed 3.6 KiB/61.6 KiB (9.3 KiB/s) with 4 file(s) remaining
+download: s3://terraform--states--123456789012/pipelines/dev/21/11/16/022346/fc085d2/scripts/restore.shell to scripts/restore.shell
+Completed 3.6 KiB/61.6 KiB (9.3 KiB/s) with 3 file(s) remaining
+download: s3://terraform--states--123456789012/pipelines/dev/21/11/16/022346/fc085d2/fc085d22760149ba48725016e10e823dc2d51a51 to ./fc085d22760149ba48725016e10e823dc2d51a51
+Completed 3.6 KiB/61.6 KiB (9.3 KiB/s) with 2 file(s) remaining
+Completed 28.5 KiB/61.6 KiB (65.8 KiB/s) with 2 file(s) remaining
+download: s3://terraform--states--123456789012/pipelines/dev/21/11/16/022346/fc085d2/terraform.tfstate.d/dev/terraform.tfplan to terraform.tfstate.d/dev/terraform.tfplan
+Completed 28.5 KiB/61.6 KiB (65.8 KiB/s) with 1 file(s) remaining
+Completed 61.6 KiB/61.6 KiB (125.5 KiB/s) with 1 file(s) remaining
+download: s3://terraform--states--123456789012/pipelines/dev/21/11/16/022346/fc085d2/terraform.tfstate.d/dev/terraform.tfstate to terraform.tfstate.d/dev/terraform.tfstate
+
+Displaying Terraform file-structure ...
+
+/home/runner/work/terraform-controller/terraform-controller/restore/fc085d2
+├── .github/
+│   ├── templates/
+│   │   └── manage-terraform.shell
+│   └── workflows/
+│       ├── terraform-controller.yaml
+│       └── terraform-restore.yaml
+├── .gitignore
+├── .ssh/
+│   ├── id_rsa
+│   └── id_rsa.pub
+├── LICENSE
+├── README.md
+├── _config.yml
+├── action.functions
+├── action.yaml
+├── configs/
+│   ├── dev-configs.tfvars
+│   ├── prod-configs.tfvars
+│   └── uat-configs.tfvars
+├── fc085d22760149ba48725016e10e823dc2d51a51
+├── main.tf
+├── modules/
+│   └── s3/
+│       ├── main.tf
+│       ├── outputs.tf
+│       └── variables.tf
+├── outputs.tf
+├── scripts/
+│   ├── destroy.shell
+│   └── restore.shell
+├── terraform.tfstate.d/
+│   └── dev/
+│       ├── terraform.tfplan
+│       └── terraform.tfstate
+├── terraform.tfvars
+├── variables.tf
+├── website/
+│   ├── corporate.jpg
+│   └── index.html
+└── workspace
+
+11 directories, 29 files
+
+Initializing Terraform ...
+
+2021/11/16 03:16:00 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+2021/11/16 03:16:00 [INFO] Terraform version: 0.13.1
+2021/11/16 03:16:00 [INFO] Go runtime version: go1.14.7
+2021/11/16 03:16:00 [INFO] CLI args: []string{"/usr/local/bin/terraform", "init"}
+2021/11/16 03:16:00 [INFO] CLI command args: []string{"init"}
+2021/11/16 03:16:00 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+Initializing modules...
+2021/11/16 03:16:00 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+- bucket in modules/s3
+Downloading terraform-aws-modules/vpc/aws 2.15.0 for vpc...
+- vpc in .terraform/modules/vpc
+
+Initializing the backend...
+2021/11/16 03:16:01 [INFO] Failed to read plugin lock file .terraform/plugins/linux_amd64/lock.json: open .terraform/plugins/linux_amd64/lock.json: no such file or directory
+2021/11/16 03:16:01 [WARN] Failed to scan provider cache directory .terraform/plugins: cannot search .terraform/plugins: lstat .terraform/plugins: no such file or directory
+
+2021/11/16 03:16:01 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+Initializing provider plugins...
+- Finding latest version of hashicorp/aws...
+2021/11/16 03:16:02 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+- Finding latest version of hashicorp/random...
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+2021/11/16 03:16:02 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+- Finding latest version of hashicorp/template...
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+2021/11/16 03:16:02 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+- Installing hashicorp/aws v3.65.0...
+- Installed hashicorp/aws v3.65.0 (self-signed, key ID 34365D9472D7468F)
+2021/11/16 03:16:04 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+- Installing hashicorp/random v3.1.0...
+2021/11/16 03:16:04 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+- Installed hashicorp/random v3.1.0 (self-signed, key ID 34365D9472D7468F)
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+- Installing hashicorp/template v2.2.0...
+- Installed hashicorp/template v2.2.0 (self-signed, key ID 34365D9472D7468F)
+
+Partner and community providers are signed by their developers.
+If you'd like to know more about provider signing, you can read about it here:
+https://www.terraform.io/docs/plugins/signing.html
+
+The following providers do not have any version constraints in configuration,
+so the latest version was installed.
+
+To prevent automatic upgrades to new major versions that may contain breaking
+changes, we recommend adding version constraints in a required_providers block
+in your configuration, with the constraint strings suggested below.
+
+* hashicorp/aws: version = "~> 3.65.0"
+* hashicorp/random: version = "~> 3.1.0"
+* hashicorp/template: version = "~> 2.2.0"
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+
+Terraform Create|Select Workspace [dev] ...
+
+2021/11/16 03:16:06 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+2021/11/16 03:16:06 [INFO] Terraform version: 0.13.1
+2021/11/16 03:16:06 [INFO] Go runtime version: go1.14.7
+2021/11/16 03:16:06 [INFO] CLI args: []string{"/usr/local/bin/terraform", "workspace", "select", "dev"}
+2021/11/16 03:16:06 [INFO] CLI command args: []string{"workspace", "select", "dev"}
+2021/11/16 03:16:06 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+2021/11/16 03:16:07 [INFO] Failed to read plugin lock file .terraform/plugins/linux_amd64/lock.json: open .terraform/plugins/linux_amd64/lock.json: no such file or directory
+Switched to workspace "dev".
+
+Terraform Listing Workspaces ...
+
+2021/11/16 03:16:07 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+2021/11/16 03:16:07 [INFO] Terraform version: 0.13.1
+2021/11/16 03:16:07 [INFO] Go runtime version: go1.14.7
+2021/11/16 03:16:07 [INFO] CLI args: []string{"/usr/local/bin/terraform", "workspace", "list"}
+2021/11/16 03:16:07 [INFO] CLI command args: []string{"workspace", "list"}
+2021/11/16 03:16:07 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+2021/11/16 03:16:08 [INFO] Failed to read plugin lock file .terraform/plugins/linux_amd64/lock.json: open .terraform/plugins/linux_amd64/lock.json: no such file or directory
+  default
+* dev
+
+Executing Terraform ...
+2021/11/16 03:16:08 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+2021/11/16 03:16:08 [INFO] Terraform version: 0.13.1
+2021/11/16 03:16:08 [INFO] Go runtime version: go1.14.7
+2021/11/16 03:16:08 [INFO] CLI args: []string{"/usr/local/bin/terraform", "apply", "-auto-approve", "/home/runner/work/terraform-controller/terraform-controller/restore/fc085d2/terraform.tfstate.d/dev/terraform.tfplan"}
+2021/11/16 03:16:08 [INFO] CLI command args: []string{"apply", "-auto-approve", "/home/runner/work/terraform-controller/terraform-controller/restore/fc085d2/terraform.tfstate.d/dev/terraform.tfplan"}
+2021/11/16 03:16:09 [INFO] Failed to read plugin lock file .terraform/plugins/linux_amd64/lock.json: open .terraform/plugins/linux_amd64/lock.json: no such file or directory
+2021/11/16 03:16:09 [WARN] Log levels other than TRACE are currently unreliable, and are supported only for backward compatibility.
+  Use TF_LOG=TRACE to see Terraform's internal logs.
+  ----
+2021/11/16 03:16:09 [INFO] backend/local: starting Apply operation
+2021-11-16T03:16:09.443Z [INFO]  plugin: configuring client automatic mTLS
+2021-11-16T03:16:09.542Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: configuring server automatic mTLS: timestamp=2021-11-16T03:16:09.542Z
+2021-11-16T03:16:09.819Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+2021-11-16T03:16:09.822Z [INFO]  plugin: configuring client automatic mTLS
+2021-11-16T03:16:09.864Z [INFO]  plugin.terraform-provider-random_v3.1.0_x5: configuring server automatic mTLS: timestamp=2021-11-16T03:16:09.864Z
+2021-11-16T03:16:09.976Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+2021-11-16T03:16:09.977Z [INFO]  plugin: configuring client automatic mTLS
+2021-11-16T03:16:10.019Z [INFO]  plugin.terraform-provider-template_v2.2.0_x4: configuring server automatic mTLS: timestamp=2021-11-16T03:16:10.019Z
+2021-11-16T03:16:10.136Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unimplemented desc = unknown service plugin.GRPCStdio"
+2021-11-16T03:16:10.177Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+2021-11-16T03:16:10.216Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+2021-11-16T03:16:10.283Z [INFO]  plugin: configuring client automatic mTLS
+2021-11-16T03:16:10.384Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: configuring server automatic mTLS: timestamp=2021-11-16T03:16:10.384Z
+2021-11-16T03:16:10.659Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+2021-11-16T03:16:10.663Z [INFO]  plugin: configuring client automatic mTLS
+2021-11-16T03:16:10.715Z [INFO]  plugin.terraform-provider-random_v3.1.0_x5: configuring server automatic mTLS: timestamp=2021-11-16T03:16:10.714Z
+2021-11-16T03:16:10.834Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+2021-11-16T03:16:10.835Z [INFO]  plugin: configuring client automatic mTLS
+2021-11-16T03:16:10.875Z [INFO]  plugin.terraform-provider-template_v2.2.0_x4: configuring server automatic mTLS: timestamp=2021-11-16T03:16:10.875Z
+2021-11-16T03:16:10.987Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unimplemented desc = unknown service plugin.GRPCStdio"
+2021-11-16T03:16:11.026Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+2021-11-16T03:16:11.065Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+2021/11/16 03:16:11 [INFO] backend/local: apply calling Apply
+2021/11/16 03:16:11 [INFO] terraform: building graph: GraphTypeApply
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "terraform.workspace"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "terraform.workspace"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "count.index"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "terraform.workspace"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "count.index"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "terraform.workspace"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "self"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "count.index"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "count.index"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "count.index"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "count.index"
+ module.vpc.var.public_subnet_suffix (expand) module.vpc.var.name (expand) module.vpc.var.azs (expand) module.vpc.var.tags (expand) module.vpc.var.public_subnet_tags (expand) module.vpc.var.map_public_ip_on_launch (expand) module.vpc.local.vpc_id (expand) module.vpc.var.public_subnets (expand)]
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "aws_instance.nginx#destroy"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "terraform.workspace"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "terraform.workspace"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "terraform.workspace"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "terraform.workspace"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "count.index"
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "aws_subnet.public#destroy"
+.public (expand) module.vpc.aws_subnet.public[0] module.vpc.aws_route_table.public[0]]
+2021/11/16 03:16:11 [WARN] ReferenceTransformer: reference not found: "terraform.workspace"
+s_security_group.nginx-sg" references: [module.vpc.output.vpc_id (expand) local.env_index (expand) local.common_tags (expand) local.env_name (expand) local.env_index (expand) var.network_address_space]
+2021-11-16T03:16:11.196Z [INFO]  plugin: configuring client automatic mTLS
+2021-11-16T03:16:11.255Z [INFO]  plugin.terraform-provider-template_v2.2.0_x4: configuring server automatic mTLS: timestamp=2021-11-16T03:16:11.255Z
+2021-11-16T03:16:11.380Z [INFO]  plugin: configuring client automatic mTLS
+2021-11-16T03:16:11.384Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unimplemented desc = unknown service plugin.GRPCStdio"
+2021-11-16T03:16:11.419Z [INFO]  plugin.terraform-provider-random_v3.1.0_x5: configuring server automatic mTLS: timestamp=2021-11-16T03:16:11.419Z
+2021-11-16T03:16:11.540Z [INFO]  plugin: configuring client automatic mTLS
+2021-11-16T03:16:11.641Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: configuring server automatic mTLS: timestamp=2021-11-16T03:16:11.641Z
+random_integer.rand: Creating...
+random_integer.rand: Creation complete after 0s [id=49614]
+2021-11-16T03:16:11.777Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+2021-11-16T03:16:11.912Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:11 [INFO] AWS Auth provider used: "SharedCredentialsProvider": timestamp=2021-11-16T03:16:11.912Z
+2021-11-16T03:16:11.913Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:11 [DEBUG] Trying to get account information via sts:GetCallerIdentity: timestamp=2021-11-16T03:16:11.913Z
+2021-11-16T03:16:12.238Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:12 [DEBUG] Trying to get account information via sts:GetCallerIdentity: timestamp=2021-11-16T03:16:12.238Z
+module.vpc.aws_vpc.this[0]: Creating...
+2021/11/16 03:16:13 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an invalid plan for module.bucket.aws_iam_role.allow_instance_s3, but we are tolerating it because it is using the legacy plugin SDK.
+module.bucket.aws_iam_role.allow_instance_s3: Creating...
+    The following problems may be the cause of any confusing errors from downstream operations:
+      - .force_detach_policies: planned value cty.False does not match config value cty.NullVal(cty.Bool)
+      - .path: planned value cty.StringVal("/") does not match config value cty.NullVal(cty.String)
+      - .max_session_duration: planned value cty.NumberIntVal(3600) does not match config value cty.NullVal(cty.Number)
+      - .inline_policy: attribute representing nested block must not be unknown itself; set nested attribute values to unknown instead
+2021-11-16T03:16:13.049Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] setting computed for "tags_all" from ComputedKeys: timestamp=2021-11-16T03:16:13.049Z
+2021-11-16T03:16:13.049Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] setting computed for "managed_policy_arns" from ComputedKeys: timestamp=2021-11-16T03:16:13.049Z
+2021-11-16T03:16:13.050Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] setting computed for "inline_policy" from ComputedKeys: timestamp=2021-11-16T03:16:13.050Z
+2021-11-16T03:16:13.051Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:13.051Z
+2021/11/16 03:16:13 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an invalid plan for module.bucket.aws_s3_bucket.web_bucket, but we are tolerating it because it is using the legacy plugin SDK.
+    The following problems may be the cause of any confusing errors from downstream operations:
+      - .versioning: attribute representing nested block must not be unknown itself; set nested attribute values to unknown instead
+module.bucket.aws_s3_bucket.web_bucket: Creating...
+2021-11-16T03:16:13.059Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] VPC create config: {
+  AmazonProvidedIpv6CidrBlock: false,
+  CidrBlock: "10.0.0.0/16",
+  InstanceTenancy: "default",
+  TagSpecifications: [{
+      ResourceType: "vpc",
+      Tags: [{
+          Key: "BillingCode",
+          Value: "1234567890"
+        },{
+          Key: "Environment",
+          Value: "dev"
+        },{
+          Key: "Name",
+          Value: "dev-vpc-49614"
+        }]
+    }]
+}: timestamp=2021-11-16T03:16:13.059Z
+2021-11-16T03:16:13.060Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] setting computed for "versioning" from ComputedKeys: timestamp=2021-11-16T03:16:13.060Z
+2021-11-16T03:16:13.060Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] S3 bucket create: terraform-dev-49614: timestamp=2021-11-16T03:16:13.060Z
+2021-11-16T03:16:13.061Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] S3 bucket terraform-dev-49614 has canned ACL private: timestamp=2021-11-16T03:16:13.060Z
+2021-11-16T03:16:13.061Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] S3 bucket create: terraform-dev-49614, using region: us-east-1: timestamp=2021-11-16T03:16:13.061Z
+2021-11-16T03:16:13.061Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:13.061Z
+2021-11-16T03:16:13.457Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:13.457Z
+2021-11-16T03:16:13.559Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [INFO] VPC ID: vpc-087a539689fc9c597: timestamp=2021-11-16T03:16:13.559Z
+2021-11-16T03:16:13.559Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] Waiting for VPC (vpc-087a539689fc9c597) to become available: timestamp=2021-11-16T03:16:13.559Z
+2021-11-16T03:16:13.559Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] Waiting for state to become: [available]: timestamp=2021-11-16T03:16:13.559Z
+2021-11-16T03:16:13.563Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:13.563Z
+2021-11-16T03:16:14.050Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:14 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:14.049Z
+2021-11-16T03:16:14.306Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:14 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:14.306Z
+2021/11/16 03:16:14 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an unexpected new value for module.bucket.aws_iam_role.allow_instance_s3, but we are tolerating it because it is using the legacy plugin SDK.
+module.bucket.aws_iam_role.allow_instance_s3: Creation complete after 2s [id=terraform-dev-49614_allow_instance_s3]
+    The following problems may be the cause of any confusing errors from downstream operations:
+      - .description: was null, but now cty.StringVal("")
+      - .assume_role_policy: was cty.StringVal("{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Action\": \"sts:AssumeRole\",\n      \"Principal\": {\n        \"Service\": \"ec2.amazonaws.com\"\n      },\n      \"Effect\": \"Allow\",\n      \"Sid\": \"\"\n    }\n  ]\n}\n"), but now cty.StringVal("{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}")
+2021/11/16 03:16:14 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an invalid plan for module.bucket.aws_iam_instance_profile.instance_profile, but we are tolerating it because it is using the legacy plugin SDK.
+module.bucket.aws_iam_instance_profile.instance_profile: Creating...
+    The following problems may be the cause of any confusing errors from downstream operations:
+      - .path: planned value cty.StringVal("/") does not match config value cty.NullVal(cty.String)
+2021-11-16T03:16:14.523Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:14 [DEBUG] setting computed for "tags_all" from ComputedKeys: timestamp=2021-11-16T03:16:14.523Z
+module.bucket.aws_iam_role_policy.allow_s3_all: Creating...
+2021-11-16T03:16:14.585Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:14 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:14.585Z
+2021-11-16T03:16:14.850Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:14 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:14.850Z
+2021-11-16T03:16:14.890Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:14 [DEBUG] S3 bucket: terraform-dev-49614, read ACL grants policy: {
+  Grants: [{
+      Grantee: {
+        DisplayName: "emvaldes",
+        ID: "502e3fbc98d56651ae719d77f05ce485086e55bff71066e58cefefce7c478451",
+        Type: "CanonicalUser"
+      },
+      Permission: "FULL_CONTROL"
+    }],
+  Owner: {
+    DisplayName: "emvaldes",
+    ID: "502e3fbc98d56651ae719d77f05ce485086e55bff71066e58cefefce7c478451"
+  }
+}: timestamp=2021-11-16T03:16:14.890Z
+2021-11-16T03:16:14.890Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:14 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:14.890Z
+2021-11-16T03:16:15.155Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:15 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:15.155Z
+module.bucket.aws_iam_role_policy.allow_s3_all: Creation complete after 0s [id=terraform-dev-49614_allow_instance_s3:terraform-dev-49614_allow_all]
+2021-11-16T03:16:15.188Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:15 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:15.188Z
+module.bucket.aws_iam_instance_profile.instance_profile: Creation complete after 0s [id=terraform-dev-49614_instance_profile]
+2021-11-16T03:16:15.504Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:15 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:15.504Z
+2021-11-16T03:16:15.804Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:15 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:15.804Z
+2021-11-16T03:16:16.118Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:16 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:16.118Z
+2021-11-16T03:16:16.438Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:16 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:16.438Z
+2021-11-16T03:16:16.751Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:16 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:16.751Z
+2021-11-16T03:16:17.052Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:17.052Z
+2021-11-16T03:16:17.343Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:17.342Z
+module.vpc.aws_vpc.this[0]: Creation complete after 4s [id=vpc-087a539689fc9c597]
+2021-11-16T03:16:17.348Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [WARN] Truncating attribute path of 0 diagnostics for TypeSet: timestamp=2021-11-16T03:16:17.348Z
+2021-11-16T03:16:17.349Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [WARN] Truncating attribute path of 0 diagnostics for TypeSet: timestamp=2021-11-16T03:16:17.348Z
+module.vpc.aws_internet_gateway.this[0]: Creating...
+2021/11/16 03:16:17 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an invalid plan for aws_security_group.nginx-sg, but we are tolerating it because it is using the legacy plugin SDK.
+aws_security_group.nginx-sg: Creating...
+    The following problems may be the cause of any confusing errors from downstream operations:
+.NumberIntVal(80)})})
+      - .description: planned value cty.StringVal("Managed by Terraform") does not match config value cty.NullVal(cty.String)
+      - .egress: planned value cty.SetVal([]cty.Value{cty.ObjectVal(map[string]cty.Value{"cidr_blocks":cty.ListVal([]cty.Value{cty.StringVal("0.0.0.0/0")}), "description":cty.StringVal(""), "from_port":cty.NumberIntVal(0), "ipv6_cidr_blocks":cty.ListValEmpty(cty.String), "prefix_list_ids":cty.ListValEmpty(cty.String), "protocol":cty.StringVal("-1"), "security_groups":cty.SetValEmpty(cty.String), "self":cty.False, "to_port":cty.NumberIntVal(0)})}) does not match config value cty.SetVal([]cty.Value{cty.ObjectVal(map[string]cty.Value{"cidr_blocks":cty.ListVal([]cty.Value{cty.StringVal("0.0.0.0/0")}), "description":cty.NullVal(cty.String), "from_port":cty.NumberIntVal(0), "ipv6_cidr_blocks":cty.NullVal(cty.List(cty.String)), "prefix_list_ids":cty.NullVal(cty.List(cty.String)), "protocol":cty.StringVal("-1"), "security_groups":cty.NullVal(cty.Set(cty.String)), "self":cty.NullVal(cty.Bool), "to_port":cty.NumberIntVal(0)})})
+      - .revoke_rules_on_delete: planned value cty.False does not match config value cty.NullVal(cty.Bool)
+2021-11-16T03:16:17.353Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Creating EC2 Internet Gateway: {
+  TagSpecifications: [{
+      ResourceType: "internet-gateway",
+      Tags: [{
+          Key: "Name",
+          Value: "dev-vpc-49614"
+        },{
+          Key: "BillingCode",
+          Value: "1234567890"
+        },{
+          Key: "Environment",
+          Value: "dev"
+        }]
+    }]
+}: timestamp=2021-11-16T03:16:17.352Z
+2021-11-16T03:16:17.355Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [WARN] Truncating attribute path of 0 diagnostics for TypeSet: timestamp=2021-11-16T03:16:17.354Z
+2021-11-16T03:16:17.355Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [WARN] Truncating attribute path of 0 diagnostics for TypeSet: timestamp=2021-11-16T03:16:17.354Z
+2021/11/16 03:16:17 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an invalid plan for aws_security_group.elb-sg, but we are tolerating it because it is using the legacy plugin SDK.
+module.vpc.aws_subnet.public[0]: Creating...
+aws_security_group.elb-sg: Creating...
+    The following problems may be the cause of any confusing errors from downstream operations:
+      - .ingress: planned value cty.SetVal([]cty.Value{cty.ObjectVal(map[string]cty.Value{"cidr_blocks":cty.ListVal([]cty.Value{cty.StringVal("0.0.0.0/0")}), "description":cty.StringVal(""), "from_port":cty.NumberIntVal(80), "ipv6_cidr_blocks":cty.ListValEmpty(cty.String), "prefix_list_ids":cty.ListValEmpty(cty.String), "protocol":cty.StringVal("tcp"), "security_groups":cty.SetValEmpty(cty.String), "self":cty.False, "to_port":cty.NumberIntVal(80)})}) does not match config value cty.SetVal([]cty.Value{cty.ObjectVal(map[string]cty.Value{"cidr_blocks":cty.ListVal([]cty.Value{cty.StringVal("0.0.0.0/0")}), "description":cty.NullVal(cty.String), "from_port":cty.NumberIntVal(80), "ipv6_cidr_blocks":cty.NullVal(cty.List(cty.String)), "prefix_list_ids":cty.NullVal(cty.List(cty.String)), "protocol":cty.StringVal("tcp"), "security_groups":cty.NullVal(cty.Set(cty.String)), "self":cty.NullVal(cty.Bool), "to_port":cty.NumberIntVal(80)})})
+      - .description: planned value cty.StringVal("Managed by Terraform") does not match config value cty.NullVal(cty.String)
+locks":cty.NullVal(cty.List(cty.String)), "prefix_list_ids":cty.NullVal(cty.List(cty.String)), "protocol":cty.StringVal("-1"), "security_groups":cty.NullVal(cty.Set(cty.String)), "self":cty.NullVal(cty.Bool), "to_port":cty.NumberIntVal(0)})})
+      - .revoke_rules_on_delete: planned value cty.False does not match config value cty.NullVal(cty.Bool)
+2021-11-16T03:16:17.364Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Security Group create configuration: {
+  Description: "Managed by Terraform",
+  GroupName: "nginx_sg-49614",
+  TagSpecifications: [{
+      ResourceType: "security-group",
+      Tags: [{
+          Key: "Name",
+          Value: "dev-nginx-sg-49614"
+        },{
+          Key: "Environment",
+          Value: "dev"
+        },{
+          Key: "BillingCode",
+          Value: "1234567890"
+        }]
+    }],
+  VpcId: "vpc-087a539689fc9c597"
+}: timestamp=2021-11-16T03:16:17.363Z
+2021-11-16T03:16:17.365Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Security Group create configuration: {
+  Description: "Managed by Terraform",
+  GroupName: "nginx_elb_sg-49614",
+  TagSpecifications: [{
+      ResourceType: "security-group",
+      Tags: [{
+          Key: "Name",
+          Value: "dev-elb-sg-49614"
+        },{
+          Key: "Environment",
+          Value: "dev"
+        },{
+          Key: "BillingCode",
+          Value: "1234567890"
+        }]
+    }],
+  VpcId: "vpc-087a539689fc9c597"
+}: timestamp=2021-11-16T03:16:17.364Z
+module.vpc.aws_route_table.public[0]: Creating...
+2021-11-16T03:16:17.368Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] setting computed for "propagating_vgws" from ComputedKeys: timestamp=2021-11-16T03:16:17.368Z
+2021-11-16T03:16:17.368Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] setting computed for "route" from ComputedKeys: timestamp=2021-11-16T03:16:17.368Z
+2021-11-16T03:16:17.368Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Creating Route Table: {
+  TagSpecifications: [{
+      ResourceType: "route-table",
+      Tags: [{
+          Key: "Name",
+          Value: "dev-vpc-49614-public"
+        },{
+          Key: "Environment",
+          Value: "dev"
+        },{
+          Key: "BillingCode",
+          Value: "1234567890"
+        }]
+    }],
+  VpcId: "vpc-087a539689fc9c597"
+}: timestamp=2021-11-16T03:16:17.368Z
+2021-11-16T03:16:17.639Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:17.638Z
+2021-11-16T03:16:17.758Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [INFO] Attaching EC2 Internet Gateway: {
+  InternetGatewayId: "igw-0aff224fd387bed95",
+  VpcId: "vpc-087a539689fc9c597"
+}: timestamp=2021-11-16T03:16:17.757Z
+2021-11-16T03:16:17.758Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:17.758Z
+2021-11-16T03:16:17.824Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [INFO] Security Group ID: sg-0b7d58b799245f025: timestamp=2021-11-16T03:16:17.824Z
+2021-11-16T03:16:17.824Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Waiting for state to become: [Created]: timestamp=2021-11-16T03:16:17.824Z
+2021-11-16T03:16:17.838Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Waiting for state to become: [ready]: timestamp=2021-11-16T03:16:17.838Z
+2021-11-16T03:16:17.939Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [INFO] Security Group ID: sg-06ce42cbc3e1de8c2: timestamp=2021-11-16T03:16:17.939Z
+2021-11-16T03:16:17.939Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Waiting for state to become: [Created]: timestamp=2021-11-16T03:16:17.939Z
+2021-11-16T03:16:17.944Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:17.944Z
+2021-11-16T03:16:17.961Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [INFO] Subnet ID: subnet-0fae7a4e52559acf6: timestamp=2021-11-16T03:16:17.960Z
+2021-11-16T03:16:17.961Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Waiting for subnet (subnet-0fae7a4e52559acf6) to become available: timestamp=2021-11-16T03:16:17.960Z
+2021-11-16T03:16:17.961Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:17 [DEBUG] Waiting for state to become: [available]: timestamp=2021-11-16T03:16:17.960Z
+2021-11-16T03:16:18.189Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:18 [DEBUG] Waiting for state to become: [available]: timestamp=2021-11-16T03:16:18.189Z
+2021-11-16T03:16:18.258Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:18 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:18.258Z
+2021-11-16T03:16:18.281Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:18 [DEBUG] Revoking default egress rule for Security Group for sg-0b7d58b799245f025: timestamp=2021-11-16T03:16:18.280Z
+2021-11-16T03:16:18.318Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:18 [DEBUG] Revoking default egress rule for Security Group for sg-06ce42cbc3e1de8c2: timestamp=2021-11-16T03:16:18.318Z
+module.vpc.aws_route_table.public[0]: Creation complete after 1s [id=rtb-0a0782f82cc53313f]
+2021-11-16T03:16:18.521Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:18 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:18.521Z
+module.bucket.aws_s3_bucket.web_bucket: Creation complete after 6s [id=terraform-dev-49614]
+2021/11/16 03:16:18 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an invalid plan for aws_s3_bucket_object.graphic, but we are tolerating it because it is using the legacy plugin SDK.
+aws_s3_bucket_object.graphic: Creating...
+    The following problems may be the cause of any confusing errors from downstream operations:
+      - .acl: planned value cty.StringVal("private") does not match config value cty.NullVal(cty.String)
+      - .force_destroy: planned value cty.False does not match config value cty.NullVal(cty.Bool)
+2021-11-16T03:16:18.613Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:18 [DEBUG] setting computed for "tags_all" from ComputedKeys: timestamp=2021-11-16T03:16:18.613Z
+2021-11-16T03:16:18.682Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:18 [DEBUG] Revoking default IPv6 egress rule for Security Group for sg-0b7d58b799245f025: timestamp=2021-11-16T03:16:18.682Z
+2021-11-16T03:16:18.770Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:18 [DEBUG] Waiting for state to become: [true]: timestamp=2021-11-16T03:16:18.770Z
+module.vpc.aws_internet_gateway.this[0]: Creation complete after 2s [id=igw-0aff224fd387bed95]
+module.vpc.aws_route.public_internet_gateway[0]: Creating...
+2021-11-16T03:16:18.878Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:18 [DEBUG] Creating Route: {
+  DestinationCidrBlock: "0.0.0.0/0",
+  GatewayId: "igw-0aff224fd387bed95",
+  RouteTableId: "rtb-0a0782f82cc53313f"
+}: timestamp=2021-11-16T03:16:18.878Z
+2021-11-16T03:16:18.878Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:18 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:18.878Z
+2021-11-16T03:16:18.917Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:18 [DEBUG] Revoking default IPv6 egress rule for Security Group for sg-06ce42cbc3e1de8c2: timestamp=2021-11-16T03:16:18.916Z
+2021-11-16T03:16:19.078Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:19 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:19.078Z
+2021-11-16T03:16:19.275Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:19 [DEBUG] Waiting for state to become: [ready]: timestamp=2021-11-16T03:16:19.274Z
+2021-11-16T03:16:19.411Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:19 [DEBUG] Reading S3 Bucket Object meta: {
+  AcceptRanges: "bytes",
+  ContentLength: 41686,
+  ContentType: "binary/octet-stream",
+  ETag: "\"fdabd97c8924266763d283dca174b802\"",
+  LastModified: 2021-11-16 03:16:19 +0000 UTC
+}: timestamp=2021-11-16T03:16:19.411Z
+2021-11-16T03:16:19.411Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:19 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:19.411Z
+2021-11-16T03:16:19.412Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:19 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:19.411Z
+2021-11-16T03:16:19.630Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:19 [TRACE] Waiting 100ms before next try: timestamp=2021-11-16T03:16:19.630Z
+2021-11-16T03:16:19.703Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:19 [DEBUG] Authorizing security group {
+  Description: "Managed by Terraform",
+  GroupId: "sg-0b7d58b799245f025",
+  GroupName: "nginx_elb_sg-49614",
+  OwnerId: "123456789012",
+  Tags: [{
+      Key: "BillingCode",
+      Value: "1234567890"
+    },{
+      Key: "Environment",
+      Value: "dev"
+    },{
+      Key: "Name",
+      Value: "dev-elb-sg-49614"
+    }],
+  VpcId: "vpc-087a539689fc9c597"
+} ingress rule: []*ec2.IpPermission{{
+  FromPort: 80,
+  IpProtocol: "tcp",
+  IpRanges: [{
+      CidrIp: "0.0.0.0/0"
+    }],
+  ToPort: 80
+}}: timestamp=2021-11-16T03:16:19.703Z
+2021/11/16 03:16:19 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an unexpected new value for aws_s3_bucket_object.graphic, but we are tolerating it because it is using the legacy plugin SDK.
+    The following problems may be the cause of any confusing errors from downstream operations:
+aws_s3_bucket_object.graphic: Creation complete after 1s [id=/website/corporate.jpg]
+      - .content_encoding: was null, but now cty.StringVal("")
+      - .object_lock_mode: was null, but now cty.StringVal("")
+      - .object_lock_retain_until_date: was null, but now cty.StringVal("")
+      - .website_redirect: was null, but now cty.StringVal("")
+      - .cache_control: was null, but now cty.StringVal("")
+      - .content_language: was null, but now cty.StringVal("")
+      - .object_lock_legal_hold_status: was null, but now cty.StringVal("")
+      - .content_disposition: was null, but now cty.StringVal("")
+2021-11-16T03:16:19.797Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:19 [DEBUG] Authorizing security group {
+  Description: "Managed by Terraform",
+  GroupId: "sg-06ce42cbc3e1de8c2",
+  GroupName: "nginx_sg-49614",
+  OwnerId: "123456789012",
+  Tags: [{
+      Key: "Name",
+      Value: "dev-nginx-sg-49614"
+    },{
+      Key: "BillingCode",
+      Value: "1234567890"
+    },{
+      Key: "Environment",
+      Value: "dev"
+    }],
+  VpcId: "vpc-087a539689fc9c597"
+} ingress rule: []*ec2.IpPermission{{
+  FromPort: 80,
+  IpProtocol: "tcp",
+  IpRanges: [{
+      CidrIp: "10.0.0.0/16"
+    }],
+  ToPort: 80
+}, {
+  FromPort: 22,
+  IpProtocol: "tcp",
+  IpRanges: [{
+      CidrIp: "0.0.0.0/0"
+    }],
+  ToPort: 22
+}}: timestamp=2021-11-16T03:16:19.797Z
+2021-11-16T03:16:20.143Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:20 [DEBUG] Authorizing security group {
+  Description: "Managed by Terraform",
+  GroupId: "sg-0b7d58b799245f025",
+  GroupName: "nginx_elb_sg-49614",
+  OwnerId: "123456789012",
+  Tags: [{
+      Key: "BillingCode",
+      Value: "1234567890"
+    },{
+      Key: "Environment",
+      Value: "dev"
+    },{
+      Key: "Name",
+      Value: "dev-elb-sg-49614"
+    }],
+  VpcId: "vpc-087a539689fc9c597"
+} egress rule: []*ec2.IpPermission{{
+  FromPort: 0,
+  IpProtocol: "-1",
+  IpRanges: [{
+      CidrIp: "0.0.0.0/0"
+    }],
+  ToPort: 0
+}}: timestamp=2021-11-16T03:16:20.143Z
+2021/11/16 03:16:20 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an unexpected new value for module.vpc.aws_route.public_internet_gateway[0], but we are tolerating it because it is using the legacy plugin SDK.
+    The following problems may be the cause of any confusing errors from downstream operations:
+      - .destination_ipv6_cidr_block: was null, but now cty.StringVal("")
+      - .egress_only_gateway_id: was null, but now cty.StringVal("")
+      - .vpc_endpoint_id: was null, but now cty.StringVal("")
+      - .destination_prefix_list_id: was null, but now cty.StringVal("")
+      - .local_gateway_id: was null, but now cty.StringVal("")
+      - .vpc_peering_connection_id: was null, but now cty.StringVal("")
+      - .transit_gateway_id: was null, but now cty.StringVal("")
+      - .carrier_gateway_id: was null, but now cty.StringVal("")
+      - .nat_gateway_id: was null, but now cty.StringVal("")
+module.vpc.aws_route.public_internet_gateway[0]: Creation complete after 1s [id=r-rtb-0a0782f82cc53313f1080289494]
+2021-11-16T03:16:20.435Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:20 [DEBUG] Authorizing security group {
+  Description: "Managed by Terraform",
+  GroupId: "sg-06ce42cbc3e1de8c2",
+  GroupName: "nginx_sg-49614",
+  OwnerId: "123456789012",
+  Tags: [{
+      Key: "Name",
+      Value: "dev-nginx-sg-49614"
+    },{
+      Key: "BillingCode",
+      Value: "1234567890"
+    },{
+      Key: "Environment",
+      Value: "dev"
+    }],
+  VpcId: "vpc-087a539689fc9c597"
+} egress rule: []*ec2.IpPermission{{
+  FromPort: 0,
+  IpProtocol: "-1",
+  IpRanges: [{
+      CidrIp: "0.0.0.0/0"
+    }],
+  ToPort: 0
+}}: timestamp=2021-11-16T03:16:20.435Z
+aws_security_group.elb-sg: Creation complete after 4s [id=sg-0b7d58b799245f025]
+aws_security_group.nginx-sg: Creation complete after 4s [id=sg-06ce42cbc3e1de8c2]
+module.vpc.aws_subnet.public[0]: Still creating... [10s elapsed]
+2021-11-16T03:16:29.138Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:29.138Z
+2021/11/16 03:16:29 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an unexpected new value for module.vpc.aws_subnet.public[0], but we are tolerating it because it is using the legacy plugin SDK.
+    The following problems may be the cause of any confusing errors from downstream operations:
+      - .outpost_arn: was null, but now cty.StringVal("")
+      - .map_customer_owned_ip_on_launch: was null, but now cty.False
+      - .customer_owned_ipv4_pool: was null, but now cty.StringVal("")
+      - .ipv6_cidr_block: was null, but now cty.StringVal("")
+module.vpc.aws_subnet.public[0]: Creation complete after 12s [id=subnet-0fae7a4e52559acf6]
+2021-11-16T03:16:29.455Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] Creating Route Table Association: {
+module.vpc.aws_route_table_association.public[0]: Creating...
+  RouteTableId: "rtb-0a0782f82cc53313f",
+  SubnetId: "subnet-0fae7a4e52559acf6"
+}: timestamp=2021-11-16T03:16:29.455Z
+2021-11-16T03:16:29.455Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:29.455Z
+2021-11-16T03:16:29.457Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [WARN] Truncating attribute path of 0 diagnostics for TypeSet: timestamp=2021-11-16T03:16:29.457Z
+2021/11/16 03:16:29 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an invalid plan for aws_instance.nginx[0], but we are tolerating it because it is using the legacy plugin SDK.
+aws_instance.nginx[0]: Creating...
+    The following problems may be the cause of any confusing errors from downstream operations:
+      - .get_password_data: planned value cty.False does not match config value cty.NullVal(cty.Bool)
+      - .source_dest_check: planned value cty.True does not match config value cty.NullVal(cty.Bool)
+      - .capacity_reservation_specification: attribute representing nested block must not be unknown itself; set nested attribute values to unknown instead
+      - .ebs_block_device: attribute representing nested block must not be unknown itself; set nested attribute values to unknown instead
+      - .network_interface: attribute representing nested block must not be unknown itself; set nested attribute values to unknown instead
+      - .enclave_options: attribute representing nested block must not be unknown itself; set nested attribute values to unknown instead
+      - .ephemeral_block_device: attribute representing nested block must not be unknown itself; set nested attribute values to unknown instead
+      - .metadata_options: attribute representing nested block must not be unknown itself; set nested attribute values to unknown instead
+      - .root_block_device: attribute representing nested block must not be unknown itself; set nested attribute values to unknown instead
+2021-11-16T03:16:29.469Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] setting computed for "metadata_options" from ComputedKeys: timestamp=2021-11-16T03:16:29.467Z
+2021-11-16T03:16:29.469Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] setting computed for "security_groups" from ComputedKeys: timestamp=2021-11-16T03:16:29.467Z
+2021-11-16T03:16:29.469Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] setting computed for "secondary_private_ips" from ComputedKeys: timestamp=2021-11-16T03:16:29.467Z
+2021-11-16T03:16:29.469Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] setting computed for "ephemeral_block_device" from ComputedKeys: timestamp=2021-11-16T03:16:29.467Z
+2021-11-16T03:16:29.469Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] setting computed for "ipv6_addresses" from ComputedKeys: timestamp=2021-11-16T03:16:29.467Z
+2021-11-16T03:16:29.469Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] setting computed for "network_interface" from ComputedKeys: timestamp=2021-11-16T03:16:29.467Z
+2021-11-16T03:16:29.469Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] setting computed for "enclave_options" from ComputedKeys: timestamp=2021-11-16T03:16:29.467Z
+2021-11-16T03:16:29.469Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] setting computed for "root_block_device" from ComputedKeys: timestamp=2021-11-16T03:16:29.467Z
+2021-11-16T03:16:29.469Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] setting computed for "network_interface" from ComputedKeys: timestamp=2021-11-16T03:16:29.467Z
+2021-11-16T03:16:29.469Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] setting computed for "capacity_reservation_specification" from ComputedKeys: timestamp=2021-11-16T03:16:29.467Z
+provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] setting computed for "ebs_block_device" from ComputedKeys: timestamp=2021-11-16T03:16:29.468Z
+2021-11-16T03:16:29.469Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] Run configuration: {
+  DisableApiTermination: false,
+  EbsOptimized: false,
+  HibernationOptions: {
+    Configured: false
+  },
+  IamInstanceProfile: {
+    Name: "terraform-dev-49614_instance_profile"
+  },
+  ImageId: "ami-0a2c275b42dee0b81",
+  InstanceType: "t2.micro",
+  KeyName: "devops",
+  MaxCount: 1,
+  MinCount: 1,
+  Monitoring: {
+    Enabled: false
+  },
+  NetworkInterfaces: [{
+      DeviceIndex: 0,
+      Groups: ["sg-06ce42cbc3e1de8c2"],
+      SubnetId: "subnet-0fae7a4e52559acf6"
+    }],
+  Placement: {
+    AvailabilityZone: "",
+    GroupName: ""
+  },
+  TagSpecifications: [{
+      ResourceType: "instance",
+      Tags: [{
+          Key: "Environment",
+          Value: "dev"
+        },{
+          Key: "Name",
+          Value: "dev-nginx-49614-1"
+        },{
+          Key: "BillingCode",
+          Value: "1234567890"
+        }]
+    }]
+}: timestamp=2021-11-16T03:16:29.468Z
+2021-11-16T03:16:29.469Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:29 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:29.468Z
+2021-11-16T03:16:30.044Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:30 [DEBUG] Waiting for Route Table Association (rtbassoc-0324d863752b684c6) creation: timestamp=2021-11-16T03:16:30.043Z
+2021-11-16T03:16:30.044Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:30 [DEBUG] Waiting for state to become: [associated]: timestamp=2021-11-16T03:16:30.043Z
+2021/11/16 03:16:30 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an unexpected new value for module.vpc.aws_route_table_association.public[0], but we are tolerating it because it is using the legacy plugin SDK.
+module.vpc.aws_route_table_association.public[0]: Creation complete after 2s [id=rtbassoc-0324d863752b684c6]
+    The following problems may be the cause of any confusing errors from downstream operations:
+      - .gateway_id: was null, but now cty.StringVal("")
+2021-11-16T03:16:31.361Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:31 [INFO] Instance ID: i-0973cd4b24ae85a7f: timestamp=2021-11-16T03:16:31.361Z
+2021-11-16T03:16:31.361Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:31 [DEBUG] Waiting for instance (i-0973cd4b24ae85a7f) to become running: timestamp=2021-11-16T03:16:31.361Z
+2021-11-16T03:16:31.361Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:31 [DEBUG] Waiting for state to become: [running]: timestamp=2021-11-16T03:16:31.361Z
+aws_instance.nginx[0]: Still creating... [10s elapsed]
+2021-11-16T03:16:41.761Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:41 [TRACE] Waiting 3s before next try: timestamp=2021-11-16T03:16:41.761Z
+2021-11-16T03:16:45.158Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:45 [TRACE] Waiting 6s before next try: timestamp=2021-11-16T03:16:45.158Z
+aws_instance.nginx[0]: Still creating... [20s elapsed]
+2021-11-16T03:16:51.506Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:51 [TRACE] Waiting 10s before next try: timestamp=2021-11-16T03:16:51.506Z
+aws_instance.nginx[0]: Still creating... [30s elapsed]
+2021-11-16T03:17:02.981Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:17:02 [DEBUG] Setting Security Group IDs: []string{"sg-06ce42cbc3e1de8c2"}: timestamp=2021-11-16T03:17:02.981Z
+2021/11/16 03:17:05 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an unexpected new value for aws_instance.nginx[0], but we are tolerating it because it is using the legacy plugin SDK.
+aws_instance.nginx[0]: Provisioning with 'file'...
+    The following problems may be the cause of any confusing errors from downstream operations:
+      - .hibernation: was null, but now cty.False
+      - .credit_specification: block count changed from 0 to 1
+aws_instance.nginx[0]: Provisioning with 'file'...
+aws_instance.nginx[0]: Provisioning with 'file'...
+aws_instance.nginx[0]: Provisioning with 'remote-exec'...
+aws_instance.nginx[0] (remote-exec): Connecting to remote host via SSH...
+aws_instance.nginx[0] (remote-exec):   Host: 3.239.106.81
+aws_instance.nginx[0] (remote-exec):   User: ec2-user
+aws_instance.nginx[0] (remote-exec):   Password: false
+aws_instance.nginx[0] (remote-exec):   Private key: true
+aws_instance.nginx[0] (remote-exec):   Certificate: false
+aws_instance.nginx[0] (remote-exec):   SSH Agent: false
+aws_instance.nginx[0] (remote-exec):   Checking Host Key: false
+aws_instance.nginx[0]: Still creating... [40s elapsed]
+aws_instance.nginx[0] (remote-exec): Connected!
+aws_instance.nginx[0] (remote-exec): Loaded plugins: priorities, update-motd,
+aws_instance.nginx[0] (remote-exec):               : upgrade-helper
+aws_instance.nginx[0] (remote-exec): Resolving Dependencies
+aws_instance.nginx[0] (remote-exec): --> Running transaction check
+aws_instance.nginx[0] (remote-exec): ---> Package nginx.x86_64 1:1.18.0-1.43.amzn1 will be installed
+aws_instance.nginx[0] (remote-exec): --> Processing Dependency: libprofiler.so.0()(64bit) for package: 1:nginx-1.18.0-1.43.amzn1.x86_64
+aws_instance.nginx[0] (remote-exec): --> Running transaction check
+aws_instance.nginx[0] (remote-exec): ---> Package gperftools-libs.x86_64 0:2.0-11.5.amzn1 will be installed
+aws_instance.nginx[0] (remote-exec): --> Processing Dependency: libunwind.so.8()(64bit) for package: gperftools-libs-2.0-11.5.amzn1.x86_64
+aws_instance.nginx[0] (remote-exec): --> Running transaction check
+aws_instance.nginx[0] (remote-exec): ---> Package libunwind.x86_64 0:1.1-10.8.amzn1 will be installed
+aws_instance.nginx[0] (remote-exec): --> Finished Dependency Resolution
+
+aws_instance.nginx[0] (remote-exec): Dependencies Resolved
+
+aws_instance.nginx[0] (remote-exec): ========================================
+aws_instance.nginx[0] (remote-exec):  Package   Arch   Version
+aws_instance.nginx[0] (remote-exec):                      Repository    Size
+aws_instance.nginx[0] (remote-exec): ========================================
+aws_instance.nginx[0] (remote-exec): Installing:
+aws_instance.nginx[0] (remote-exec):  nginx     x86_64 1:1.18.0-1.43.amzn1
+aws_instance.nginx[0] (remote-exec):                      amzn-updates 603 k
+aws_instance.nginx[0] (remote-exec): Installing for dependencies:
+aws_instance.nginx[0] (remote-exec):  gperftools-libs
+aws_instance.nginx[0] (remote-exec):            x86_64 2.0-11.5.amzn1
+aws_instance.nginx[0] (remote-exec):                      amzn-main    570 k
+aws_instance.nginx[0] (remote-exec):  libunwind x86_64 1.1-10.8.amzn1
+aws_instance.nginx[0] (remote-exec):                      amzn-main     72 k
+
+aws_instance.nginx[0] (remote-exec): Transaction Summary
+aws_instance.nginx[0] (remote-exec): ========================================
+aws_instance.nginx[0] (remote-exec): Install  1 Package (+2 Dependent packages)
+
+aws_instance.nginx[0] (remote-exec): Total download size: 1.2 M
+aws_instance.nginx[0] (remote-exec): Installed size: 3.0 M
+aws_instance.nginx[0] (remote-exec): Downloading packages:
+aws_instance.nginx[0] (remote-exec): (1/3): gperftools- | 570 kB   00:00
+aws_instance.nginx[0] (remote-exec): (2/3): libunwind-1 |  72 kB   00:00
+aws_instance.nginx[0] (remote-exec): (3/3): nginx-1.18. | 603 kB   00:00
+aws_instance.nginx[0] (remote-exec): ----------------------------------------
+aws_instance.nginx[0] (remote-exec): Total      4.2 MB/s | 1.2 MB  00:00
+aws_instance.nginx[0] (remote-exec): Running transaction check
+aws_instance.nginx[0] (remote-exec): Running transaction test
+aws_instance.nginx[0] (remote-exec): Transaction test succeeded
+aws_instance.nginx[0] (remote-exec): Running transaction
+aws_instance.nginx[0] (remote-exec):   Installing : libunwin [         ] 1/3
+aws_instance.nginx[0] (remote-exec):   Installing : libunwin [#####    ] 1/3
+aws_instance.nginx[0] (remote-exec):   Installing : libunwin [#######  ] 1/3
+aws_instance.nginx[0] (remote-exec):   Installing : libunwin [######## ] 1/3
+aws_instance.nginx[0] (remote-exec):   Installing : libunwind-1.1-10.8   1/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [         ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [#        ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [##       ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [###      ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [####     ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [#####    ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [######   ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [#######  ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [######## ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftools-libs-2.   2/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [         ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [#        ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [##       ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [###      ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [####     ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [#####    ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [######   ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [#######  ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [######## ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx-1.18.0-1.4   3/3
+aws_instance.nginx[0] (remote-exec):   Verifying  : libunwind-1.1-10.8   1/3
+aws_instance.nginx[0] (remote-exec):   Verifying  : 1:nginx-1.18.0-1.4   2/3
+aws_instance.nginx[0] (remote-exec):   Verifying  : gperftools-libs-2.   3/3
+
+aws_instance.nginx[0] (remote-exec): Installed:
+aws_instance.nginx[0] (remote-exec):   nginx.x86_64 1:1.18.0-1.43.amzn1
+
+aws_instance.nginx[0] (remote-exec): Dependency Installed:
+aws_instance.nginx[0] (remote-exec):   gperftools-libs.x86_64 0:2.0-11.5.amzn1
+aws_instance.nginx[0] (remote-exec):   libunwind.x86_64 0:1.1-10.8.amzn1
+
+aws_instance.nginx[0] (remote-exec): Complete!
+aws_instance.nginx[0] (remote-exec): Starting nginx: [  OK  ]
+aws_instance.nginx[0] (remote-exec): Collecting s3cmd
+aws_instance.nginx[0] (remote-exec):   Downloading https://files.pythonhosted.org/packages/1e/88/9630c6e894575f03c1685104a6562a31ecf9e82b5b687d8516445a051fbe/s3cmd-2.2.0-py2.py3-none-any.whl (153kB)
+aws_instance.nginx[0] (remote-exec): 25l
+aws_instance.nginx[0] (remote-exec):     6% |██▏                             | 10kB 34.9MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     13% |████▎                           | 20kB 28.5MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     19% |██████▍                         | 30kB 29.0MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     26% |████████▌                       | 40kB 29.6MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     33% |██████████▋                     | 51kB 29.6MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     39% |████████████▊                   | 61kB 29.8MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     46% |███████████████                 | 71kB 30.7MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     53% |█████████████████               | 81kB 14.1MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     59% |███████████████████▏            | 92kB 15.2MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     66% |█████████████████████▎          | 102kB 16.3MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     73% |███████████████████████▍        | 112kB 16.5MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     79% |█████████████████████████▌      | 122kB 17.2MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     86% |███████████████████████████▊    | 133kB 17.5MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     93% |█████████████████████████████▉  | 143kB 18.0MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     99% |████████████████████████████████| 153kB 18.4MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     100% |████████████████████████████████| 163kB 3.3MB/s
+aws_instance.nginx[0] (remote-exec): 25hCollecting python-magic (from s3cmd)
+aws_instance.nginx[0] (remote-exec):   Downloading https://files.pythonhosted.org/packages/d3/99/c89223c6547df268596899334ee77b3051f606077317023617b1c43162fb/python_magic-0.4.24-py2.py3-none-any.whl
+aws_instance.nginx[0] (remote-exec): Requirement already satisfied: python-dateutil in /usr/lib/python2.7/dist-packages (from s3cmd)
+aws_instance.nginx[0] (remote-exec): Requirement already satisfied: six in /usr/lib/python2.7/dist-packages (from python-dateutil->s3cmd)
+aws_instance.nginx[0] (remote-exec): Installing collected packages: python-magic, s3cmd
+aws_instance.nginx[0] (remote-exec): Successfully installed python-magic-0.4.24 s3cmd-2.2.0
+aws_instance.nginx[0] (remote-exec): You are using pip version 9.0.3, however version 21.3.1 is available.
+aws_instance.nginx[0] (remote-exec): You should consider upgrading via the 'pip install --upgrade pip' command.
+aws_instance.nginx[0] (remote-exec): download: 's3://terraform-dev-49614/website/corporate.jpg' -> './corporate.jpg'  [1 of 1]
+aws_instance.nginx[0] (remote-exec):  41686 of 41686   100% in    0s   868.50 KB/s
+aws_instance.nginx[0] (remote-exec):  41686 of 41686   100% in    0s   864.35 KB/s  done
+aws_instance.nginx[0] (remote-exec): upload: '/var/log/nginx/access.log' -> 's3://terraform-dev-49614/nginx/i-0973cd4b24ae85a7f/access.log'  [1 of 3]
+aws_instance.nginx[0] (remote-exec):  0 of 0     0% in    0s     0.00 B/s
+aws_instance.nginx[0] (remote-exec):  0 of 0     0% in    0s     0.00 B/s  done
+aws_instance.nginx[0] (remote-exec): upload: '/var/log/nginx/access.log-20211116.gz' -> 's3://terraform-dev-49614/nginx/i-0973cd4b24ae85a7f/access.log-20211116.gz'  [2 of 3]
+aws_instance.nginx[0] (remote-exec):  20 of 20   100% in    0s    23.76 KB/s
+aws_instance.nginx[0] (remote-exec):  20 of 20   100% in    0s   230.10 B/s  done
+aws_instance.nginx[0] (remote-exec): upload: '/var/log/nginx/error.log' -> 's3://terraform-dev-49614/nginx/i-0973cd4b24ae85a7f/error.log'  [3 of 3]
+aws_instance.nginx[0] (remote-exec):  0 of 0     0% in    0s     0.00 B/s
+aws_instance.nginx[0] (remote-exec):  0 of 0     0% in    0s     0.00 B/s  done
+aws_instance.nginx[0] (remote-exec): remote copy: 'access.log-20211116.gz' -> 'error.log-20211116.gz'  [1 of 1]
+aws_instance.nginx[0] (remote-exec): Done. Uploaded 20 bytes in 1.0 seconds, 20.00 B/s.
+aws_instance.nginx[0]: Creation complete after 48s [id=i-0973cd4b24ae85a7f]
+2021-11-16T03:17:17.244Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+2021-11-16T03:17:17.247Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+2021-11-16T03:17:17.249Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:17:17 [WARN] Truncating attribute path of 0 diagnostics for TypeSet: timestamp=2021-11-16T03:17:17.249Z
+2021-11-16T03:17:17.249Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:17:17 [WARN] Truncating attribute path of 0 diagnostics for TypeSet: timestamp=2021-11-16T03:17:17.249Z
+2021-11-16T03:17:17.249Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:17:17 [WARN] Truncating attribute path of 0 diagnostics for TypeSet: timestamp=2021-11-16T03:17:17.249Z
+2021-11-16T03:17:17.249Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:17:17 [WARN] Truncating attribute path of 0 diagnostics for TypeSet: timestamp=2021-11-16T03:17:17.249Z
+2021/11/16 03:17:17 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an invalid plan for aws_elb.web, but we are tolerating it because it is using the legacy plugin SDK.
+aws_elb.web: Creating...
+    The following problems may be the cause of any confusing errors from downstream operations:
+      - .idle_timeout: planned value cty.NumberIntVal(60) does not match config value cty.NullVal(cty.Number)
+      - .connection_draining_timeout: planned value cty.NumberIntVal(300) does not match config value cty.NullVal(cty.Number)
+      - .cross_zone_load_balancing: planned value cty.True does not match config value cty.NullVal(cty.Bool)
+      - .connection_draining: planned value cty.False does not match config value cty.NullVal(cty.Bool)
+2021-11-16T03:17:17.258Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:17:17 [DEBUG] setting computed for "availability_zones" from ComputedKeys: timestamp=2021-11-16T03:17:17.257Z
+2021-11-16T03:17:17.262Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:17:17 [DEBUG] ELB create configuration: {
+  Listeners: [{
+      InstancePort: 80,
+      InstanceProtocol: "http",
+      LoadBalancerPort: 80,
+      Protocol: "http",
+      SSLCertificateId: ""
+    }],
+  LoadBalancerName: "dev-nginx-elb-49614",
+  SecurityGroups: ["sg-0b7d58b799245f025"],
+  Subnets: ["subnet-0fae7a4e52559acf6"],
+  Tags: [{
+      Key: "BillingCode",
+      Value: "1234567890"
+    },{
+      Key: "Environment",
+      Value: "dev"
+    },{
+      Key: "Name",
+      Value: "dev-elb-49614"
+    }]
+}: timestamp=2021-11-16T03:17:17.258Z
+2021-11-16T03:17:17.262Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:17:17 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:17:17.258Z
+2021-11-16T03:17:18.075Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:17:18 [INFO] ELB ID: dev-nginx-elb-49614: timestamp=2021-11-16T03:17:18.075Z
+2021-11-16T03:17:18.075Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:17:18 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:17:18.075Z
+2021-11-16T03:17:19.050Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:17:19 [DEBUG] ELB Modify Load Balancer Attributes Request: {
+  LoadBalancerAttributes: {
+    AccessLog: {
+      Enabled: false
+    },
+    ConnectionSettings: {
+      IdleTimeout: 60
+    },
+    CrossZoneLoadBalancing: {
+      Enabled: true
+    }
+  },
+  LoadBalancerName: "dev-nginx-elb-49614"
+}: timestamp=2021-11-16T03:17:19.050Z
+2021-11-16T03:17:21.328Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:17:21 [DEBUG] ELB attach subnets opts: {
+  LoadBalancerName: "dev-nginx-elb-49614",
+  Subnets: ["subnet-0fae7a4e52559acf6"]
+}: timestamp=2021-11-16T03:17:21.328Z
+2021-11-16T03:17:21.328Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:17:21 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:17:21.328Z
+aws_elb.web: Creation complete after 7s [id=dev-nginx-elb-49614]
+2021-11-16T03:17:24.042Z [WARN]  plugin.stdio: received EOF, stopping recv loop: err="rpc error: code = Unavailable desc = transport is closing"
+
+Apply complete! Resources: 16 added, 0 changed, 0 destroyed.
+
+The state of your infrastructure has been saved to the path
+below. This state is required to modify and destroy your
+infrastructure, so keep it safe. To inspect the complete state
+use the `terraform show` command.
+
+State path: terraform.tfstate
+
+Outputs:
+
+aws_elb_public_dns = dev-nginx-elb-49614-1172827116.us-east-1.elb.amazonaws.com
+cname_record_url = http://211116022346.terraform-controller.emvaldes.name
+custom_contact = Updated - emvaldes@yahoo.com
+custom_engineer = Updated - DevOps Team
+custom_listset = Updated - Proving Nothing
+custom_mapset = Updated - Testing Something
+custom_timestamp = Updated - Today Is A Good Day To ...
+filebased_parameters = Updated - Development Parameters loaded from a custom parameter file
+resources_index = 49614
+
+Executing Terraform Show ...
+
+# aws_elb.web:
+resource "aws_elb" "web" {
+    arn                         = "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/dev-nginx-elb-49614"
+    availability_zones          = [
+        "us-east-1a",
+    ]
+    connection_draining         = false
+    connection_draining_timeout = 300
+    cross_zone_load_balancing   = true
+    dns_name                    = "dev-nginx-elb-49614-1172827116.us-east-1.elb.amazonaws.com"
+    id                          = "dev-nginx-elb-49614"
+    idle_timeout                = 60
+    instances                   = [
+        "i-0973cd4b24ae85a7f",
+    ]
+    internal                    = false
+    name                        = "dev-nginx-elb-49614"
+    security_groups             = [
+        "sg-0b7d58b799245f025",
+    ]
+    source_security_group       = "123456789012/nginx_elb_sg-49614"
+    source_security_group_id    = "sg-0b7d58b799245f025"
+    subnets                     = [
+        "subnet-0fae7a4e52559acf6",
+    ]
+    tags                        = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-elb-49614"
+    }
+    tags_all                    = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-elb-49614"
+    }
+    zone_id                     = "Z35SXDOTRQ7X7K"
+
+    health_check {
+        healthy_threshold   = 2
+        interval            = 30
+        target              = "TCP:80"
+        timeout             = 5
+        unhealthy_threshold = 2
+    }
+
+    listener {
+        instance_port     = 80
+        instance_protocol = "http"
+        lb_port           = 80
+        lb_protocol       = "http"
+    }
+}
+
+# aws_instance.nginx[0]:
+resource "aws_instance" "nginx" {
+    ami                                  = "ami-0a2c275b42dee0b81"
+    arn                                  = "arn:aws:ec2:us-east-1:123456789012:instance/i-0973cd4b24ae85a7f"
+    associate_public_ip_address          = true
+    availability_zone                    = "us-east-1a"
+    cpu_core_count                       = 1
+    cpu_threads_per_core                 = 1
+    disable_api_termination              = false
+    ebs_optimized                        = false
+    get_password_data                    = false
+    hibernation                          = false
+    iam_instance_profile                 = "terraform-dev-49614_instance_profile"
+    id                                   = "i-0973cd4b24ae85a7f"
+    instance_initiated_shutdown_behavior = "stop"
+    instance_state                       = "running"
+    instance_type                        = "t2.micro"
+    ipv6_address_count                   = 0
+    ipv6_addresses                       = []
+    key_name                             = "devops"
+    monitoring                           = false
+    primary_network_interface_id         = "eni-06793cfdf4588814c"
+    private_dns                          = "ip-10-0-0-178.ec2.internal"
+    private_ip                           = "10.0.0.178"
+    public_ip                            = "3.239.106.81"
+    secondary_private_ips                = []
+    security_groups                      = []
+    source_dest_check                    = true
+    subnet_id                            = "subnet-0fae7a4e52559acf6"
+    tags                                 = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-nginx-49614-1"
+    }
+    tags_all                             = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-nginx-49614-1"
+    }
+    tenancy                              = "default"
+    vpc_security_group_ids               = [
+        "sg-06ce42cbc3e1de8c2",
+    ]
+
+    capacity_reservation_specification {
+        capacity_reservation_preference = "open"
+    }
+
+    credit_specification {
+        cpu_credits = "standard"
+    }
+
+    enclave_options {
+        enabled = false
+    }
+
+    metadata_options {
+        http_endpoint               = "enabled"
+        http_put_response_hop_limit = 1
+        http_tokens                 = "optional"
+    }
+
+    root_block_device {
+        delete_on_termination = true
+        device_name           = "/dev/xvda"
+        encrypted             = false
+        iops                  = 100
+        tags                  = {}
+        throughput            = 0
+        volume_id             = "vol-06c4c419ef2a1b0e2"
+        volume_size           = 8
+        volume_type           = "gp2"
+    }
+}
+
+# aws_s3_bucket_object.graphic:
+resource "aws_s3_bucket_object" "graphic" {
+    acl                = "private"
+    bucket             = "terraform-dev-49614"
+    bucket_key_enabled = false
+    content_type       = "binary/octet-stream"
+    etag               = "fdabd97c8924266763d283dca174b802"
+    force_destroy      = false
+    id                 = "/website/corporate.jpg"
+    key                = "/website/corporate.jpg"
+    source             = "./website/corporate.jpg"
+    storage_class      = "STANDARD"
+    tags_all           = {}
+}
+
+# aws_security_group.elb-sg:
+resource "aws_security_group" "elb-sg" {
+    arn                    = "arn:aws:ec2:us-east-1:123456789012:security-group/sg-0b7d58b799245f025"
+    description            = "Managed by Terraform"
+    egress                 = [
+        {
+            cidr_blocks      = [
+                "0.0.0.0/0",
+            ]
+            description      = ""
+            from_port        = 0
+            ipv6_cidr_blocks = []
+            prefix_list_ids  = []
+            protocol         = "-1"
+            security_groups  = []
+            self             = false
+            to_port          = 0
+        },
+    ]
+    id                     = "sg-0b7d58b799245f025"
+    ingress                = [
+        {
+            cidr_blocks      = [
+                "0.0.0.0/0",
+            ]
+            description      = ""
+            from_port        = 80
+            ipv6_cidr_blocks = []
+            prefix_list_ids  = []
+            protocol         = "tcp"
+            security_groups  = []
+            self             = false
+            to_port          = 80
+        },
+    ]
+    name                   = "nginx_elb_sg-49614"
+    owner_id               = "123456789012"
+    revoke_rules_on_delete = false
+    tags                   = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-elb-sg-49614"
+    }
+    tags_all               = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-elb-sg-49614"
+    }
+    vpc_id                 = "vpc-087a539689fc9c597"
+}
+
+# aws_security_group.nginx-sg:
+resource "aws_security_group" "nginx-sg" {
+    arn                    = "arn:aws:ec2:us-east-1:123456789012:security-group/sg-06ce42cbc3e1de8c2"
+    description            = "Managed by Terraform"
+    egress                 = [
+        {
+            cidr_blocks      = [
+                "0.0.0.0/0",
+            ]
+            description      = ""
+            from_port        = 0
+            ipv6_cidr_blocks = []
+            prefix_list_ids  = []
+            protocol         = "-1"
+            security_groups  = []
+            self             = false
+            to_port          = 0
+        },
+    ]
+    id                     = "sg-06ce42cbc3e1de8c2"
+    ingress                = [
+        {
+            cidr_blocks      = [
+                "0.0.0.0/0",
+            ]
+            description      = ""
+            from_port        = 22
+            ipv6_cidr_blocks = []
+            prefix_list_ids  = []
+            protocol         = "tcp"
+            security_groups  = []
+            self             = false
+            to_port          = 22
+        },
+        {
+            cidr_blocks      = [
+                "10.0.0.0/16",
+            ]
+            description      = ""
+            from_port        = 80
+            ipv6_cidr_blocks = []
+            prefix_list_ids  = []
+            protocol         = "tcp"
+            security_groups  = []
+            self             = false
+            to_port          = 80
+        },
+    ]
+    name                   = "nginx_sg-49614"
+    owner_id               = "123456789012"
+    revoke_rules_on_delete = false
+    tags                   = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-nginx-sg-49614"
+    }
+    tags_all               = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-nginx-sg-49614"
+    }
+    vpc_id                 = "vpc-087a539689fc9c597"
+}
+
+# data.aws_ami.aws-linux:
+data "aws_ami" "aws-linux" {
+    architecture          = "x86_64"
+    arn                   = "arn:aws:ec2:us-east-1::image/ami-0a2c275b42dee0b81"
+    block_device_mappings = [
+        {
+            device_name  = "/dev/xvda"
+            ebs          = {
+                "delete_on_termination" = "true"
+                "encrypted"             = "false"
+                "iops"                  = "0"
+                "snapshot_id"           = "snap-0e1b02ca64790f4f1"
+                "throughput"            = "0"
+                "volume_size"           = "8"
+                "volume_type"           = "gp2"
+            }
+            no_device    = ""
+            virtual_name = ""
+        },
+    ]
+    creation_date         = "2021-10-27T16:36:33.000Z"
+    description           = "Amazon Linux AMI 2018.03.0.20211015.1 x86_64 HVM gp2"
+    ena_support           = true
+    hypervisor            = "xen"
+    id                    = "ami-0a2c275b42dee0b81"
+    image_id              = "ami-0a2c275b42dee0b81"
+    image_location        = "amazon/amzn-ami-hvm-2018.03.0.20211015.1-x86_64-gp2"
+    image_owner_alias     = "amazon"
+    image_type            = "machine"
+    most_recent           = true
+    name                  = "amzn-ami-hvm-2018.03.0.20211015.1-x86_64-gp2"
+    owner_id              = "137112412989"
+    owners                = [
+        "amazon",
+    ]
+    platform_details      = "Linux/UNIX"
+    product_codes         = []
+    public                = true
+    root_device_name      = "/dev/xvda"
+    root_device_type      = "ebs"
+    root_snapshot_id      = "snap-0e1b02ca64790f4f1"
+    sriov_net_support     = "simple"
+    state                 = "available"
+    state_reason          = {
+        "code"    = "UNSET"
+        "message" = "UNSET"
+    }
+    tags                  = {}
+    usage_operation       = "RunInstances"
+    virtualization_type   = "hvm"
+
+    filter {
+        name   = "name"
+        values = [
+            "amzn-ami-hvm*",
+        ]
+    }
+    filter {
+        name   = "root-device-type"
+        values = [
+            "ebs",
+        ]
+    }
+    filter {
+        name   = "virtualization-type"
+        values = [
+            "hvm",
+        ]
+    }
+}
+
+# data.aws_availability_zones.available:
+data "aws_availability_zones" "available" {
+    group_names = [
+        "us-east-1",
+    ]
+    id          = "us-east-1"
+    names       = [
+        "us-east-1a",
+        "us-east-1b",
+        "us-east-1c",
+        "us-east-1d",
+        "us-east-1e",
+        "us-east-1f",
+    ]
+    zone_ids    = [
+        "use1-az1",
+        "use1-az2",
+        "use1-az4",
+        "use1-az6",
+        "use1-az3",
+        "use1-az5",
+    ]
+}
+
+# data.aws_elb_hosted_zone_id.main:
+data "aws_elb_hosted_zone_id" "main" {
+    id = "Z35SXDOTRQ7X7K"
+}
+
+# data.template_file.public_cidrsubnet[0]:
+data "template_file" "public_cidrsubnet" {
+    id       = "a34d80f7b68bf2b583681f727bae85f5a202ee100ad60ab3b3d351b9ce929539"
+    rendered = "10.0.0.0/24"
+    template = "${cidrsubnet(vpc_cidr,8,current_count)}"
+    vars     = {
+        "current_count" = "0"
+        "vpc_cidr"      = "10.0.0.0/16"
+    }
+}
+
+# random_integer.rand:
+resource "random_integer" "rand" {
+    id     = "49614"
+    max    = 99999
+    min    = 10000
+    result = 49614
+}
+
+# module.bucket.aws_iam_instance_profile.instance_profile:
+resource "aws_iam_instance_profile" "instance_profile" {
+    arn         = "arn:aws:iam::123456789012:instance-profile/terraform-dev-49614_instance_profile"
+    create_date = "2021-11-16T03:16:14Z"
+    id          = "terraform-dev-49614_instance_profile"
+    name        = "terraform-dev-49614_instance_profile"
+    path        = "/"
+    role        = "terraform-dev-49614_allow_instance_s3"
+    tags_all    = {}
+    unique_id   = "AIPA2XV4BKOYA6R7ZMDGO"
+}
+
+# module.bucket.aws_iam_role.allow_instance_s3:
+resource "aws_iam_role" "allow_instance_s3" {
+    arn                   = "arn:aws:iam::123456789012:role/terraform-dev-49614_allow_instance_s3"
+    assume_role_policy    = jsonencode(
+        {
+            Statement = [
+                {
+                    Action    = "sts:AssumeRole"
+                    Effect    = "Allow"
+                    Principal = {
+                        Service = "ec2.amazonaws.com"
+                    }
+                    Sid       = ""
+                },
+            ]
+            Version   = "2012-10-17"
+        }
+    )
+    create_date           = "2021-11-16T03:16:13Z"
+    force_detach_policies = false
+    id                    = "terraform-dev-49614_allow_instance_s3"
+    managed_policy_arns   = []
+    max_session_duration  = 3600
+    name                  = "terraform-dev-49614_allow_instance_s3"
+    path                  = "/"
+    tags_all              = {}
+    unique_id             = "AROA2XV4BKOYKASKMJSIM"
+
+    inline_policy {}
+}
+
+# module.bucket.aws_iam_role_policy.allow_s3_all:
+resource "aws_iam_role_policy" "allow_s3_all" {
+    id     = "terraform-dev-49614_allow_instance_s3:terraform-dev-49614_allow_all"
+    name   = "terraform-dev-49614_allow_all"
+    policy = jsonencode(
+        {
+            Statement = [
+                {
+                    Action   = [
+                        "s3:*",
+                    ]
+                    Effect   = "Allow"
+                    Resource = [
+                        "arn:aws:s3:::terraform-dev-49614",
+                        "arn:aws:s3:::terraform-dev-49614/*",
+                    ]
+                },
+            ]
+            Version   = "2012-10-17"
+        }
+    )
+    role   = "terraform-dev-49614_allow_instance_s3"
+}
+
+# module.bucket.aws_s3_bucket.web_bucket:
+resource "aws_s3_bucket" "web_bucket" {
+    acl                         = "private"
+    arn                         = "arn:aws:s3:::terraform-dev-49614"
+    bucket                      = "terraform-dev-49614"
+    bucket_domain_name          = "terraform-dev-49614.s3.amazonaws.com"
+    bucket_regional_domain_name = "terraform-dev-49614.s3.amazonaws.com"
+    force_destroy               = true
+    hosted_zone_id              = "Z3AQBSTGFYJSTF"
+    id                          = "terraform-dev-49614"
+    region                      = "us-east-1"
+    request_payer               = "BucketOwner"
+    tags                        = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "terraform-dev-49614-web-bucket"
+    }
+    tags_all                    = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "terraform-dev-49614-web-bucket"
+    }
+
+    versioning {
+        enabled    = false
+        mfa_delete = false
+    }
+}
+
+# module.vpc.aws_internet_gateway.this[0]:
+resource "aws_internet_gateway" "this" {
+    arn      = "arn:aws:ec2:us-east-1:123456789012:internet-gateway/igw-0aff224fd387bed95"
+    id       = "igw-0aff224fd387bed95"
+    owner_id = "123456789012"
+    tags     = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-vpc-49614"
+    }
+    tags_all = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-vpc-49614"
+    }
+    vpc_id   = "vpc-087a539689fc9c597"
+}
+
+# module.vpc.aws_route.public_internet_gateway[0]:
+resource "aws_route" "public_internet_gateway" {
+    destination_cidr_block = "0.0.0.0/0"
+    gateway_id             = "igw-0aff224fd387bed95"
+    id                     = "r-rtb-0a0782f82cc53313f1080289494"
+    origin                 = "CreateRoute"
+    route_table_id         = "rtb-0a0782f82cc53313f"
+    state                  = "active"
+
+    timeouts {
+        create = "5m"
+    }
+}
+
+# module.vpc.aws_route_table.public[0]:
+resource "aws_route_table" "public" {
+    arn              = "arn:aws:ec2:us-east-1:123456789012:route-table/rtb-0a0782f82cc53313f"
+    id               = "rtb-0a0782f82cc53313f"
+    owner_id         = "123456789012"
+    propagating_vgws = []
+    route            = []
+    tags             = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-vpc-49614-public"
+    }
+    tags_all         = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-vpc-49614-public"
+    }
+    vpc_id           = "vpc-087a539689fc9c597"
+}
+
+# module.vpc.aws_route_table_association.public[0]:
+resource "aws_route_table_association" "public" {
+    id             = "rtbassoc-0324d863752b684c6"
+    route_table_id = "rtb-0a0782f82cc53313f"
+    subnet_id      = "subnet-0fae7a4e52559acf6"
+}
+
+# module.vpc.aws_subnet.public[0]:
+resource "aws_subnet" "public" {
+    arn                             = "arn:aws:ec2:us-east-1:123456789012:subnet/subnet-0fae7a4e52559acf6"
+    assign_ipv6_address_on_creation = false
+    availability_zone               = "us-east-1a"
+    availability_zone_id            = "use1-az1"
+    cidr_block                      = "10.0.0.0/24"
+    id                              = "subnet-0fae7a4e52559acf6"
+    map_customer_owned_ip_on_launch = false
+    map_public_ip_on_launch         = true
+    owner_id                        = "123456789012"
+    tags                            = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-vpc-49614-public-us-east-1a"
+    }
+    tags_all                        = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-vpc-49614-public-us-east-1a"
+    }
+    vpc_id                          = "vpc-087a539689fc9c597"
+}
+
+# module.vpc.aws_vpc.this[0]:
+resource "aws_vpc" "this" {
+    arn                              = "arn:aws:ec2:us-east-1:123456789012:vpc/vpc-087a539689fc9c597"
+    assign_generated_ipv6_cidr_block = false
+    cidr_block                       = "10.0.0.0/16"
+    default_network_acl_id           = "acl-0ad85fd2520e393a3"
+    default_route_table_id           = "rtb-012ebfb02815eeb78"
+    default_security_group_id        = "sg-090cc6d7f2812c516"
+    dhcp_options_id                  = "dopt-b1e813ca"
+    enable_classiclink               = false
+    enable_classiclink_dns_support   = false
+    enable_dns_hostnames             = false
+    enable_dns_support               = true
+    id                               = "vpc-087a539689fc9c597"
+    instance_tenancy                 = "default"
+    main_route_table_id              = "rtb-012ebfb02815eeb78"
+    owner_id                         = "123456789012"
+    tags                             = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-vpc-49614"
+    }
+    tags_all                         = {
+        "BillingCode" = "1234567890"
+        "Environment" = "dev"
+        "Name"        = "dev-vpc-49614"
+    }
+}
+
+Outputs:
+
+aws_elb_public_dns = "dev-nginx-elb-49614-1172827116.us-east-1.elb.amazonaws.com"
+cname_record_url = "http://211116022346.terraform-controller.emvaldes.name"
+custom_contact = "Updated - emvaldes@yahoo.com"
+custom_engineer = "Updated - DevOps Team"
+custom_listset = "Updated - Proving Nothing"
+custom_mapset = "Updated - Testing Something"
+custom_timestamp = "Updated - Today Is A Good Day To ..."
+filebased_parameters = "Updated - Development Parameters loaded from a custom parameter file"
+resources_index = 49614
+
+Backing-Up Terraform Restore-State ...
+
+Working Directory: /home/runner/work/terraform-controller/terraform-controller/restore/fc085d2
+
+S3Bucket Path: /pipelines/dev/21/11/16/022346/fc085d2/restored/123456789012/us-east-1/211116031556/terraform.tfstate.d/dev
+
+Transferring Terraform State @ Local-Storage ... terraform--states--123456789012
+
+> aws --profile default \
+      --region us-east-1 \
+      s3 cp \
+      /home/runner/work/terraform-controller/terraform-controller/restore/fc085d2/terraform.tfstate.d/dev \
+      s3://terraform--states--123456789012//pipelines/dev/21/11/16/022346/fc085d2/restored/123456789012/us-east-1/211116031556/terraform.tfstate.d/dev \
+      --recursive \
+      --only-show-errors
+
+Listing Terraform State @ AWS S3 Bucket ... terraform--states--123456789012
+
+> aws --profile default \
+      --region us-east-1 \
+      s3 ls \
+      s3://terraform--states--123456789012//pipelines/dev/21/11/16/022346/fc085d2/restored/123456789012/us-east-1/211116031556/terraform.tfstate.d/dev \
+      --recursive
+
+2021-11-16 03:17:28      25510 /pipelines/dev/21/11/16/022346/fc085d2/restored/123456789012/us-east-1/211116031556/terraform.tfstate.d/dev/terraform.tfplan
+2021-11-16 03:17:28      33967 /pipelines/dev/21/11/16/022346/fc085d2/restored/123456789012/us-east-1/211116031556/terraform.tfstate.d/dev/terraform.tfstate
+2021-11-16 03:17:28      33967 /pipelines/dev/21/11/16/022346/fc085d2/restored/123456789012/us-east-1/211116031556/terraform.tfstate.d/dev/terraform.tfstate.backup
+2021-11-16 03:17:28      19813 /pipelines/dev/21/11/16/022346/fc085d2/restored/123456789012/us-east-1/211116031556/terraform.tfstate.d/dev/terraform.tfstate.yaml
+
+Completed!
+
+Post checkout - 0s
+
+Post job cleanup.
+/usr/bin/git version
+git version 2.33.1
+/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+/usr/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :
+/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+http.https://github.com/.extraheader
+/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+/usr/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :
+
+Complete job - 0s
+
+Cleaning up orphan processes
