@@ -1,0 +1,1458 @@
+terraform-controller - 3m 5s
+
+Set up job - 3s
+
+Current runner version: '2.284.0'
+Operating System
+  Ubuntu
+  20.04.3
+  LTS
+Virtual Environment
+  Environment: ubuntu-20.04
+  Version: 20211108.1
+  Included Software: https://github.com/actions/virtual-environments/blob/ubuntu20/20211108.1/images/linux/Ubuntu2004-README.md
+  Image Release: https://github.com/actions/virtual-environments/releases/tag/ubuntu20%2F20211108.1
+Virtual Environment Provisioner
+  1.0.0.0-master-20211108-1
+GITHUB_TOKEN Permissions
+  Actions: write
+  Checks: write
+  Contents: write
+  Deployments: write
+  Discussions: write
+  Issues: write
+  Metadata: read
+  Packages: write
+  Pages: write
+  PullRequests: write
+  RepositoryProjects: write
+  SecurityEvents: write
+  Statuses: write
+Prepare workflow directory
+Prepare all required actions
+Getting action download info
+Download action repository 'actions/checkout@v2' (SHA:ec3a7ce113134d7a93b817d10a8272cb61118579)
+Download action repository 'emvaldes/system-requirements@master' (SHA:f3cfb4bf5dca1ff8515d8b526d8cdb43edb99b6f)
+Download action repository 'emvaldes/generate-credentials@master' (SHA:8543934e21de4444e3f1c0a3a0aef3f981639070)
+Download action repository 'emvaldes/configure-access@master' (SHA:250651a71b4842d70f40dad44e969ce15d27e140)
+Download action repository 'emvaldes/provision-terraform@master' (SHA:fc085d22760149ba48725016e10e823dc2d51a51)
+
+checkout - 1s
+
+Run actions/checkout@v2
+  with:
+    repository: emvaldes/terraform-controller
+    token: ***
+    ssh-strict: ***
+    persist-credentials: ***
+    clean: ***
+    fetch-depth: 1
+    lfs: false
+    submodules: false
+  env:
+    AWS_ACCESS_KEY_ID: ***
+    AWS_DEFAULT_ACCOUNT: 123456789012
+    AWS_DEFAULT_PROFILE: default
+    AWS_DEFAULT_REGION: us-east-1
+    AWS_SECRET_ACCESS_KEY: ***
+    BACKUP_TERRAFORM: ***
+    DEPLOY_TERRAFORM: ***
+    DESTROY_TERRAFORM: ***
+    DEVOPS_ACCESS_ROLE: ***
+    DEVOPS_ACCOUNT_NAME: devops
+    DYNAMODB_DEFAULT_REGION: us-east-1
+    PRIVATE_KEYPAIR_FILE: .ssh/id_rsa
+    PRIVATE_KEYPAIR_NAME: devops
+    PRIVATE_KEYPAIR_SECRET: ***
+    PROVISION_TERRAFORM: ***
+    S3BUCKET_CONTAINER: pipelines
+    S3BUCKET_DEFAULT_REGION: us-east-1
+    TARGET_WORKSPACE: dev
+    terraform_input_params:
+Syncing repository: emvaldes/terraform-controller
+Getting Git version info
+  Working directory is '/home/runner/work/terraform-controller/terraform-controller'
+  /usr/bin/git version
+  git version 2.33.1
+Deleting the contents of '/home/runner/work/terraform-controller/terraform-controller'
+Initializing the repository
+  /usr/bin/git init /home/runner/work/terraform-controller/terraform-controller
+  hint: Using 'master' as the name for the initial branch. This default branch name
+  hint: is subject to change. To configure the initial branch name to use in all
+  hint: of your new repositories, which will suppress this warning, call:
+  hint:
+  hint: 	git config --global init.defaultBranch <name>
+  hint:
+  hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+  hint: 'development'. The just-created branch can be renamed via this command:
+  hint:
+  hint: 	git branch -m <name>
+  Initialized empty Git repository in /home/runner/work/terraform-controller/terraform-controller/.git/
+  /usr/bin/git remote add origin https://github.com/emvaldes/terraform-controller
+Disabling automatic garbage collection
+  /usr/bin/git config --local gc.auto 0
+Setting up auth
+  /usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+  /usr/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :
+  /usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+  /usr/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :
+  /usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Fetching the repository
+Determining the checkout info
+Checking out the ref
+  /usr/bin/git checkout --progress --force -B master refs/remotes/origin/master
+  Reset branch 'master'
+  Branch 'master' set up to track remote branch 'master' from 'origin'.
+/usr/bin/git log -1 --format='%H'
+'fc085d22760149ba48725016e10e823dc2d51a51'
+
+Environment Variables - 0s
+
+Run ####------------------------------------------------------------------
+Processing File|Input-based Parameters ... [ 1-10 ]
+
+       Target Workspace [input-based]: 'dev'
+       Terraform Version [iput-based]: '0.13.1'
+
+System Requirements - 19s
+
+Run emvaldes/system-requirements@master
+Run ####----------------------------------------------------------------------------
+
+Installing Default Tools ...
+Package: jq ...
+Package: tree ...
+
+Installing Custom Tools ...
+Package: netcat ...
+
+AWS CLI is Installed ... Ok!
+/usr/local/bin/aws
+aws-cli/2.3.4 Python/3.8.8 Linux/5.11.0-1020-azure exe/x86_64.ubuntu.20 prompt/off
+
+Upgrading AWS-CLI to version 2.0.40
+lrwxrwxrwx 1 root root 37 Nov  8 11:06 /usr/local/bin/aws -> /usr/local/aws-cli/v2/current/bin/aws
+You can now run: /usr/local/bin/aws --version
+aws-cli/2.3.6 Python/3.8.8 Linux/5.11.0-1020-azure exe/x86_64.ubuntu.20 prompt/off
+
+HashiCorp Terraform is Installed ... Ok!
+
+Isolating exiting Terraform 1.0.10 binary [/usr/local/bin/terraform] ...
+renamed '/usr/local/bin/terraform' -> '/usr/local/bin/terraform-1.0.10'
+
+Terraform Source: releases.hashicorp.com/terraform/0.13.1/terraform_0.13.1_linux_amd64.zip
+-rw-r--r-- 1 runner docker 34860186 Feb 15  2021 /tmp/terraform_0.13.1_linux_amd64.zip
+Archive:  /tmp/terraform_0.13.1_linux_amd64.zip
+  inflating: terraform
+
+Listing current Terraform version:
+Terraform v0.13.1
+
+Your version of Terraform is out of date! The latest version
+is 1.0.11. You can update by downloading from https://www.terraform.io/downloads.html
+
+Completed!
+
+Installed Packages - 1s
+
+Run jq --version 2>/dev/null ;
+jq-1.6
+tree v1.8.0 (c) 1996 - 2018 by Steve Baker, Thomas Moore, Francesc Rocher, Florian Sesser, Kyosuke Tokoro
+Python 3.8.10
+aws-cli/2.3.6 Python/3.8.8 Linux/5.11.0-1020-azure exe/x86_64.ubuntu.20 prompt/off
+Terraform v0.13.1
+
+Your version of Terraform is out of date! The latest version
+is 1.0.11. You can update by downloading from https://www.terraform.io/downloads.html
+
+Terraform Parameters - 0s
+
+Run remote_origin="$(git config --get remote.origin.url)" ;
+
+Requesting Credentials - 2s
+
+Run emvaldes/generate-credentials@master
+Run ####--------------------------------------------------------------------
+
+Fetched STS Assumed Role Values:
+
+Injecting Default User-Credentials into AWS-Credentials file: /home/runner/work/terraform-controller/terraform-controller/.aws/credentials
+
+Initiating STS Assume Role request ...
+
+> aws --profile default \
+      --region us-east-1 \
+      sts assume-role \
+      --role-arn arn:aws:iam::123456789012:role/*** \
+      --role-session-name DevOpsPipeline--211116022346 ;
+
+Constructed Session Items [array]:
+AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_TOKEN_EXPIRES AWS_PRINCIPAL_ARN AWS_DEFAULT_ACCOUNT
+
+Obtaining Caller Identity (Default-Role):
+{
+    "UserId": "AIDA2XV4BKOYGRJ4G52JY",
+    "Account": "123456789012",
+    "Arn": "arn:aws:iam::123456789012:user/devops"
+}
+
+Obtaining Caller Identity (Assumed-Role):
+{
+    "UserId": "AROA2XV4BKOYLAX3Z52SQ:DevOpsPipeline--211116022346",
+    "Account": "123456789012",
+    "Arn": "arn:aws:sts::123456789012:assumed-role/***/DevOpsPipeline--211116022346"
+}
+
+Completed!
+
+Provisioning Access - 2s
+
+Run emvaldes/configure-access@master
+Run ####--------------------------------------------------------------------
+Downloading Action-Functions: action.functions ...
+Sourcing Action-Functions ...
+-r-------- 1 runner docker 1675 Nov 16 02:24 /home/runner/work/terraform-controller/terraform-controller/.ssh/id_rsa
+
+Listing SSH Private-Key:
+-r-------- 1 runner docker 1675 Nov 16 02:24 /home/runner/work/terraform-controller/terraform-controller/.ssh/id_rsa
+
+Generating SSH Public-Key ...
+-rw-r--r-- 1 runner docker 381 Nov 16 02:24 /home/runner/work/terraform-controller/terraform-controller/.ssh/id_rsa.pub
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCnqYFzfsIDEiGjLdYDwBLng2QhNhN07xSaPi1Ou1SU2mF17ec0vXvEcPeMnNA1vcfJpp0Pz9o2+viClEkRQRz/gJUh9IDpyTogPrxGQpGtwNT4wwTyAZbUFnSKG5C+D5jKelvA3xerEsGY5KxT63SlMCCGAM2Kbe4E6J36f1/GUAimmGn5beuYt0xYFg1IxUG4WbHRN/tqAz+Y2/J1tg9OqWG3pmwlAHJH50Wd36sBk+N1TSmiaOuHx1nHXjDpw4Wqdud5bI0w5Db9DTtCxxkiT2wTl4umxBC+dE6JPt4QN3kYctNJAIRt5E2f7X4inuF6nRbUxsbFM9UEU0gSle6V
+
+/home/runner/work/terraform-controller/terraform-controller/.ssh
+├── id_rsa
+└── id_rsa.pub
+
+0 directories, 2 files
+
+Inspecting SSH Public-Key Fingerprint ...
+2048 MD5:12:2d:b0:b2:8d:96:42:97:56:10:f9:83:91:b0:fd:f3 no comment (RSA)
+
+Fetching AWS EC2 Key-Pair Fingerprint ... f1:8b:cc:31:67:c9:ea:f3:35:58:ed:9a:19:1a:a6:d9 ?
+
+aws --profile default \
+    --region us-east-1 \
+    ec2 describe-key-pairs \
+    --key-name devops
+{
+  "KeyPairs": [
+    {
+      "KeyPairId": "key-0ba9d8c80d6b6b7e8",
+      "KeyFingerprint": "f1:8b:cc:31:67:c9:ea:f3:35:58:ed:9a:19:1a:a6:d9",
+      "KeyName": "devops",
+      "KeyType": "rsa",
+      "Tags": [
+        {
+          "Key": "Name",
+          "Value": "DevOps Keypair"
+        }
+      ]
+    }
+  ]
+}
+
+Completed validating access-key!
+AWS Access Key-Pair file length: [1675] ...
+
+Completed!
+
+Provision Terraform - 26s
+
+Prepare all required actions
+Run ./
+Run ####--------------------------------------------------------------------
+Downloading Terraform Management Script: /home/runner/work/terraform-controller/terraform-controller/manage-terraform.shell ...
+
+Downloading Terraform Controller Functions: action.functions ...
+Sourcing Terraform Controller Functions ...
+Initializing modules...
+- bucket in modules/s3
+Downloading terraform-aws-modules/vpc/aws 2.15.0 for vpc...
+- vpc in .terraform/modules/vpc
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Finding latest version of hashicorp/aws...
+- Finding latest version of hashicorp/random...
+- Finding latest version of hashicorp/template...
+- Installing hashicorp/aws v3.65.0...
+- Installed hashicorp/aws v3.65.0 (self-signed, key ID 34365D9472D7468F)
+- Installing hashicorp/random v3.1.0...
+- Installed hashicorp/random v3.1.0 (self-signed, key ID 34365D9472D7468F)
+- Installing hashicorp/template v2.2.0...
+- Installed hashicorp/template v2.2.0 (self-signed, key ID 34365D9472D7468F)
+
+Partner and community providers are signed by their developers.
+If you'd like to know more about provider signing, you can read about it here:
+https://www.terraform.io/docs/plugins/signing.html
+
+The following providers do not have any version constraints in configuration,
+so the latest version was installed.
+
+To prevent automatic upgrades to new major versions that may contain breaking
+changes, we recommend adding version constraints in a required_providers block
+in your configuration, with the constraint strings suggested below.
+
+* hashicorp/aws: version = "~> 3.65.0"
+* hashicorp/random: version = "~> 3.1.0"
+* hashicorp/template: version = "~> 2.2.0"
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+Created and switched to workspace "dev"!
+
+You're now on a new, empty workspace. Workspaces isolate their state,
+so if you run "terraform plan" Terraform will not see any existing state
+for this configuration.
+Success! The configuration is valid.
+
+Terraform Custom Parameters:
+Y3VzdG9tX3RpbWVzdGFtcD0yMTExMTYwMjIzNDY= -> custom_timestamp=211116022346
+Y3VzdG9tX2VuZ2luZWVyPUVkdWFyZG8gVmFsZGVz -> custom_engineer=Eduardo Valdes
+Y3VzdG9tX2NvbnRhY3Q9ZW12YWxkZXNAaG90bWFpbC5jb20= -> custom_contact=emvaldes@hotmail.com
+Y3VzdG9tX2xpc3RzZXQ9WyJhbWktYWJjMTIzIiwiYW1pLWRlZjQ1NiJd -> custom_listset=["ami-abc123","ami-def456"]
+Y3VzdG9tX21hcHNldD17InVzLWVhc3QtMSI6ImFtaS1hYmMxMjMiLCJ1cy1lYXN0LTIiOiJhbWktZGVmNDU2In0= -> custom_mapset={"us-east-1":"ami-abc123","us-east-2":"ami-def456"}
+cm91dGU1M19yZWNvcmQ9MjExMTE2MDIyMzQ2LnRlcnJhZm9ybS1jb250cm9sbGVy -> route53_record=211116022346.terraform-controller
+
+Listing Custom Terraform Variables file [configs/dev-configs.tfvars]:
+-rw-r--r-- 1 runner docker 375 Nov 16 02:23 /home/runner/work/terraform-controller/terraform-controller/configs/dev-configs.tfvars
+
+Terraform Output Plan: /home/runner/work/terraform-controller/terraform-controller/terraform.tfstate.d/dev/terraform.tfplan
+
+Listing Private-KeyPair File: [.ssh/id_rsa]:
+-r-------- 1 runner docker 1675 Nov 16 02:24 .ssh/id_rsa
+
+Private-KeyPair File: .ssh/id_rsa
+
+Private-KeyPair Name: devops
+
+Listing Terraform Plan command:
+
+terraform plan -var="region=us-east-1" -var="aws_access_key=ASIA2XV4BKOYO3ZIZZGC" -var="aws_secret_key=j+5lZ2TPAvEX8hyVaVhSfk50UvgAEFnDiB354MvD" -var="private_keypair_file=.ssh/id_rsa" -var="private_keypair_name=devops" -var="custom_timestamp=211116022346" -var="custom_engineer=Eduardo Valdes" -var="custom_contact=emvaldes@hotmail.com" -var="custom_listset=["ami-abc123","ami-def456"]" -var="custom_mapset={"us-east-1":"ami-abc123","us-east-2":"ami-def456"}" -var="route53_record=211116022346.terraform-controller" -var-file="configs/dev-configs.tfvars" -out terraform.tfstate.d/dev/terraform.tfplan
+
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+data.template_file.public_cidrsubnet[0]: Refreshing state...
+data.aws_elb_hosted_zone_id.main: Refreshing state...
+data.aws_availability_zones.available: Refreshing state...
+data.aws_ami.aws-linux: Refreshing state...
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_elb.web will be created
+  + resource "aws_elb" "web" {
+      + arn                         = (known after apply)
+      + availability_zones          = (known after apply)
+      + connection_draining         = false
+      + connection_draining_timeout = 300
+      + cross_zone_load_balancing   = ***
+      + dns_name                    = (known after apply)
+      + id                          = (known after apply)
+      + idle_timeout                = 60
+      + instances                   = (known after apply)
+      + internal                    = (known after apply)
+      + name                        = (known after apply)
+      + security_groups             = (known after apply)
+      + source_security_group       = (known after apply)
+      + source_security_group_id    = (known after apply)
+      + subnets                     = (known after apply)
+      + tags                        = (known after apply)
+      + tags_all                    = (known after apply)
+      + zone_id                     = (known after apply)
+
+      + health_check {
+          + healthy_threshold   = 2
+          + interval            = 30
+          + target              = "TCP:80"
+          + timeout             = 5
+          + unhealthy_threshold = 2
+        }
+
+      + listener {
+          + instance_port     = 80
+          + instance_protocol = "http"
+          + lb_port           = 80
+          + lb_protocol       = "http"
+        }
+    }
+
+  # aws_instance.nginx[0] will be created
+  + resource "aws_instance" "nginx" {
+      + ami                                  = "ami-0a2c275b42dee0b81"
+      + arn                                  = (known after apply)
+      + associate_public_ip_address          = (known after apply)
+      + availability_zone                    = (known after apply)
+      + cpu_core_count                       = (known after apply)
+      + cpu_threads_per_core                 = (known after apply)
+      + disable_api_termination              = (known after apply)
+      + ebs_optimized                        = (known after apply)
+      + get_password_data                    = false
+      + host_id                              = (known after apply)
+      + iam_instance_profile                 = (known after apply)
+      + id                                   = (known after apply)
+      + instance_initiated_shutdown_behavior = (known after apply)
+      + instance_state                       = (known after apply)
+      + instance_type                        = "t2.micro"
+      + ipv6_address_count                   = (known after apply)
+      + ipv6_addresses                       = (known after apply)
+      + key_name                             = "devops"
+      + monitoring                           = (known after apply)
+      + outpost_arn                          = (known after apply)
+      + password_data                        = (known after apply)
+      + placement_group                      = (known after apply)
+      + placement_partition_number           = (known after apply)
+      + primary_network_interface_id         = (known after apply)
+      + private_dns                          = (known after apply)
+      + private_ip                           = (known after apply)
+      + public_dns                           = (known after apply)
+      + public_ip                            = (known after apply)
+      + secondary_private_ips                = (known after apply)
+      + security_groups                      = (known after apply)
+      + source_dest_check                    = ***
+      + subnet_id                            = (known after apply)
+      + tags                                 = (known after apply)
+      + tags_all                             = (known after apply)
+      + tenancy                              = (known after apply)
+      + user_data                            = (known after apply)
+      + user_data_base64                     = (known after apply)
+      + vpc_security_group_ids               = (known after apply)
+
+      + capacity_reservation_specification {
+          + capacity_reservation_preference = (known after apply)
+
+          + capacity_reservation_target {
+              + capacity_reservation_id = (known after apply)
+            }
+        }
+
+      + ebs_block_device {
+          + delete_on_termination = (known after apply)
+          + device_name           = (known after apply)
+          + encrypted             = (known after apply)
+          + iops                  = (known after apply)
+          + kms_key_id            = (known after apply)
+          + snapshot_id           = (known after apply)
+          + tags                  = (known after apply)
+          + throughput            = (known after apply)
+          + volume_id             = (known after apply)
+          + volume_size           = (known after apply)
+          + volume_type           = (known after apply)
+        }
+
+      + enclave_options {
+          + enabled = (known after apply)
+        }
+
+      + ephemeral_block_device {
+          + device_name  = (known after apply)
+          + no_device    = (known after apply)
+          + virtual_name = (known after apply)
+        }
+
+      + metadata_options {
+          + http_endpoint               = (known after apply)
+          + http_put_response_hop_limit = (known after apply)
+          + http_tokens                 = (known after apply)
+        }
+
+      + network_interface {
+          + delete_on_termination = (known after apply)
+          + device_index          = (known after apply)
+          + network_interface_id  = (known after apply)
+        }
+
+      + root_block_device {
+          + delete_on_termination = (known after apply)
+          + device_name           = (known after apply)
+          + encrypted             = (known after apply)
+          + iops                  = (known after apply)
+          + kms_key_id            = (known after apply)
+          + tags                  = (known after apply)
+          + throughput            = (known after apply)
+          + volume_id             = (known after apply)
+          + volume_size           = (known after apply)
+          + volume_type           = (known after apply)
+        }
+    }
+
+  # aws_s3_bucket_object.graphic will be created
+  + resource "aws_s3_bucket_object" "graphic" {
+      + acl                    = "private"
+      + bucket                 = (known after apply)
+      + bucket_key_enabled     = (known after apply)
+      + content_type           = (known after apply)
+      + etag                   = (known after apply)
+      + force_destroy          = false
+      + id                     = (known after apply)
+      + key                    = "/website/corporate.jpg"
+      + kms_key_id             = (known after apply)
+      + server_side_encryption = (known after apply)
+      + source                 = "./website/corporate.jpg"
+      + storage_class          = (known after apply)
+      + tags_all               = (known after apply)
+      + version_id             = (known after apply)
+    }
+
+  # aws_security_group.elb-sg will be created
+  + resource "aws_security_group" "elb-sg" {
+      + arn                    = (known after apply)
+      + description            = "Managed by Terraform"
+      + egress                 = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 0
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "-1"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 0
+            },
+        ]
+      + id                     = (known after apply)
+      + ingress                = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 80
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 80
+            },
+        ]
+      + name                   = (known after apply)
+      + name_prefix            = (known after apply)
+      + owner_id               = (known after apply)
+      + revoke_rules_on_delete = false
+      + tags                   = (known after apply)
+      + tags_all               = (known after apply)
+      + vpc_id                 = (known after apply)
+    }
+
+  # aws_security_group.nginx-sg will be created
+  + resource "aws_security_group" "nginx-sg" {
+      + arn                    = (known after apply)
+      + description            = "Managed by Terraform"
+      + egress                 = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 0
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "-1"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 0
+            },
+        ]
+      + id                     = (known after apply)
+      + ingress                = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = ""
+              + from_port        = 22
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 22
+            },
+          + {
+              + cidr_blocks      = [
+                  + "10.0.0.0/16",
+                ]
+              + description      = ""
+              + from_port        = 80
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 80
+            },
+        ]
+      + name                   = (known after apply)
+      + name_prefix            = (known after apply)
+      + owner_id               = (known after apply)
+      + revoke_rules_on_delete = false
+      + tags                   = (known after apply)
+      + tags_all               = (known after apply)
+      + vpc_id                 = (known after apply)
+    }
+
+  # random_integer.rand will be created
+  + resource "random_integer" "rand" {
+      + id     = (known after apply)
+      + max    = 99999
+      + min    = 10000
+      + result = (known after apply)
+    }
+
+  # module.bucket.aws_iam_instance_profile.instance_profile will be created
+  + resource "aws_iam_instance_profile" "instance_profile" {
+      + arn         = (known after apply)
+      + create_date = (known after apply)
+      + id          = (known after apply)
+      + name        = (known after apply)
+      + path        = "/"
+      + role        = (known after apply)
+      + tags_all    = (known after apply)
+      + unique_id   = (known after apply)
+    }
+
+  # module.bucket.aws_iam_role.allow_instance_s3 will be created
+  + resource "aws_iam_role" "allow_instance_s3" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "ec2.amazonaws.com"
+                        }
+                      + Sid       = ""
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + tags_all              = (known after apply)
+      + unique_id             = (known after apply)
+
+      + inline_policy {
+          + name   = (known after apply)
+          + policy = (known after apply)
+        }
+    }
+
+  # module.bucket.aws_iam_role_policy.allow_s3_all will be created
+  + resource "aws_iam_role_policy" "allow_s3_all" {
+      + id     = (known after apply)
+      + name   = (known after apply)
+      + policy = (known after apply)
+      + role   = (known after apply)
+    }
+
+  # module.bucket.aws_s3_bucket.web_bucket will be created
+  + resource "aws_s3_bucket" "web_bucket" {
+      + acceleration_status         = (known after apply)
+      + acl                         = "private"
+      + arn                         = (known after apply)
+      + bucket                      = (known after apply)
+      + bucket_domain_name          = (known after apply)
+      + bucket_regional_domain_name = (known after apply)
+      + force_destroy               = ***
+      + hosted_zone_id              = (known after apply)
+      + id                          = (known after apply)
+      + region                      = (known after apply)
+      + request_payer               = (known after apply)
+      + tags                        = (known after apply)
+      + tags_all                    = (known after apply)
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+
+      + versioning {
+          + enabled    = (known after apply)
+          + mfa_delete = (known after apply)
+        }
+    }
+
+  # module.vpc.aws_internet_gateway.this[0] will be created
+  + resource "aws_internet_gateway" "this" {
+      + arn      = (known after apply)
+      + id       = (known after apply)
+      + owner_id = (known after apply)
+      + tags     = (known after apply)
+      + tags_all = (known after apply)
+      + vpc_id   = (known after apply)
+    }
+
+  # module.vpc.aws_route.public_internet_gateway[0] will be created
+  + resource "aws_route" "public_internet_gateway" {
+      + destination_cidr_block = "0.0.0.0/0"
+      + gateway_id             = (known after apply)
+      + id                     = (known after apply)
+      + instance_id            = (known after apply)
+      + instance_owner_id      = (known after apply)
+      + network_interface_id   = (known after apply)
+      + origin                 = (known after apply)
+      + route_table_id         = (known after apply)
+      + state                  = (known after apply)
+
+      + timeouts {
+          + create = "5m"
+        }
+    }
+
+  # module.vpc.aws_route_table.public[0] will be created
+  + resource "aws_route_table" "public" {
+      + arn              = (known after apply)
+      + id               = (known after apply)
+      + owner_id         = (known after apply)
+      + propagating_vgws = (known after apply)
+      + route            = (known after apply)
+      + tags             = (known after apply)
+      + tags_all         = (known after apply)
+      + vpc_id           = (known after apply)
+    }
+
+  # module.vpc.aws_route_table_association.public[0] will be created
+  + resource "aws_route_table_association" "public" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # module.vpc.aws_subnet.public[0] will be created
+  + resource "aws_subnet" "public" {
+      + arn                             = (known after apply)
+      + assign_ipv6_address_on_creation = false
+      + availability_zone               = "us-east-1a"
+      + availability_zone_id            = (known after apply)
+      + cidr_block                      = "10.0.0.0/24"
+      + id                              = (known after apply)
+      + ipv6_cidr_block_association_id  = (known after apply)
+      + map_public_ip_on_launch         = ***
+      + owner_id                        = (known after apply)
+      + tags                            = (known after apply)
+      + tags_all                        = (known after apply)
+      + vpc_id                          = (known after apply)
+    }
+
+  # module.vpc.aws_vpc.this[0] will be created
+  + resource "aws_vpc" "this" {
+      + arn                              = (known after apply)
+      + assign_generated_ipv6_cidr_block = false
+      + cidr_block                       = "10.0.0.0/16"
+      + default_network_acl_id           = (known after apply)
+      + default_route_table_id           = (known after apply)
+      + default_security_group_id        = (known after apply)
+      + dhcp_options_id                  = (known after apply)
+      + enable_classiclink               = (known after apply)
+      + enable_classiclink_dns_support   = (known after apply)
+      + enable_dns_hostnames             = false
+      + enable_dns_support               = ***
+      + id                               = (known after apply)
+      + instance_tenancy                 = "default"
+      + ipv6_association_id              = (known after apply)
+      + ipv6_cidr_block                  = (known after apply)
+      + main_route_table_id              = (known after apply)
+      + owner_id                         = (known after apply)
+      + tags                             = (known after apply)
+      + tags_all                         = (known after apply)
+    }
+
+Plan: 16 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+This plan was saved to: terraform.tfstate.d/dev/terraform.tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "terraform.tfstate.d/dev/terraform.tfplan"
+
+> aws --profile default \
+      --region us-east-1 \
+      dynamodb list-tables
+
+{
+    "TableNames": [
+        "github-pipelines",
+        "terraform-pipelines",
+        "terraform-states"
+    ]
+}
+
+> aws --profile default \
+      --region us-east-1 \
+      dynamodb put-item \
+      --table-name github-pipelines \
+      --item file:///home/runner/work/terraform-controller/terraform-controller/github-pipelines.json
+
+Listing DynamoDB GitHub Table-Record: ...
+
+> aws --profile default \
+      --region us-east-1 \
+      dynamodb get-item \
+      --table-name github-pipelines \
+      --key '{ "shaindex": { "S": "fc085d22760149ba48725016e10e823dc2d51a51" }, "repository": { "S": "terraform-controller" } }'
+
+{
+    "Item": {
+        "repository": {
+            "S": "terraform-controller"
+        },
+        "version": {
+            "S": "???"
+        },
+        "datetime": {
+            "S": "211116022346"
+        },
+        "shaindex": {
+            "S": "fc085d22760149ba48725016e10e823dc2d51a51"
+        },
+        "organization": {
+            "S": "emvaldes"
+        },
+        "release": {
+            "BOOL": false
+        },
+        "branch": {
+            "S": "refs/heads/master"
+        },
+        "contact": {
+            "S": "???"
+        },
+        "author": {
+            "S": "emvaldes"
+        }
+    }
+}
+
+> aws --profile default \
+      --region us-east-1 \
+      dynamodb list-tables
+
+{
+    "TableNames": [
+        "github-pipelines",
+        "terraform-pipelines",
+        "terraform-states"
+    ]
+}
+
+> aws --profile default \
+      --region us-east-1 \
+      dynamodb put-item \
+      --table-name terraform-pipelines \
+      --item file:///home/runner/work/terraform-controller/terraform-controller/terraform-pipelines.json
+
+Listing DynamoDB Terraform Table-Record: ...
+
+> aws --profile default \
+      --region us-east-1 \
+      dynamodb get-item \
+      --table-name terraform-pipelines \
+      --key '{ "shaindex": { "S": "fc085d22760149ba48725016e10e823dc2d51a51" }, "repository": { "S": "terraform-controller" } }'
+
+{
+    "Item": {
+        "environment": {
+            "M": {
+                "description": {
+                    "S": "???"
+                },
+                "target": {
+                    "S": "dev"
+                }
+            }
+        },
+        "repository": {
+            "S": "terraform-controller"
+        },
+        "outputs": {
+            "L": []
+        },
+        "configs": {
+            "L": [
+                {
+                    "S": "configs/dev-configs.tfvars"
+                }
+            ]
+        },
+        "datetime": {
+            "S": "211116022346"
+        },
+        "location": {
+            "S": "pipelines/dev/21/11/16/022346/fc085d2"
+        },
+        "shaindex": {
+            "S": "fc085d22760149ba48725016e10e823dc2d51a51"
+        },
+        "identity": {
+            "M": {
+                "access": {
+                    "S": "***"
+                },
+                "userid": {
+                    "S": "???"
+                },
+                "account": {
+                    "S": "123456789012"
+                },
+                "profile": {
+                    "S": "devops"
+                }
+            }
+        },
+        "pipeline": {
+            "S": "pipelines"
+        },
+        "variables": {
+            "L": [
+                {
+                    "S": "custom_timestamp='211116022346'"
+                },
+                {
+                    "S": "custom_engineer='Eduardo Valdes'"
+                },
+                {
+                    "S": "custom_contact='emvaldes@hotmail.com'"
+                },
+                {
+                    "S": "custom_listset='[\"ami-abc123\",\"ami-def456\"]'"
+                },
+                {
+                    "S": "custom_mapset='{\"us-east-1\":\"ami-abc123\",\"us-east-2\":\"ami-def456\"}'"
+                },
+                {
+                    "S": "route53_record='211116022346.terraform-controller'"
+                }
+            ]
+        }
+    }
+}
+
+Completed!
+
+Deploy Terraform - 1m 26s
+
+Prepare all required actions
+Run ./
+Run ####--------------------------------------------------------------------
+Downloading Terraform Management Script: /home/runner/work/terraform-controller/terraform-controller/manage-terraform.shell ...
+
+Downloading Terraform Controller Functions: action.functions ...
+Sourcing Terraform Controller Functions ...
+Listing Terraform Input Plan: [/home/runner/work/terraform-controller/terraform-controller/terraform.tfstate.d/dev/terraform.tfplan]:
+-rw-r--r-- 1 runner docker 25510 Nov 16 02:24 /home/runner/work/terraform-controller/terraform-controller/terraform.tfstate.d/dev/terraform.tfplan
+
+random_integer.rand: Creating...
+random_integer.rand: Creation complete after 0s [id=75207]
+module.bucket.aws_iam_role.allow_instance_s3: Creating...
+module.vpc.aws_vpc.this[0]: Creating...
+module.bucket.aws_s3_bucket.web_bucket: Creating...
+module.bucket.aws_iam_role.allow_instance_s3: Creation complete after 0s [id=terraform-dev-75207_allow_instance_s3]
+module.bucket.aws_iam_role_policy.allow_s3_all: Creating...
+module.bucket.aws_iam_instance_profile.instance_profile: Creating...
+module.bucket.aws_iam_role_policy.allow_s3_all: Creation complete after 0s [id=terraform-dev-75207_allow_instance_s3:terraform-dev-75207_allow_all]
+module.bucket.aws_iam_instance_profile.instance_profile: Creation complete after 0s [id=terraform-dev-75207_instance_profile]
+module.bucket.aws_s3_bucket.web_bucket: Creation complete after 1s [id=terraform-dev-75207]
+aws_s3_bucket_object.graphic: Creating...
+module.vpc.aws_vpc.this[0]: Creation complete after 1s [id=vpc-01312157fe1d24bd2]
+module.vpc.aws_subnet.public[0]: Creating...
+module.vpc.aws_route_table.public[0]: Creating...
+module.vpc.aws_internet_gateway.this[0]: Creating...
+aws_security_group.elb-sg: Creating...
+aws_security_group.nginx-sg: Creating...
+aws_s3_bucket_object.graphic: Creation complete after 0s [id=/website/corporate.jpg]
+module.vpc.aws_internet_gateway.this[0]: Creation complete after 1s [id=igw-0c93bd79d546a2b25]
+module.vpc.aws_route_table.public[0]: Creation complete after 1s [id=rtb-06a89f777e193eb4f]
+module.vpc.aws_route.public_internet_gateway[0]: Creating...
+module.vpc.aws_route.public_internet_gateway[0]: Creation complete after 1s [id=r-rtb-06a89f777e193eb4f1080289494]
+aws_security_group.elb-sg: Creation complete after 2s [id=sg-0b6bc290d11847e0f]
+aws_security_group.nginx-sg: Creation complete after 2s [id=sg-030127c5f91f9171a]
+module.vpc.aws_subnet.public[0]: Still creating... [10s elapsed]
+module.vpc.aws_subnet.public[0]: Creation complete after 11s [id=subnet-08adc8c4a5851ca4b]
+module.vpc.aws_route_table_association.public[0]: Creating...
+aws_instance.nginx[0]: Creating...
+module.vpc.aws_route_table_association.public[0]: Creation complete after 0s [id=rtbassoc-0d12328fa3827413e]
+aws_instance.nginx[0]: Still creating... [10s elapsed]
+aws_instance.nginx[0]: Still creating... [20s elapsed]
+aws_instance.nginx[0]: Still creating... [30s elapsed]
+aws_instance.nginx[0]: Provisioning with 'file'...
+aws_instance.nginx[0]: Still creating... [40s elapsed]
+aws_instance.nginx[0]: Provisioning with 'file'...
+aws_instance.nginx[0]: Provisioning with 'file'...
+aws_instance.nginx[0]: Provisioning with 'remote-exec'...
+aws_instance.nginx[0] (remote-exec): Connecting to remote host via SSH...
+aws_instance.nginx[0] (remote-exec):   Host: 35.170.198.178
+aws_instance.nginx[0] (remote-exec):   User: ec2-user
+aws_instance.nginx[0] (remote-exec):   Password: false
+aws_instance.nginx[0] (remote-exec):   Private key: ***
+aws_instance.nginx[0] (remote-exec):   Certificate: false
+aws_instance.nginx[0] (remote-exec):   SSH Agent: false
+aws_instance.nginx[0] (remote-exec):   Checking Host Key: false
+aws_instance.nginx[0] (remote-exec): Connected!
+aws_instance.nginx[0] (remote-exec): Loaded plugins: priorities, update-motd,
+aws_instance.nginx[0] (remote-exec):               : upgrade-helper
+aws_instance.nginx[0] (remote-exec): Resolving Dependencies
+aws_instance.nginx[0] (remote-exec): --> Running transaction check
+aws_instance.nginx[0] (remote-exec): ---> Package nginx.x86_64 1:1.18.0-1.43.amzn1 will be installed
+aws_instance.nginx[0] (remote-exec): --> Processing Dependency: libprofiler.so.0()(64bit) for package: 1:nginx-1.18.0-1.43.amzn1.x86_64
+aws_instance.nginx[0] (remote-exec): --> Running transaction check
+aws_instance.nginx[0] (remote-exec): ---> Package gperftools-libs.x86_64 0:2.0-11.5.amzn1 will be installed
+aws_instance.nginx[0] (remote-exec): --> Processing Dependency: libunwind.so.8()(64bit) for package: gperftools-libs-2.0-11.5.amzn1.x86_64
+aws_instance.nginx[0] (remote-exec): --> Running transaction check
+aws_instance.nginx[0] (remote-exec): ---> Package libunwind.x86_64 0:1.1-10.8.amzn1 will be installed
+aws_instance.nginx[0]: Still creating... [50s elapsed]
+aws_instance.nginx[0] (remote-exec): --> Finished Dependency Resolution
+
+aws_instance.nginx[0] (remote-exec): Dependencies Resolved
+
+aws_instance.nginx[0] (remote-exec): ========================================
+aws_instance.nginx[0] (remote-exec):  Package   Arch   Version
+aws_instance.nginx[0] (remote-exec):                      Repository    Size
+aws_instance.nginx[0] (remote-exec): ========================================
+aws_instance.nginx[0] (remote-exec): Installing:
+aws_instance.nginx[0] (remote-exec):  nginx     x86_64 1:1.18.0-1.43.amzn1
+aws_instance.nginx[0] (remote-exec):                      amzn-updates 603 k
+aws_instance.nginx[0] (remote-exec): Installing for dependencies:
+aws_instance.nginx[0] (remote-exec):  gperftools-libs
+aws_instance.nginx[0] (remote-exec):            x86_64 2.0-11.5.amzn1
+aws_instance.nginx[0] (remote-exec):                      amzn-main    570 k
+aws_instance.nginx[0] (remote-exec):  libunwind x86_64 1.1-10.8.amzn1
+aws_instance.nginx[0] (remote-exec):                      amzn-main     72 k
+
+aws_instance.nginx[0] (remote-exec): Transaction Summary
+aws_instance.nginx[0] (remote-exec): ========================================
+aws_instance.nginx[0] (remote-exec): Install  1 Package (+2 Dependent packages)
+
+aws_instance.nginx[0] (remote-exec): Total download size: 1.2 M
+aws_instance.nginx[0] (remote-exec): Installed size: 3.0 M
+aws_instance.nginx[0] (remote-exec): Downloading packages:
+aws_instance.nginx[0] (remote-exec): (1/3): libunwind-1 |  72 kB   00:00
+aws_instance.nginx[0] (remote-exec): (2/3): gperftools- | 570 kB   00:00
+aws_instance.nginx[0] (remote-exec): (3/3): nginx-1.18. | 603 kB   00:00
+aws_instance.nginx[0] (remote-exec): ----------------------------------------
+aws_instance.nginx[0] (remote-exec): Total      5.7 MB/s | 1.2 MB  00:00
+aws_instance.nginx[0] (remote-exec): Running transaction check
+aws_instance.nginx[0] (remote-exec): Running transaction test
+aws_instance.nginx[0] (remote-exec): Transaction test succeeded
+aws_instance.nginx[0] (remote-exec): Running transaction
+aws_instance.nginx[0] (remote-exec):   Installing : libunwin [         ] 1/3
+aws_instance.nginx[0] (remote-exec):   Installing : libunwin [#####    ] 1/3
+aws_instance.nginx[0] (remote-exec):   Installing : libunwin [#######  ] 1/3
+aws_instance.nginx[0] (remote-exec):   Installing : libunwin [######## ] 1/3
+aws_instance.nginx[0] (remote-exec):   Installing : libunwind-1.1-10.8   1/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [         ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [#        ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [##       ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [###      ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [####     ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [#####    ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [######   ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [#######  ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftoo [######## ] 2/3
+aws_instance.nginx[0] (remote-exec):   Installing : gperftools-libs-2.   2/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [         ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [#        ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [##       ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [###      ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [####     ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [#####    ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [######   ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [#######  ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx- [######## ] 3/3
+aws_instance.nginx[0] (remote-exec):   Installing : 1:nginx-1.18.0-1.4   3/3
+aws_instance.nginx[0] (remote-exec):   Verifying  : libunwind-1.1-10.8   1/3
+aws_instance.nginx[0] (remote-exec):   Verifying  : 1:nginx-1.18.0-1.4   2/3
+aws_instance.nginx[0] (remote-exec):   Verifying  : gperftools-libs-2.   3/3
+
+aws_instance.nginx[0] (remote-exec): Installed:
+aws_instance.nginx[0] (remote-exec):   nginx.x86_64 1:1.18.0-1.43.amzn1
+
+aws_instance.nginx[0] (remote-exec): Dependency Installed:
+aws_instance.nginx[0] (remote-exec):   gperftools-libs.x86_64 0:2.0-11.5.amzn1
+aws_instance.nginx[0] (remote-exec):   libunwind.x86_64 0:1.1-10.8.amzn1
+
+aws_instance.nginx[0] (remote-exec): Complete!
+aws_instance.nginx[0] (remote-exec): Starting nginx: [  OK  ]
+aws_instance.nginx[0] (remote-exec): Collecting s3cmd
+aws_instance.nginx[0] (remote-exec):   Downloading https://files.pythonhosted.org/packages/1e/88/9630c6e894575f03c1685104a6562a31ecf9e82b5b687d8516445a051fbe/s3cmd-2.2.0-py2.py3-none-any.whl (153kB)
+aws_instance.nginx[0] (remote-exec): 25l
+aws_instance.nginx[0] (remote-exec):     6% |██▏                             | 10kB 34.6MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     13% |████▎                           | 20kB 30.9MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     19% |██████▍                         | 30kB 31.3MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     26% |████████▌                       | 40kB 31.3MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     33% |██████████▋                     | 51kB 32.4MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     39% |████████████▊                   | 61kB 32.7MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     46% |███████████████                 | 71kB 32.9MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     53% |█████████████████               | 81kB 13.7MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     59% |███████████████████▏            | 92kB 14.7MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     66% |█████████████████████▎          | 102kB 15.6MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     73% |███████████████████████▍        | 112kB 15.7MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     79% |█████████████████████████▌      | 122kB 16.0MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     86% |███████████████████████████▊    | 133kB 16.0MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     93% |█████████████████████████████▉  | 143kB 16.2MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     99% |████████████████████████████████| 153kB 16.2MB/s eta 0:00:01
+aws_instance.nginx[0] (remote-exec):     100% |████████████████████████████████| 163kB 3.0MB/s
+aws_instance.nginx[0] (remote-exec): 25hCollecting python-magic (from s3cmd)
+aws_instance.nginx[0] (remote-exec):   Downloading https://files.pythonhosted.org/packages/d3/99/c89223c6547df268596899334ee77b3051f606077317023617b1c43162fb/python_magic-0.4.24-py2.py3-none-any.whl
+aws_instance.nginx[0] (remote-exec): Requirement already satisfied: python-dateutil in /usr/lib/python2.7/dist-packages (from s3cmd)
+aws_instance.nginx[0] (remote-exec): Requirement already satisfied: six in /usr/lib/python2.7/dist-packages (from python-dateutil->s3cmd)
+aws_instance.nginx[0] (remote-exec): Installing collected packages: python-magic, s3cmd
+aws_instance.nginx[0] (remote-exec): Successfully installed python-magic-0.4.24 s3cmd-2.2.0
+aws_instance.nginx[0] (remote-exec): You are using pip version 9.0.3, however version 21.3.1 is available.
+aws_instance.nginx[0] (remote-exec): You should consider upgrading via the 'pip install --upgrade pip' command.
+aws_instance.nginx[0] (remote-exec): download: 's3://terraform-dev-75207/website/corporate.jpg' -> './corporate.jpg'  [1 of 1]
+aws_instance.nginx[0] (remote-exec):  41686 of 41686   100% in    0s   943.76 KB/s
+aws_instance.nginx[0] (remote-exec):  41686 of 41686   100% in    0s   939.03 KB/s  done
+aws_instance.nginx[0] (remote-exec): upload: '/var/log/nginx/access.log' -> 's3://terraform-dev-75207/nginx/i-099b8f6d4c01403e1/access.log'  [1 of 3]
+aws_instance.nginx[0] (remote-exec):  0 of 0     0% in    0s     0.00 B/s
+aws_instance.nginx[0] (remote-exec):  0 of 0     0% in    0s     0.00 B/s  done
+aws_instance.nginx[0] (remote-exec): upload: '/var/log/nginx/access.log-20211116.gz' -> 's3://terraform-dev-75207/nginx/i-099b8f6d4c01403e1/access.log-20211116.gz'  [2 of 3]
+aws_instance.nginx[0] (remote-exec):  20 of 20   100% in    0s    21.90 KB/s
+aws_instance.nginx[0] (remote-exec):  20 of 20   100% in    0s   606.50 B/s  done
+aws_instance.nginx[0] (remote-exec): upload: '/var/log/nginx/error.log' -> 's3://terraform-dev-75207/nginx/i-099b8f6d4c01403e1/error.log'  [3 of 3]
+aws_instance.nginx[0] (remote-exec):  0 of 0     0% in    0s     0.00 B/s
+aws_instance.nginx[0] (remote-exec):  0 of 0     0% in    0s     0.00 B/s  done
+aws_instance.nginx[0] (remote-exec): remote copy: 'access.log-20211116.gz' -> 'error.log-20211116.gz'  [1 of 1]
+aws_instance.nginx[0] (remote-exec): Done. Uploaded 20 bytes in 1.0 seconds, 20.00 B/s.
+aws_instance.nginx[0]: Creation complete after 56s [id=i-099b8f6d4c01403e1]
+aws_elb.web: Creating...
+aws_elb.web: Creation complete after 2s [id=dev-nginx-elb-75207]
+
+Apply complete! Resources: 16 added, 0 changed, 0 destroyed.
+
+The state of your infrastructure has been saved to the path
+below. This state is required to modify and destroy your
+infrastructure, so keep it safe. To inspect the complete state
+use the `terraform show` command.
+
+State path: terraform.tfstate
+
+Outputs:
+
+aws_elb_public_dns = dev-nginx-elb-75207-460671641.us-east-1.elb.amazonaws.com
+cname_record_url = http://211116022346.terraform-controller.emvaldes.name
+custom_contact = Updated - emvaldes@yahoo.com
+custom_engineer = Updated - DevOps Team
+custom_listset = Updated - Proving Nothing
+custom_mapset = Updated - Testing Something
+custom_timestamp = Updated - Today Is A Good Day To ...
+filebased_parameters = Updated - Development Parameters loaded from a custom parameter file
+resources_index = 75207
+/home/runner/work/terraform-controller/terraform-controller
+
+AWS DynamoDB Expression Attribute-Values:
+
+{
+  ":outputs": {
+    "L": [
+      {
+        "S": "aws_elb_public_dns='dev-nginx-elb-75207-460671641.us-east-1.elb.amazonaws.com'"
+      },
+      {
+        "S": "cname_record_url='http://211116022346.terraform-controller.emvaldes.name'"
+      },
+      {
+        "S": "custom_contact='Updated - emvaldes@yahoo.com'"
+      },
+      {
+        "S": "custom_engineer='Updated - DevOps Team'"
+      },
+      {
+        "S": "custom_listset='Updated - Proving Nothing'"
+      },
+      {
+        "S": "custom_mapset='Updated - Testing Something'"
+      },
+      {
+        "S": "custom_timestamp='Updated - Today Is A Good Day To ...'"
+      },
+      {
+        "S": "filebased_parameters='Updated - Development Parameters loaded from a custom parameter file'"
+      },
+      {
+        "S": "resources_index='75207'"
+      }
+    ]
+  }
+}
+
+> aws --profile default \
+      --region us-east-1 \
+      dynamodb update-item \
+      --table-name terraform-pipelines \
+      --key '{ "shaindex": { "S": "fc085d22760149ba48725016e10e823dc2d51a51" }, "repository": { "S": "terraform-controller" } }' \
+      --update-expression "SET outputs = :outputs" \
+      --expression-attribute-values file://attribute-values.json
+
+How-To Destroy Terraform Infrastructure State:
+-> s3://terraform--states--123456789012/pipelines/dev/21/11/16/022346/fc085d2/scripts/destroy.shell
+
+#!/bin/bash
+
+read -p "Enter Target-Profile [ e.g.: default ] ?: " aws_default_profile ;
+read -p "Enter Target-Region  [ e.g.: us-east-1 ] ?: " aws_default_region ;
+
+export terraform_restore="/tmp/terraform/211116022346" ;
+
+mkdir -p ${terraform_restore} ;
+cd ${terraform_restore} ;
+
+git clone git://github.com/emvaldes/terraform-controller.git ${terraform_restore} ;
+git checkout -b restore fc085d22760149ba48725016e10e823dc2d51a51 ;
+
+[[ -d /home/runner/work/terraform-controller/terraform-controller ]] && export HOME="/home/runner/work/terraform-controller/terraform-controller" ;
+cp -pr ${HOME}/.ssh ${terraform_restore} ;
+
+export AWS_PROFILE="${aws_default_profile}";
+export AWS_DEFAULT_REGION="${aws_default_region}";
+
+echo -e "\nFetching Terraform components ... \n";
+aws --profile ${AWS_PROFILE} \
+    --region ${AWS_DEFAULT_REGION} \
+    s3 cp s3://terraform--states--123456789012/pipelines/dev/21/11/16/022346/fc085d2 \
+    ${terraform_restore} \
+    --recursive \
+  ;
+
+echo -e "\nDisplaying Terraform file-structure ...\n" ;
+tree -FCla --prune -I .git $(pwd) ;
+
+if [[ -f ${terraform_restore}/terraform.tfstate.d/dev/terraform.tfplan ]]; then
+        echo -e "\nInitializing Terraform ... \n" ;
+        eval  \
+             terraform init ; echo -e ;
+        echo -e "\nTerraform Create|Select Workspace [dev] ... \n" ;
+        eval  \
+             terraform workspace select dev || terraform workspace new dev ;
+        echo -e "\nTerraform Listing Workspaces ... \n" ;
+        eval  \
+             terraform workspace list ;
+        echo -e "\nExecuting Terraform ..." ;
+        eval  \
+             TF_VAR_region=${AWS_DEFAULT_REGION} \
+             terraform destroy -auto-approve ;
+  else  echo -e "\nWarning: Unable to download Terraform components! \n" ;
+        exit 1 ;
+fi ;
+
+Completed!
+
+Backup Terraform - 2s
+
+Run emvaldes/provision-terraform@master
+Run ####--------------------------------------------------------------------
+Downloading Terraform Management Script: /home/runner/work/terraform-controller/terraform-controller/manage-terraform.shell ...
+
+Downloading Terraform Controller Functions: action.functions ...
+Sourcing Terraform Controller Functions ...
+
+Creating Target Build-Set Container ... [ dev/21/11/16/022346/fc085d2 ]
+
+Transferring terraform configurations to container ...
+
+dev/21/11/16/022346/fc085d2
+├── fc085d22760149ba48725016e10e823dc2d51a51
+├── scripts
+│   ├── destroy.shell
+│   └── restore.shell
+└── terraform.tfstate.d
+    └── dev
+        ├── terraform.tfplan
+        └── terraform.tfstate
+
+3 directories, 5 files
+
+Working Directory: /home/runner/work/terraform-controller/terraform-controller
+
+S3Bucket Path: pipelines/dev/21/11/16/022346/fc085d2/
+
+Transferring Terraform State @ Local-Storage ... terraform--states--123456789012
+
+> aws --profile default \
+      --region us-east-1 \
+      s3 cp \
+      dev/21/11/16/022346/fc085d2 s3://terraform--states--123456789012/pipelines/dev/21/11/16/022346/fc085d2/ \
+      --recursive \
+      --only-show-errors
+
+Listing Terraform State @ AWS S3 Bucket ... terraform--states--123456789012
+
+> aws --profile default \
+      --region us-east-1 \
+      s3 ls \
+      s3://terraform--states--123456789012/pipelines/dev/21/11/16/022346/fc085d2/ \
+      --recursive
+
+2021-11-16 02:26:04          0 pipelines/dev/21/11/16/022346/fc085d2/fc085d22760149ba48725016e10e823dc2d51a51
+2021-11-16 02:26:04       1792 pipelines/dev/21/11/16/022346/fc085d2/scripts/destroy.shell
+2021-11-16 02:26:04       1852 pipelines/dev/21/11/16/022346/fc085d2/scripts/restore.shell
+2021-11-16 02:26:04      25510 pipelines/dev/21/11/16/022346/fc085d2/terraform.tfstate.d/dev/terraform.tfplan
+2021-11-16 02:26:04      33967 pipelines/dev/21/11/16/022346/fc085d2/terraform.tfstate.d/dev/terraform.tfstate
+
+Completed!
+
+Destroy Terraform - 43s
+
+Prepare all required actions
+Run ./
+Run ####--------------------------------------------------------------------
+Downloading Terraform Management Script: /home/runner/work/terraform-controller/terraform-controller/manage-terraform.shell ...
+
+Downloading Terraform Controller Functions: action.functions ...
+Sourcing Terraform Controller Functions ...
+data.template_file.public_cidrsubnet[0]: Refreshing state... [id=a34d80f7b68bf2b583681f727bae85f5a202ee100ad60ab3b3d351b9ce929539]
+random_integer.rand: Refreshing state... [id=75207]
+module.bucket.aws_s3_bucket.web_bucket: Refreshing state... [id=terraform-dev-75207]
+data.aws_elb_hosted_zone_id.main: Refreshing state... [id=Z35SXDOTRQ7X7K]
+data.aws_availability_zones.available: Refreshing state... [id=us-east-1]
+data.aws_ami.aws-linux: Refreshing state... [id=ami-0a2c275b42dee0b81]
+module.vpc.aws_vpc.this[0]: Refreshing state... [id=vpc-01312157fe1d24bd2]
+module.bucket.aws_iam_role.allow_instance_s3: Refreshing state... [id=terraform-dev-75207_allow_instance_s3]
+module.bucket.aws_iam_role_policy.allow_s3_all: Refreshing state... [id=terraform-dev-75207_allow_instance_s3:terraform-dev-75207_allow_all]
+module.bucket.aws_iam_instance_profile.instance_profile: Refreshing state... [id=terraform-dev-75207_instance_profile]
+aws_s3_bucket_object.graphic: Refreshing state... [id=/website/corporate.jpg]
+aws_security_group.elb-sg: Refreshing state... [id=sg-0b6bc290d11847e0f]
+module.vpc.aws_route_table.public[0]: Refreshing state... [id=rtb-06a89f777e193eb4f]
+aws_security_group.nginx-sg: Refreshing state... [id=sg-030127c5f91f9171a]
+module.vpc.aws_internet_gateway.this[0]: Refreshing state... [id=igw-0c93bd79d546a2b25]
+module.vpc.aws_subnet.public[0]: Refreshing state... [id=subnet-08adc8c4a5851ca4b]
+module.vpc.aws_route.public_internet_gateway[0]: Refreshing state... [id=r-rtb-06a89f777e193eb4f1080289494]
+module.vpc.aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-0d12328fa3827413e]
+aws_instance.nginx[0]: Refreshing state... [id=i-099b8f6d4c01403e1]
+aws_elb.web: Refreshing state... [id=dev-nginx-elb-75207]
+module.vpc.aws_route_table_association.public[0]: Destroying... [id=rtbassoc-0d12328fa3827413e]
+module.vpc.aws_route.public_internet_gateway[0]: Destroying... [id=r-rtb-06a89f777e193eb4f1080289494]
+aws_elb.web: Destroying... [id=dev-nginx-elb-75207]
+aws_s3_bucket_object.graphic: Destroying... [id=/website/corporate.jpg]
+aws_s3_bucket_object.graphic: Destruction complete after 0s
+module.vpc.aws_route_table_association.public[0]: Destruction complete after 0s
+aws_elb.web: Destruction complete after 0s
+aws_security_group.elb-sg: Destroying... [id=sg-0b6bc290d11847e0f]
+aws_instance.nginx[0]: Destroying... [id=i-099b8f6d4c01403e1]
+module.vpc.aws_route.public_internet_gateway[0]: Destruction complete after 0s
+module.vpc.aws_internet_gateway.this[0]: Destroying... [id=igw-0c93bd79d546a2b25]
+module.vpc.aws_route_table.public[0]: Destroying... [id=rtb-06a89f777e193eb4f]
+module.vpc.aws_route_table.public[0]: Destruction complete after 0s
+aws_security_group.elb-sg: Destruction complete after 1s
+aws_instance.nginx[0]: Still destroying... [id=i-099b8f6d4c01403e1, 10s elapsed]
+module.vpc.aws_internet_gateway.this[0]: Still destroying... [id=igw-0c93bd79d546a2b25, 10s elapsed]
+aws_instance.nginx[0]: Still destroying... [id=i-099b8f6d4c01403e1, 20s elapsed]
+module.vpc.aws_internet_gateway.this[0]: Still destroying... [id=igw-0c93bd79d546a2b25, 20s elapsed]
+module.vpc.aws_internet_gateway.this[0]: Destruction complete after 27s
+aws_instance.nginx[0]: Destruction complete after 30s
+module.bucket.aws_iam_instance_profile.instance_profile: Destroying... [id=terraform-dev-75207_instance_profile]
+module.vpc.aws_subnet.public[0]: Destroying... [id=subnet-08adc8c4a5851ca4b]
+aws_security_group.nginx-sg: Destroying... [id=sg-030127c5f91f9171a]
+module.bucket.aws_s3_bucket.web_bucket: Destroying... [id=terraform-dev-75207]
+module.bucket.aws_iam_role_policy.allow_s3_all: Destroying... [id=terraform-dev-75207_allow_instance_s3:terraform-dev-75207_allow_all]
+module.bucket.aws_iam_role_policy.allow_s3_all: Destruction complete after 0s
+module.bucket.aws_iam_instance_profile.instance_profile: Destruction complete after 0s
+module.bucket.aws_iam_role.allow_instance_s3: Destroying... [id=terraform-dev-75207_allow_instance_s3]
+aws_security_group.nginx-sg: Destruction complete after 0s
+module.vpc.aws_subnet.public[0]: Destruction complete after 0s
+module.vpc.aws_vpc.this[0]: Destroying... [id=vpc-01312157fe1d24bd2]
+module.bucket.aws_iam_role.allow_instance_s3: Destruction complete after 0s
+module.bucket.aws_s3_bucket.web_bucket: Destruction complete after 0s
+module.vpc.aws_vpc.this[0]: Destruction complete after 1s
+random_integer.rand: Destroying... [id=75207]
+random_integer.rand: Destruction complete after 0s
+
+Destroy complete! Resources: 16 destroyed.
+
+How-To Restore Terraform Infrastructure State:
+
+-> s3://terraform--states--123456789012/pipelines/dev/21/11/16/022346/fc085d2/scripts/restore.shell
+
+#!/bin/bash
+
+read -p "Enter Target-Profile [ e.g.: default ] ?: " aws_default_profile ;
+read -p "Enter Target-Region  [ e.g.: us-east-1 ] ?: " aws_default_region ;
+
+export terraform_restore="/tmp/terraform/211116022346" ;
+
+mkdir -p ${terraform_restore} ;
+cd ${terraform_restore} ;
+
+git clone git://github.com/emvaldes/terraform-controller.git ${terraform_restore} ;
+git checkout -b restore fc085d22760149ba48725016e10e823dc2d51a51 ;
+
+[[ -d /home/runner/work/terraform-controller/terraform-controller ]] && export HOME="/home/runner/work/terraform-controller/terraform-controller" ;
+cp -pr ${HOME}/.ssh ${terraform_restore} ;
+
+export AWS_PROFILE="${aws_default_profile}";
+export AWS_DEFAULT_REGION="${aws_default_region}";
+
+echo -e "\nFetching Terraform components ... \n";
+aws --profile ${AWS_PROFILE} \
+    --region ${AWS_DEFAULT_REGION} \
+    s3 cp \
+    s3://terraform--states--123456789012/pipelines/dev/21/11/16/022346/fc085d2 \
+    ${terraform_restore} \
+    --recursive \
+  ;
+
+echo -e "\nDisplaying Terraform file-structure ...\n" ;
+tree -FCla --prune -I .git $(pwd) ;
+
+if [[ -f ${terraform_restore}/terraform.tfstate.d/dev/terraform.tfplan ]]; then
+        echo -e "\nInitializing Terraform ... \n" ;
+        eval  \
+             terraform init ; echo -e ;
+        echo -e "\nTerraform Create|Select Workspace [dev] ... \n" ;
+        eval  \
+             terraform workspace select dev || terraform workspace new dev ;
+        echo -e "\nTerraform Listing Workspaces ... \n" ;
+        eval  \
+             terraform workspace list ;
+        echo -e "\nExecuting Terraform ..." ;
+        eval  \
+             TF_VAR_region=${AWS_DEFAULT_REGION} \
+             terraform apply -auto-approve ${terraform_restore}/terraform.tfstate.d/dev/terraform.tfplan ;
+  else  echo -e "\nWarning: Unable to download Terraform components! \n" ;
+        exit 1 ;
+fi ;
+
+Completed!
+
+Post checkout - 0s
+
+Post job cleanup.
+/usr/bin/git version
+git version 2.33.1
+/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+/usr/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :
+/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+http.https://github.com/.extraheader
+/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+/usr/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :
+
+Complete job - 0s
+
+Cleaning up orphan processes
