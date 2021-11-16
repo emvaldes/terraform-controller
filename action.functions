@@ -1,5 +1,6 @@
 
 ## https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html
+
 function configure_terraform_template () {
     ## echo -e "\nManaged Scripts: ${managed_scripts[@]}" ;
     if [[ ${#managed_scripts[@]} -eq 0 ]]; then
@@ -291,7 +292,7 @@ function restore_terraform_state () {
       echo -e "\nWarning: Git SHA Index is invalid! \n";
       exit 1 ;
     fi ;
-##------------------------------------------------------------------------------
+		##--------------------------------------------------------------------------
     awscli_command="
         aws --profile ${aws_default_profile} \
             --region ${dynamodb_default_region} \
@@ -318,7 +319,7 @@ function restore_terraform_state () {
       echo -e "\nWarning: Source Repository is invalid! \n";
       exit 3;
     fi;
-##------------------------------------------------------------------------------
+		##--------------------------------------------------------------------------
     awscli_command="
         aws --profile ${aws_default_profile} \
             --region ${dynamodb_default_region} \
@@ -347,7 +348,7 @@ function restore_terraform_state () {
             exit 5;
       else  echo -e "\nTarget Location: '${target_location}'" ;
     fi;
-##------------------------------------------------------------------------------
+		##--------------------------------------------------------------------------
     echo -e "\nRestoring Terraform State @ ${organization}/${repository} -> ${restore_shaindex} [${target_workspace}] = ${target_location} :\n" ;
     export target_path="${github_workspace}";
     export restore_folder="${target_path}/restore/${restore_shaindex:0:7}" ;

@@ -61,7 +61,7 @@ Run actions/checkout@v2
     DEVOPS_ACCESS_ROLE: ***
     DEVOPS_ACCOUNT_NAME: devops
     DYNAMODB_DEFAULT_REGION: us-east-1
-    PRIVATE_KEYPAIR_FILE: .ssh/id_rsa
+    PRIVATE_KEYPAIR_FILE: devops.pem
     PRIVATE_KEYPAIR_NAME: devops
     PRIVATE_KEYPAIR_SECRET: ***
     PROVISION_TERRAFORM: ***
@@ -169,7 +169,7 @@ Terraform Parameters - 0s
 
 Run remote_origin="$(git config --get remote.origin.url)" ;
 
-Requesting Credentials - 2s
+Generating Credentials - 2s
 
 Run emvaldes/generate-credentials@master
 Run ####--------------------------------------------------------------------
@@ -205,25 +205,25 @@ Obtaining Caller Identity (Assumed-Role):
 
 Completed!
 
-Provisioning Access - 2s
+Configuring Access - 2s
 
 Run emvaldes/configure-access@master
 Run ####--------------------------------------------------------------------
 Downloading Action-Functions: action.functions ...
 Sourcing Action-Functions ...
--r-------- 1 runner docker 1675 Nov 16 02:24 /home/runner/work/terraform-controller/terraform-controller/.ssh/id_rsa
+-r-------- 1 runner docker 1675 Nov 16 02:24 /home/runner/work/terraform-controller/terraform-controller/.ssh/devops.pem
 
 Listing SSH Private-Key:
--r-------- 1 runner docker 1675 Nov 16 02:24 /home/runner/work/terraform-controller/terraform-controller/.ssh/id_rsa
+-r-------- 1 runner docker 1675 Nov 16 02:24 /home/runner/work/terraform-controller/terraform-controller/.ssh/devops.pem
 
 Generating SSH Public-Key ...
--rw-r--r-- 1 runner docker 381 Nov 16 02:24 /home/runner/work/terraform-controller/terraform-controller/.ssh/id_rsa.pub
+-rw-r--r-- 1 runner docker 381 Nov 16 02:24 /home/runner/work/terraform-controller/terraform-controller/.ssh/devops.pub
 
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCnqYFzfsIDEiGjLdYDwBLng2QhNhN07xSaPi1Ou1SU2mF17ec0vXvEcPeMnNA1vcfJpp0Pz9o2+viClEkRQRz/gJUh9IDpyTogPrxGQpGtwNT4wwTyAZbUFnSKG5C+D5jKelvA3xerEsGY5KxT63SlMCCGAM2Kbe4E6J36f1/GUAimmGn5beuYt0xYFg1IxUG4WbHRN/tqAz+Y2/J1tg9OqWG3pmwlAHJH50Wd36sBk+N1TSmiaOuHx1nHXjDpw4Wqdud5bI0w5Db9DTtCxxkiT2wTl4umxBC+dE6JPt4QN3kYctNJAIRt5E2f7X4inuF6nRbUxsbFM9UEU0gSle6V
 
 /home/runner/work/terraform-controller/terraform-controller/.ssh
-├── id_rsa
-└── id_rsa.pub
+├── devops.pem
+└── devops.pub
 
 0 directories, 2 files
 
@@ -329,16 +329,16 @@ Listing Custom Terraform Variables file [configs/dev-configs.tfvars]:
 
 Terraform Output Plan: /home/runner/work/terraform-controller/terraform-controller/terraform.tfstate.d/dev/terraform.tfplan
 
-Listing Private-KeyPair File: [.ssh/id_rsa]:
--r-------- 1 runner docker 1675 Nov 16 02:24 .ssh/id_rsa
+Listing Private-KeyPair File: [.ssh/devops.pem]:
+-r-------- 1 runner docker 1675 Nov 16 02:24 .ssh/devops.pem
 
-Private-KeyPair File: .ssh/id_rsa
+Private-KeyPair File: .ssh/devops.pem
 
 Private-KeyPair Name: devops
 
 Listing Terraform Plan command:
 
-terraform plan -var="region=us-east-1" -var="aws_access_key=ASIA2XV4BKOYO3ZIZZGC" -var="aws_secret_key=j+5lZ2TPAvEX8hyVaVhSfk50UvgAEFnDiB354MvD" -var="private_keypair_file=.ssh/id_rsa" -var="private_keypair_name=devops" -var="custom_timestamp=211116022346" -var="custom_engineer=Eduardo Valdes" -var="custom_contact=emvaldes@hotmail.com" -var="custom_listset=["ami-abc123","ami-def456"]" -var="custom_mapset={"us-east-1":"ami-abc123","us-east-2":"ami-def456"}" -var="route53_record=211116022346.terraform-controller" -var-file="configs/dev-configs.tfvars" -out terraform.tfstate.d/dev/terraform.tfplan
+terraform plan -var="region=us-east-1" -var="aws_access_key=ASIA2XV4BKOYO3ZIZZGC" -var="aws_secret_key=j+5lZ2TPAvEX8hyVaVhSfk50UvgAEFnDiB354MvD" -var="private_keypair_file=.ssh/devops.pem" -var="private_keypair_name=devops" -var="custom_timestamp=211116022346" -var="custom_engineer=Eduardo Valdes" -var="custom_contact=emvaldes@hotmail.com" -var="custom_listset=["ami-abc123","ami-def456"]" -var="custom_mapset={"us-east-1":"ami-abc123","us-east-2":"ami-def456"}" -var="route53_record=211116022346.terraform-controller" -var-file="configs/dev-configs.tfvars" -out terraform.tfstate.d/dev/terraform.tfplan
 
 Refreshing Terraform state in-memory prior to plan...
 The refreshed state will be used to calculate this plan, but will not be
@@ -493,8 +493,8 @@ Terraform will perform the following actions:
         }
     }
 
-  # aws_s3_bucket_object.graphic will be created
-  + resource "aws_s3_bucket_object" "graphic" {
+  # aws_s3_object.graphic will be created
+  + resource "aws_s3_object" "graphic" {
       + acl                    = "private"
       + bucket                 = (known after apply)
       + bucket_key_enabled     = (known after apply)
@@ -675,8 +675,8 @@ Terraform will perform the following actions:
       + role   = (known after apply)
     }
 
-  # module.bucket.aws_s3_bucket.web_bucket will be created
-  + resource "aws_s3_bucket" "web_bucket" {
+  # module.bucket.aws_s3_bucket_acl.web_bucket will be created
+  + resource "aws_s3_bucket_acl" "web_bucket" {
       + acceleration_status         = (known after apply)
       + acl                         = "private"
       + arn                         = (known after apply)
@@ -973,21 +973,21 @@ random_integer.rand: Creating...
 random_integer.rand: Creation complete after 0s [id=75207]
 module.bucket.aws_iam_role.allow_instance_s3: Creating...
 module.vpc.aws_vpc.this[0]: Creating...
-module.bucket.aws_s3_bucket.web_bucket: Creating...
+module.bucket.aws_s3_bucket_acl.web_bucket: Creating...
 module.bucket.aws_iam_role.allow_instance_s3: Creation complete after 0s [id=terraform-dev-75207_allow_instance_s3]
 module.bucket.aws_iam_role_policy.allow_s3_all: Creating...
 module.bucket.aws_iam_instance_profile.instance_profile: Creating...
 module.bucket.aws_iam_role_policy.allow_s3_all: Creation complete after 0s [id=terraform-dev-75207_allow_instance_s3:terraform-dev-75207_allow_all]
 module.bucket.aws_iam_instance_profile.instance_profile: Creation complete after 0s [id=terraform-dev-75207_instance_profile]
-module.bucket.aws_s3_bucket.web_bucket: Creation complete after 1s [id=terraform-dev-75207]
-aws_s3_bucket_object.graphic: Creating...
+module.bucket.aws_s3_bucket_acl.web_bucket: Creation complete after 1s [id=terraform-dev-75207]
+aws_s3_object.graphic: Creating...
 module.vpc.aws_vpc.this[0]: Creation complete after 1s [id=vpc-01312157fe1d24bd2]
 module.vpc.aws_subnet.public[0]: Creating...
 module.vpc.aws_route_table.public[0]: Creating...
 module.vpc.aws_internet_gateway.this[0]: Creating...
 aws_security_group.elb-sg: Creating...
 aws_security_group.nginx-sg: Creating...
-aws_s3_bucket_object.graphic: Creation complete after 0s [id=/website/corporate.jpg]
+aws_s3_object.graphic: Creation complete after 0s [id=/website/corporate.jpg]
 module.vpc.aws_internet_gateway.this[0]: Creation complete after 1s [id=igw-0c93bd79d546a2b25]
 module.vpc.aws_route_table.public[0]: Creation complete after 1s [id=rtb-06a89f777e193eb4f]
 module.vpc.aws_route.public_internet_gateway[0]: Creating...
@@ -1329,7 +1329,7 @@ Downloading Terraform Controller Functions: action.functions ...
 Sourcing Terraform Controller Functions ...
 data.template_file.public_cidrsubnet[0]: Refreshing state... [id=a34d80f7b68bf2b583681f727bae85f5a202ee100ad60ab3b3d351b9ce929539]
 random_integer.rand: Refreshing state... [id=75207]
-module.bucket.aws_s3_bucket.web_bucket: Refreshing state... [id=terraform-dev-75207]
+module.bucket.aws_s3_bucket_acl.web_bucket: Refreshing state... [id=terraform-dev-75207]
 data.aws_elb_hosted_zone_id.main: Refreshing state... [id=Z35SXDOTRQ7X7K]
 data.aws_availability_zones.available: Refreshing state... [id=us-east-1]
 data.aws_ami.aws-linux: Refreshing state... [id=ami-0a2c275b42dee0b81]
@@ -1337,7 +1337,7 @@ module.vpc.aws_vpc.this[0]: Refreshing state... [id=vpc-01312157fe1d24bd2]
 module.bucket.aws_iam_role.allow_instance_s3: Refreshing state... [id=terraform-dev-75207_allow_instance_s3]
 module.bucket.aws_iam_role_policy.allow_s3_all: Refreshing state... [id=terraform-dev-75207_allow_instance_s3:terraform-dev-75207_allow_all]
 module.bucket.aws_iam_instance_profile.instance_profile: Refreshing state... [id=terraform-dev-75207_instance_profile]
-aws_s3_bucket_object.graphic: Refreshing state... [id=/website/corporate.jpg]
+aws_s3_object.graphic: Refreshing state... [id=/website/corporate.jpg]
 aws_security_group.elb-sg: Refreshing state... [id=sg-0b6bc290d11847e0f]
 module.vpc.aws_route_table.public[0]: Refreshing state... [id=rtb-06a89f777e193eb4f]
 aws_security_group.nginx-sg: Refreshing state... [id=sg-030127c5f91f9171a]
@@ -1350,8 +1350,8 @@ aws_elb.web: Refreshing state... [id=dev-nginx-elb-75207]
 module.vpc.aws_route_table_association.public[0]: Destroying... [id=rtbassoc-0d12328fa3827413e]
 module.vpc.aws_route.public_internet_gateway[0]: Destroying... [id=r-rtb-06a89f777e193eb4f1080289494]
 aws_elb.web: Destroying... [id=dev-nginx-elb-75207]
-aws_s3_bucket_object.graphic: Destroying... [id=/website/corporate.jpg]
-aws_s3_bucket_object.graphic: Destruction complete after 0s
+aws_s3_object.graphic: Destroying... [id=/website/corporate.jpg]
+aws_s3_object.graphic: Destruction complete after 0s
 module.vpc.aws_route_table_association.public[0]: Destruction complete after 0s
 aws_elb.web: Destruction complete after 0s
 aws_security_group.elb-sg: Destroying... [id=sg-0b6bc290d11847e0f]
@@ -1370,7 +1370,7 @@ aws_instance.nginx[0]: Destruction complete after 30s
 module.bucket.aws_iam_instance_profile.instance_profile: Destroying... [id=terraform-dev-75207_instance_profile]
 module.vpc.aws_subnet.public[0]: Destroying... [id=subnet-08adc8c4a5851ca4b]
 aws_security_group.nginx-sg: Destroying... [id=sg-030127c5f91f9171a]
-module.bucket.aws_s3_bucket.web_bucket: Destroying... [id=terraform-dev-75207]
+module.bucket.aws_s3_bucket_acl.web_bucket: Destroying... [id=terraform-dev-75207]
 module.bucket.aws_iam_role_policy.allow_s3_all: Destroying... [id=terraform-dev-75207_allow_instance_s3:terraform-dev-75207_allow_all]
 module.bucket.aws_iam_role_policy.allow_s3_all: Destruction complete after 0s
 module.bucket.aws_iam_instance_profile.instance_profile: Destruction complete after 0s
@@ -1379,7 +1379,7 @@ aws_security_group.nginx-sg: Destruction complete after 0s
 module.vpc.aws_subnet.public[0]: Destruction complete after 0s
 module.vpc.aws_vpc.this[0]: Destroying... [id=vpc-01312157fe1d24bd2]
 module.bucket.aws_iam_role.allow_instance_s3: Destruction complete after 0s
-module.bucket.aws_s3_bucket.web_bucket: Destruction complete after 0s
+module.bucket.aws_s3_bucket_acl.web_bucket: Destruction complete after 0s
 module.vpc.aws_vpc.this[0]: Destruction complete after 1s
 random_integer.rand: Destroying... [id=75207]
 random_integer.rand: Destruction complete after 0s

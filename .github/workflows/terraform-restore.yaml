@@ -64,7 +64,10 @@ env:
   ## DEVOPS_ACCOUNT_NAME: ${{ secrets.DEVOPS_ACCOUNT_NAME }}
   DYNAMODB_DEFAULT_REGION: us-east-1  ## ${{ secrets.DYNAMODB_DEFAULT_REGION }}
   ## INSPECT_DEPLOYMENT
-  PRIVATE_KEYPAIR_FILE: .ssh/id_rsa  ## ${{ secrets.PRIVATE_KEYPAIR_FILE }}
+
+  ## PRIVATE_KEYPAIR_FILE: devops.pem  ## ${{ secrets.PRIVATE_KEYPAIR_FILE }}
+  PRIVATE_KEYPAIR_FILE: ${{ secrets.PRIVATE_KEYPAIR_FILE }}
+
   ## PRIVATE_KEYPAIR_NAME: ${{ secrets.PRIVATE_KEYPAIR_NAME }}
   ## PRIVATE_KEYPAIR_SECRET: ${{ secrets.PRIVATE_KEYPAIR_SECRET }}
   ## PROVISION_TERRAFORM
@@ -192,8 +195,8 @@ jobs:
           aws --version 2>/dev/null ;
           terraform --version 2>/dev/null ;
 ####----------------------------------------------------------------------------
-      ## Requesting Credentials
-      - name: Requesting Credentials
+      ## Generating Credentials
+      - name: Generating Credentials
         uses: emvaldes/generate-credentials@master
         id: request-credentials
         with:
@@ -208,8 +211,8 @@ jobs:
           # session-timestamp: "DevOpsPipeline--${SESSION_TIMESTAMP}"
         continue-on-error: false
 ####----------------------------------------------------------------------------
-      ## Provisioning Access
-      - name: Provisioning Access
+      ## Configuring Access
+      - name: Configuring Access
         uses: emvaldes/configure-access@master
         id: provision-access
         with:

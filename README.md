@@ -112,7 +112,7 @@ GitHub Secrets (Required):
 ```bash
 AWS_ACCESS_KEY_ID           Service-Account AWS Access Key-Id (e.g.: AKIA2...VT7DU).
 AWS_DEFAULT_ACCOUNT         The AWS Account number (e.g.: 123456789012).
-AWS_DEFAULT_PROFILE         The AWS Credentials Default User (e.g.: default).
+AWS_DEFAULT_PROFILE         The AWS Credentials Default User (e.g.: default)
 AWS_DEFAULT_REGION          The AWS Default Region (e.g.: us-east-1)
 AWS_SECRET_ACCESS_KEY       Service-Account AWS Secret Access Key (e.g.: zBqDUNyQ0G...IbVyamSCpe)
 BACKUP_TERRAFORM            Enable|Disable (true|false) backing-up terraform plan/state
@@ -120,13 +120,13 @@ DEPLOY_TERRAFORM            Enable|Disable (true|false) deploying terraform infr
 DESTROY_TERRAFORM           Enable|Disable (true|false) destroying terraform infrastructure
 DEVOPS_ACCESS_POLICY        Defines the AWS IAM Policy: DevOps--Custom-Access.Policy
 DEVOPS_ACCESS_ROLE          Defines the AWS IAM Role: DevOps--Custom-Access.Role
-DEVOPS_ACCOUNT_NAME         A placeholder for the Deployment Service Account name (devops).
+DEVOPS_ACCOUNT_NAME         A placeholder for the Deployment Service Account name (devops)
 DEVOPS_ASSUMEROLE_POLICY    Defines the AWS IAM Policy: DevOps--Assume-Role.Policy
 DEVOPS_BOUNDARIES_POLICY    Defines the AWS IAM Policy: Devops--Permission-Boundaries.Policy
 DYNAMODB_DEFAULT_REGION     Single-Region tables are used (e.g.: us-east-1)
 INSPECT_DEPLOYMENT          Enable|Disable (true|false) inspecting deployment
-PRIVATE_KEYPAIR_FILE        Terraform AWS KeyPair (location: ~/.ssh/id_rsa).
-PRIVATE_KEYPAIR_NAME        Terraform AWS KeyPair (e.g.: devops).
+PRIVATE_KEYPAIR_FILE        Terraform AWS KeyPair (location: devops.pem)
+PRIVATE_KEYPAIR_NAME        Terraform AWS KeyPair (e.g.: devops)
 PRIVATE_KEYPAIR_SECRET      Terraform AWS KeyPair (PEM, Private file)
 PROVISION_TERRAFORM         Enable|Disable (true|false) the provisioning of the terraform-toolset
 S3BUCKET_CONTAINER          Identifies where the deployment will be stored
@@ -257,8 +257,8 @@ Terraform will perform the following actions:
     ...
     }
 
-  # aws_s3_bucket_object.graphic will be created
-  + resource "aws_s3_bucket_object" "graphic" {
+  # aws_s3_object.graphic will be created
+  + resource "aws_s3_object" "graphic" {
     ...
     }
 
@@ -292,8 +292,8 @@ Terraform will perform the following actions:
     ...
     }
 
-  # module.bucket.aws_s3_bucket.web_bucket will be created
-  + resource "aws_s3_bucket" "web_bucket" {
+  # module.bucket.aws_s3_bucket_acl.web_bucket will be created
+  + resource "aws_s3_bucket_acl" "web_bucket" {
     ...
     }
 
@@ -344,7 +344,7 @@ random_integer.rand: Creating...
 random_integer.rand: Creation complete after 0s [id=36748]
 module.bucket.aws_iam_role.allow_instance_s3: Creating...
 module.vpc.aws_vpc.this[0]: Creating...
-module.bucket.aws_s3_bucket.web_bucket: Creating...
+module.bucket.aws_s3_bucket_acl.web_bucket: Creating...
 module.bucket.aws_iam_role.allow_instance_s3: Creation complete after 1s [id=terraform-dev-36748_allow_instance_s3]
 module.bucket.aws_iam_role_policy.allow_s3_all: Creating...
 module.bucket.aws_iam_instance_profile.instance_profile: Creating...
@@ -365,11 +365,11 @@ module.vpc.aws_route_table_association.public[0]: Creation complete after 0s [id
 module.vpc.aws_route.public_internet_gateway[0]: Creation complete after 1s [id=r-rtb-00bc8c353eb56e3911080289494]
 aws_security_group.elb-sg: Creation complete after 4s [id=sg-06ec7a84be35e7914]
 aws_security_group.nginx-sg: Creation complete after 4s [id=sg-0d296ac58a656dc62]
-module.bucket.aws_s3_bucket.web_bucket: Still creating... [10s elapsed]
-module.bucket.aws_s3_bucket.web_bucket: Creation complete after 11s [id=terraform-dev-36748]
-aws_s3_bucket_object.graphic: Creating...
+module.bucket.aws_s3_bucket_acl.web_bucket: Still creating... [10s elapsed]
+module.bucket.aws_s3_bucket_acl.web_bucket: Creation complete after 11s [id=terraform-dev-36748]
+aws_s3_object.graphic: Creating...
 aws_instance.nginx[0]: Creating...
-aws_s3_bucket_object.graphic: Creation complete after 1s [id=/website/corporate.jpg]
+aws_s3_object.graphic: Creation complete after 1s [id=/website/corporate.jpg]
 aws_instance.nginx[0]: Still creating... [10s elapsed]
 ...
 aws_instance.nginx[0]: Still creating... [30s elapsed]
@@ -533,7 +533,7 @@ data.aws_availability_zones.available: Refreshing state... [id=2020-09-30 00:10:
 data.aws_ami.aws-linux: Refreshing state... [id=ami-032930428bf1abbff]
 module.bucket.aws_iam_role.allow_instance_s3: Refreshing state... [id=terraform-dev-36748_allow_instance_s3]
 data.aws_elb_hosted_zone_id.main: Refreshing state... [id=Z35SXDOTRQ7X7K]
-module.bucket.aws_s3_bucket.web_bucket: Refreshing state... [id=terraform-dev-36748]
+module.bucket.aws_s3_bucket_acl.web_bucket: Refreshing state... [id=terraform-dev-36748]
 module.vpc.aws_vpc.this[0]: Refreshing state... [id=vpc-08601ba0c7d611f63]
 module.bucket.aws_iam_instance_profile.instance_profile: Refreshing state... [id=terraform-dev-36748_instance_profile]
 module.bucket.aws_iam_role_policy.allow_s3_all: Refreshing state... [id=terraform-dev-36748_allow_instance_s3:terraform-dev-36748_allow_all]
@@ -544,7 +544,7 @@ module.vpc.aws_internet_gateway.this[0]: Refreshing state... [id=igw-01679506397
 module.vpc.aws_route_table.public[0]: Refreshing state... [id=rtb-00bc8c353eb56e391]
 module.vpc.aws_route.public_internet_gateway[0]: Refreshing state... [id=r-rtb-00bc8c353eb56e3911080289494]
 module.vpc.aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-07f9d9a7a503e7d7c]
-aws_s3_bucket_object.graphic: Refreshing state... [id=/website/corporate.jpg]
+aws_s3_object.graphic: Refreshing state... [id=/website/corporate.jpg]
 aws_instance.nginx[0]: Refreshing state... [id=i-0c77a6dfacc236aba]
 aws_elb.web: Refreshing state... [id=dev-nginx-elb-36748]
 
@@ -567,8 +567,8 @@ Terraform will perform the following actions:
     ...
     }
 
-  # aws_s3_bucket_object.graphic will be destroyed
-  - resource "aws_s3_bucket_object" "graphic" {
+  # aws_s3_object.graphic will be destroyed
+  - resource "aws_s3_object" "graphic" {
     ...
     }
 
@@ -602,8 +602,8 @@ Terraform will perform the following actions:
     ...
     }
 
-  # module.bucket.aws_s3_bucket.web_bucket will be destroyed
-  - resource "aws_s3_bucket" "web_bucket" {
+  # module.bucket.aws_s3_bucket_acl.web_bucket will be destroyed
+  - resource "aws_s3_bucket_acl" "web_bucket" {
     ...
     }
 
@@ -657,10 +657,10 @@ Do you really want to destroy all resources in workspace "dev"?
   Enter a value: yes
 
 module.vpc.aws_route_table_association.public[0]: Destroying... [id=rtbassoc-07f9d9a7a503e7d7c]
-aws_s3_bucket_object.graphic: Destroying... [id=/website/corporate.jpg]
+aws_s3_object.graphic: Destroying... [id=/website/corporate.jpg]
 module.vpc.aws_route.public_internet_gateway[0]: Destroying... [id=r-rtb-00bc8c353eb56e3911080289494]
 aws_elb.web: Destroying... [id=dev-nginx-elb-36748]
-aws_s3_bucket_object.graphic: Destruction complete after 1s
+aws_s3_object.graphic: Destruction complete after 1s
 module.vpc.aws_route.public_internet_gateway[0]: Destruction complete after 0s
 module.vpc.aws_internet_gateway.this[0]: Destroying... [id=igw-01679506397fbf208]
 module.vpc.aws_route_table_association.public[0]: Destruction complete after 1s
@@ -683,7 +683,7 @@ module.bucket.aws_iam_role_policy.allow_s3_all: Destroying... [id=terraform-dev-
 module.bucket.aws_iam_instance_profile.instance_profile: Destroying... [id=terraform-dev-36748_instance_profile]
 module.vpc.aws_subnet.public[0]: Destroying... [id=subnet-07ccd80b42959356e]
 aws_security_group.nginx-sg: Destroying... [id=sg-0d296ac58a656dc62]
-module.bucket.aws_s3_bucket.web_bucket: Destroying... [id=terraform-dev-36748]
+module.bucket.aws_s3_bucket_acl.web_bucket: Destroying... [id=terraform-dev-36748]
 module.vpc.aws_internet_gateway.this[0]: Destruction complete after 43s
 module.bucket.aws_iam_role_policy.allow_s3_all: Destruction complete after 1s
 aws_security_group.nginx-sg: Destruction complete after 1s
@@ -693,7 +693,7 @@ module.bucket.aws_iam_instance_profile.instance_profile: Destruction complete af
 module.bucket.aws_iam_role.allow_instance_s3: Destroying... [id=terraform-dev-36748_allow_instance_s3]
 module.vpc.aws_vpc.this[0]: Destruction complete after 1s
 module.bucket.aws_iam_role.allow_instance_s3: Destruction complete after 1s
-module.bucket.aws_s3_bucket.web_bucket: Destruction complete after 8s
+module.bucket.aws_s3_bucket_acl.web_bucket: Destruction complete after 8s
 random_integer.rand: Destroying... [id=36748]
 random_integer.rand: Destruction complete after 0s
 

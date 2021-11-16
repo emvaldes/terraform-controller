@@ -2,46 +2,59 @@ name: GitHub Actions - Terraform Controller
 on:
 
 ####----------------------------------------------------------------------------
+
   workflow_dispatch:
+
     name: Manual Deployment
     description: 'Triggering Manual Deployment'
+
     inputs:
+
+      workspace:
+        description: 'Terraform Workspace'
+        required: false
+        default: ''
+
       accesskey:
         description: 'Target Access Key-ID'
         required: false
         default: ''
-      account:
-        description: 'Target AWS Account'
-        required: false
-        default: ''
-      destroy-terraform:
-        description: 'Terraform Destroy Request'
-        required: false
-        default: true
-      keypair-name:
-        description: 'Private Key-Pair Name'
-        required: false
-        default: ''
-      keypair-secret:
-        description: 'Private Key-Pair Secret'
-        required: false
-        default: ''
-      region:
-        description: 'Target AWS Region'
-        required: false
-        default: ''
+
       secretkey:
         description: 'Target Secret Access-Key'
         required: false
         default: ''
-      workspace:
-        description: 'Terraform Workspace'
+
+      account:
+        description: 'Target AWS Account'
         required: false
-        default: 'dev'
+        default: ''
+
+      region:
+        description: 'Target AWS Region'
+        required: false
+        default: ''
+
+      deploy-terraform:
+        description: 'Deploy Terraform Infrastructure'
+        required: false
+        default: true
+
+      destroy-terraform:
+        description: 'Destroy Terraform Infrastructure'
+        required: false
+        default: false
+
       terraform-version:
         description: 'Terraform CLI Version (latest)'
         required: false
-        default: '1.0.11'
+        default: 'latest'
+
+      terraform-loglevel:
+        description: 'Terraform CLI Version (latest)'
+        required: false
+        default: 'INFO'
+
       ####----------------------------------------------------------------------
       # logLevel:
       #   description: 'Log level'
@@ -49,57 +62,140 @@ on:
       #   default: 'warning'
       # tags:
       #   description: 'Terraform Controller'
+
 ####----------------------------------------------------------------------------
+
   push:
+
     branches: [ master ]
     paths:
       - action.yaml
+      - terraform-controller.yaml
+      - terraofrm-restore.yaml
+
 ####----------------------------------------------------------------------------
+
 env:
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_DEFAULT_ACCOUNT: 738054984624  ## ${{ secrets.AWS_DEFAULT_ACCOUNT }}
-  AWS_DEFAULT_PROFILE: default  ## ${{ secrets.AWS_DEFAULT_PROFILE }}
-  AWS_DEFAULT_REGION: us-east-1  ## ${{ secrets.AWS_DEFAULT_REGION }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  ## Terraform Operations: Deploy, Destroy
-  BACKUP_TERRAFORM: ${{ secrets.BACKUP_TERRAFORM }}
-  DEPLOY_TERRAFORM: ${{ secrets.DEPLOY_TERRAFORM }}
-  DESTROY_TERRAFORM: ${{ secrets.DESTROY_TERRAFORM }}
-  ## DEVOPS_ASSUMEROLE_POLICY
-  ## DEVOPS_BOUNDARIES_POLICY
-  ## DEVOPS_ACCESS_POLICY
-  DEVOPS_ACCESS_ROLE: ${{ secrets.DEVOPS_ACCESS_ROLE }}
-  DEVOPS_ACCOUNT_NAME: devops  ## ${{ secrets.DEVOPS_ACCOUNT_NAME }}
-  DYNAMODB_DEFAULT_REGION: us-east-1  ## ${{ secrets.DYNAMODB_DEFAULT_REGION }}
-  ## INSPECT_DEPLOYMENT
-  PRIVATE_KEYPAIR_FILE: .ssh/id_rsa  ## ${{ secrets.PRIVATE_KEYPAIR_FILE }}
-  PRIVATE_KEYPAIR_NAME: devops  ## ${{ secrets.PRIVATE_KEYPAIR_NAME }}
+
+  ## Secrets: ------------------------------------------------------------------
+
+  ## AWS Access/Secret (Credentials)
+  AWS_ACCESS_KEY_ID:     ${{ vars.__AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ vars.__AWS_SECRET_ACCESS_KEY }}
+
+  ## AWS Default Account (Number)
+  AWS_DEFAULT_ACCOUNT: ${{ secrets.AWS_DEFAULT_ACCOUNT }}
+
+  ## AWS EC2 Access Keypair:
   PRIVATE_KEYPAIR_SECRET: ${{ secrets.PRIVATE_KEYPAIR_SECRET }}
-  PROVISION_TERRAFORM: ${{ secrets.PROVISION_TERRAFORM }}
-  S3BUCKET_CONTAINER: pipelines
-  S3BUCKET_DEFAULT_REGION: us-east-1  ## ${{ secrets.S3BUCKET_DEFAULT_REGION }}
-  ## TERRAFORM_VERSION
-  TARGET_WORKSPACE: dev  ## ${{ secrets.TARGET_WORKSPACE }}
-  ## UPDATE_PYTHON_LATEST
-  ## UPDATE_SYSTEM_LATEST
-  ##
-  terraform_input_params: ''
+
+  ## Variables: ----------------------------------------------------------------
+
+  ## Configure AWS CLI:
+  AWSCLI_CLI:      ${{ vars.AWSCLI_CLI }}
+  AWSCLI_DOWNLOAD: ${{ vars.AWSCLI_DOWNLOAD }}
+  AWSCLI_PACKAGE:  ${{ vars.AWSCLI_PACKAGE }}
+
+  ## AWS Default [Account, Profile, Region]
+  AWS_DEFAULT_PROFILE: ${{ vars.AWS_DEFAULT_PROFILE }}
+  AWS_DEFAULT_REGION:  ${{ vars.AWS_DEFAULT_REGION }}
+
+  ## Default/Custom toolset + Requirements
+  CUSTOM_TOOLS:  ${{ vars.CUSTOM_TOOLS }}
+  DEFAULT_TOOLS: ${{ vars.DEFAULT_TOOLS }}
+
+  ## AWS IAM Access: Policy, Role
+  DEVOPS_ACCESS_POLICY:  ${{ vars.DEVOPS_ACCESS_POLICY }}
+  DEVOPS_ACCESS_ROLE:  ${{ vars.DEVOPS_ACCESS_ROLE }}
+
+  ## AWS DevOps Account: Name (devops)
+  DEVOPS_ACCOUNT_NAME: ${{ vars.DEVOPS_ACCOUNT_NAME }}
+
+  ## AWS IAM Policies: AssumeRole, Boundaries
+  DEVOPS_ASSUMEROLE_POLICY: ${{ vars.DEVOPS_ASSUMEROLE_POLICY }}
+  DEVOPS_BOUNDARIES_POLICY: ${{ vars.DEVOPS_BOUNDARIES_POLICY }}
+
+  ## AWS IAM DevOps Engineer: Name, EMAIL
+  DEVOPS_ENGINEER_EMAIL: ${{ vars.DEVOPS_ENGINEER_EMAIL }}
+  DEVOPS_ENGINEER_NAME:  ${{ vars.DEVOPS_ENGINEER_NAME }}
+
+  ## Private SSH Keypair items
+  PRIVATE_KEYPAIR_FILE:   ${{ vars.PRIVATE_KEYPAIR_FILE }}
+  PRIVATE_KEYPAIR_NAME:   ${{ vars.PRIVATE_KEYPAIR_NAME }}
+
+  ## Python (Packages) Requirements
+  PYTHON_REQUIREMENTS:  ${{ vars.PYTHON_REQUIREMENTS }}
+
+  ## AWS Service DynamoDB: Region
+  SERVICE_DYNAMODB_REGION: ${{ vars.SERVICE_DYNAMODB_REGION }}
+
+  ## AWS Service S3 Bucket: Region, Container
+  SERVICE_S3BUCKET_REGION: ${{ vars.SERVICE_S3BUCKET_REGION }}
+  SERVICE_S3BUCKET_CONTAINER: ${{ vars.SERVICE_S3BUCKET_CONTAINER }}
+
+  ## Target Deployment workspace
+  TARGET_WORKSPACE: ${{ vars.TARGET_WORKSPACE }}
+
+  ## Terraform Operations: Backup, Deploy, Destroy, Inspect, Provision
+  TERRAFORM_BACKUP:    ${{ vars.TERRAFORM_BACKUP }}
+
+  TERRAFORM_DEPLOY:    ${{ vars.TERRAFORM_DEPLOY }}
+  TERRAFORM_DESTROY:   ${{ vars.TERRAFORM_DESTROY }}
+
+  TERRAFORM_VALIDATE:  ${{ vars.TERRAFORM_VALIDATE }}
+  TERRAFORM_PROVISION: ${{ vars.TERRAFORM_PROVISION }}
+
+  ## Terraform Configurations
+  TERRAFORM_PARAMS:  ${{ vars.TERRAFORM_PARAMS }}
+
+  TERRAFORM_LISTSET: ${{ vars.TERRAFORM_LISTSET }}
+  TERRAFORM_MAPSET:  ${{ vars.TERRAFORM_MAPSET }}
+
+  ## Terraform Configurations
+  TERRAFORM_LOGLEVEL: ${{ vars.TERRAFORM_LOGLEVEL }}
+  TERRAFORM_VERSION: ${{ vars.TERRAFORM_VERSION }}
+
+  ## Update/Upgrade -> System Components
+  UPDATE_SYSTEM:  ${{ vars.UPDATE_SYSTEM }}
+  UPGRADE_SYSTEM: ${{ vars.UPGRADE_SYSTEM }}
+
+  ## Update/Upgrade -> Python + PIP
+  UPDATE_PYTHON: ${{ vars.UPDATE_PYTHON }}
+  UPDATE_PIP:    ${{ vars.UPDATE_PIP }}
+
+  VERBOSE_MODE: ${{ vars.VERBOSE_MODE }}
+
 ####----------------------------------------------------------------------------
+
 jobs:
   terraform-controller:
     runs-on: ubuntu-latest
+
     steps:
-####----------------------------------------------------------------------------
+
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
 ####----------------------------------------------------------------------------
-      ## Environment Variables
+## Session Timestamp
+
+      - name: Session Timestamp
+        id: session-timestamp
+        shell: bash
+        run: |
+
+          SESSION_TIMESTAMP="$(date +"%y%m%d%H%M%S")" ;
+          echo "SESSION_TIMESTAMP=${SESSION_TIMESTAMP}" >> ${GITHUB_ENV} ;
+
+        continue-on-error: false
+
+####----------------------------------------------------------------------------
+## Environment Variables
+
       - name: Environment Variables
         id: environment-variables
         run: |
-          ####------------------------------------------------------------------
-          ## Parsing GitHub Action - Workflow dispatch (limited to 10 input-params)
-          echo -e "Processing File|Input-based Parameters ... [ 1-10 ]\n" ;
+
           ####------------------------------------------------------------------
           echo "TARGET_WORKSPACE=$(
               cat ${{ github.workspace }}/workspace \
@@ -107,182 +203,337 @@ jobs:
               | tr -d '[:space:]'
             )" >> ${GITHUB_ENV} ;
           ####------------------------------------------------------------------
-          echo "SESSION_TIMESTAMP=$(date +"%y%m%d%H%M%S")" >> ${GITHUB_ENV} ;
-          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> ${GITHUB_ENV} ;
-          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ${GITHUB_ENV} ;
-          ####------------------------------------------------------------------
           custom_workspace="${{ github.event.inputs.workspace }}" ;
           if [[ (${#custom_workspace} -gt 0) && (${custom_workspace} != '') ]]; then
-            echo -e "       Target Workspace [input-based]: '${custom_workspace}'" ;
-            echo "TARGET_WORKSPACE=${custom_workspace}" >> ${GITHUB_ENV} ;
+                  echo -e "       Target Workspace [input-based]: '${custom_workspace}'" ;
+                  echo "TARGET_WORKSPACE=${custom_workspace}" >> ${GITHUB_ENV} ;
+            else  echo "TARGET_WORKSPACE=${{ env.TARGET_WORKSPACE }}" >> ${GITHUB_ENV} ;
           fi ;
-          ####------------------------------------------------------------------
-          cloud_region="${{ github.event.inputs.region }}" ;
-          if [[ (${#cloud_region} -gt 0 ) && (${cloud_region} != '') ]]; then
-            echo -e "    Target Cloud Region [input-based]: '${cloud_region}'" ;
-            echo "AWS_DEFAULT_REGION=${cloud_region}" >> ${GITHUB_ENV} ;
-          fi ;
-          ####------------------------------------------------------------------
-          cloud_account="${{ github.event.inputs.account }}" ;
-          if [[ (${#cloud_account} -gt 0 ) && (${cloud_account} != '') ]]; then
-            echo -e "   Target Cloud Account [input-based]: '${cloud_account}'" ;
-            echo "AWS_DEFAULT_ACCOUNT=${cloud_account}" >> ${GITHUB_ENV} ;
-          fi;
+
           ####------------------------------------------------------------------
           access_keyid="${{ github.event.inputs.accesskey }}" ;
           if [[ (${#access_keyid} -gt 0 ) && (${access_keyid} != '') ]]; then
-            echo -e "   Target Access Key-ID [input-based]: '${access_keyid}'" ;
-            echo "AWS_ACCESS_KEY_ID=${access_keyid}" >> ${GITHUB_ENV} ;
+                  echo -e "   Target Access Key-ID [input-based]: '${access_keyid}'" ;
+                  echo "AWS_ACCESS_KEY_ID=${access_keyid}" >> ${GITHUB_ENV} ;
+            else  echo "AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}" >> ${GITHUB_ENV} ;
           fi;
+          ####------------------------------------------------------------------
+
           ####------------------------------------------------------------------
           secret_keyid="${{ github.event.inputs.secretkey }}" ;
           if [[ (${#secret_keyid} -gt 0 ) && (${secret_keyid} != '') ]]; then
-            echo -e "   Target Secret Key-ID [input-based]: '${secret_keyid}'" ;
-            echo "AWS_SECRET_ACCESS_KEY=${secret_keyid}" >> ${GITHUB_ENV} ;
+                  echo -e "   Target Secret Key-ID [input-based]: '${secret_keyid}'" ;
+                  echo "AWS_SECRET_ACCESS_KEY=${secret_keyid}" >> ${GITHUB_ENV} ;
+            else  echo "AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}" >> ${GITHUB_ENV} ;
           fi;
           ####------------------------------------------------------------------
-          keypair_name="${{ github.event.inputs.keypair-name }}" ;
-          if [[ (${#keypair_name} -gt 0 ) && (${keypair_name} != '') ]]; then
-            echo -e "  Private Key-Pair Name [input-based]: '${keypair_name}'" ;
-            echo "PRIVATE_KEYPAIR_NAME=${keypair_name}" >> ${GITHUB_ENV} ;
+
+          ####------------------------------------------------------------------
+          cloud_account="${{ github.event.inputs.account }}" ;
+          if [[ (${#cloud_account} -gt 0 ) && (${cloud_account} != '') ]]; then
+                  echo -e "   Target Cloud Account [input-based]: '${cloud_account}'" ;
+                  echo "AWS_DEFAULT_ACCOUNT=${cloud_account}" >> ${GITHUB_ENV} ;
+            else  echo "AWS_DEFAULT_ACCOUNT=${{ env.AWS_DEFAULT_ACCOUNT }}" >> ${GITHUB_ENV} ;
           fi;
           ####------------------------------------------------------------------
-          keypair_secret="${{ github.event.inputs.keypair-secret }}" ;
-          if [[ (${#keypair_secret} -gt 0 ) && (${keypair_secret} != '') ]]; then
-            private_keypair_secret="$(echo -e "${keypair_secret}" | sed -e "s|;$||" | tr ';' '\n')";
-            echo -e "Private Key-Pair Secret [input-based]: \n'***'" ;
-            echo "PRIVATE_KEYPAIR_SECRET=${private_keypair_secret}" >> ${GITHUB_ENV} ;
-          fi;
+
           ####------------------------------------------------------------------
-          terraform_version="${{ github.event.inputs.terraform-version }}" ;
-          if [[ (${#terraform_version} -gt 0 ) && (${terraform_version} != true) ]]; then
-            echo -e "       Terraform Version [iput-based]: '${terraform_version}'" ;
-            echo "TERRAFORM_VERSION=${terraform_version}" >> ${GITHUB_ENV} ;
+          cloud_region="${{ github.event.inputs.region }}" ;
+          if [[ (${#cloud_region} -gt 0 ) && (${cloud_region} != '') ]]; then
+                  echo -e "    Target Cloud Region [input-based]: '${cloud_region}'" ;
+                  echo "AWS_DEFAULT_REGION=${cloud_region}" >> ${GITHUB_ENV} ;
+            else  echo "AWS_DEFAULT_REGION=${{ env.AWS_DEFAULT_REGION }}" >> ${GITHUB_ENV} ;
+          fi ;
+          ####------------------------------------------------------------------
+
+          ####------------------------------------------------------------------
+          deploy_terraform="${{ github.event.inputs.deploy-terraform }}" ;
+          if [[ (${#deploy_terraform} -gt 0 ) && (${deploy_terraform} != false) ]]; then
+                  echo -e "       Deploy Terraform [input-based]: '${deploy_terraform}'" ;
+                  echo "TERRAFORM_DEPLOY=${deploy_terraform}" >> ${GITHUB_ENV} ;
+            else  echo "TERRAFORM_DEPLOY=${{ env.TERRAFORM_DEPLOY }}" >> ${GITHUB_ENV} ;
           fi;
+
           ####------------------------------------------------------------------
           destroy_terraform="${{ github.event.inputs.destroy-terraform }}" ;
           if [[ (${#destroy_terraform} -gt 0 ) && (${destroy_terraform} != true) ]]; then
-            echo -e "      Destroy Terraform [input-based]: '${destroy_terraform}'" ;
-            echo "DESTROY_TERRAFORM=${destroy_terraform}" >> ${GITHUB_ENV} ;
+                  echo -e "      Destroy Terraform [input-based]: '${destroy_terraform}'" ;
+                  echo "TERRAFORM_DESTROY=${destroy_terraform}" >> ${GITHUB_ENV} ;
+            else  echo "TERRAFORM_DESTROY=${{ env.TERRAFORM_DESTROY }}" >> ${GITHUB_ENV} ;
           fi;
+
+          ####------------------------------------------------------------------
+          terraform_version="${{ github.event.inputs.terraform-version }}" ;
+          if [[ (${#terraform_version} -gt 0 ) && (${terraform_version} != true) ]]; then
+                  echo -e "       Terraform Version [iput-based]: '${terraform_version}'" ;
+                  echo "TERRAFORM_VERSION=${terraform_version}" >> ${GITHUB_ENV} ;
+            else  echo "TERRAFORM_VERSION=${{ env.TERRAFORM_VERSION }}" >> ${GITHUB_ENV} ;
+          fi;
+          ####------------------------------------------------------------------
+
 ####----------------------------------------------------------------------------
-      ## System Requirements
+## System Requirements
+
       - name: System Requirements
         uses: emvaldes/system-requirements@master
         id: system-requirements
         with:
-          install-awscli-tool: true
-          install-custom-tools: 'netcat'
-          install-default-tools: true
-          install-terraform-cli: latest
+
+          verbose-mode: ${VERBOSE_MODE}
+
+          update-system:  ${UPDATE_SYSTEM}
+          upgrade-system: ${UPGRADE_SYSTEM}
+
+          update-python-version: ${UPDATE_PYTHON}
+          update-pip-version:    ${UPDATE_PIP}
+
+          install-default-tools: ${DEFAULT_TOOLS}
+          install-custom-tools:  ${CUSTOM_TOOLS}
+
+          install-awscli-cli: ${AWSCLI_CLI}
+
+          install-terraform-cli:    ${TERRAFORM_CLI}
           target-terraform-version: ${TERRAFORM_VERSION}
-          update-operating-system: ${UPDATE_SYSTEM_LATEST}
-          update-python-version: ${UPDATE_PYTHON_LATEST}
+
         continue-on-error: false
+
 ####----------------------------------------------------------------------------
-      ## Installed Packages
+## Installed Packages
+
       - name: Installed Packages
         id: installed-packages
         shell: bash
         run: |
+
+          lsb_release -a ;
+          echo -e ;
+
           jq --version 2>/dev/null ;
           tree --version 2>/dev/null ;
+          echo -e ;
+
           python --version 2>/dev/null ;
+          pip --version 2>/dev/null ;
+          echo -e ;
+
           aws --version 2>/dev/null ;
-          terraform --version 2>/dev/null ;
+
+          terraform --version >/dev/null 2>&1 && {
+              echo -e "\nWhich package: $( which terraform )" ;
+              # whereis terraform ;
+              ls -al $(
+                  dirname $( whereis terraform | cut -d' ' -f2 )
+                )/terraform* 2>/dev/null ;
+              echo -e ;
+              echo -e "Listing current Terraform version:" ;
+              ## TF_LOG=${terraform_loglevel} \
+              terraform --version ;
+              echo -e ;
+            } ;
+
+          echo -e ;
+
 ####----------------------------------------------------------------------------
-      ## Terraform Parameters
+## Generating Credentials
+
+      - name: Generating Credentials
+        uses: emvaldes/generate-credentials@master
+        id: generate-credentials
+        with:
+
+          aws-access-key-id:     ${AWS_ACCESS_KEY_ID}
+          aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+
+          aws-default-account: ${AWS_DEFAULT_ACCOUNT}
+          aws-default-profile: ${AWS_DEFAULT_PROFILE}
+          aws-default-region:  ${AWS_DEFAULT_REGION}
+
+          devops-access-role:  ${DEVOPS_ACCESS_ROLE}
+          devops-account-name: ${DEVOPS_ACCOUNT_NAME}
+
+          session-timestamp: "DevOpsPipeline--${{ env.SESSION_TIMESTAMP }}"
+
+        continue-on-error: false
+
+####----------------------------------------------------------------------------
+## Display IAM List-Users
+
+      - name: Display IAM List-Users
+        id: display-listusers
+        run: |
+
+          aws --profile ${AWS_DEFAULT_PROFILE} \
+              --region ${AWS_DEFAULT_REGION} \
+              iam list-users \
+              --query 'Users[?UserName==`'${DEVOPS_ACCOUNT_NAME}'`]' \
+          | sed -e 's|\("UserId": "\)\(.*\)\("\)|\1***\3|' ;
+
+        continue-on-error: false
+
+####----------------------------------------------------------------------------
+## Display Environment
+
+      - name: Display Credentials Environment
+        id: display-credentials-environment
+        run: |
+
+          # echo "::add-mask::$AWS_ACCESS_KEY_ID" ;
+          # echo "::add-mask::$AWS_SECRET_ACCESS_KEY" ;
+          # echo "::add-mask::$AWS_SESSION_TOKEN" ;
+
+          ## Reporting configuration settings:
+          echo -e "\nDisplaying Credentials Environment Settings ...\n" ;
+
+          echo -e "AWS Config File: ${AWS_CONFIG_FILE}" ;
+          echo -e "AWS Shared Credentials File: ${AWS_SHARED_CREDENTIALS_FILE}" ;
+
+          echo -e "AWS Access Key-ID: ${AWS_ACCESS_KEY_ID}" ;
+          echo -e "AWS Secret Access Key: ${AWS_SECRET_ACCESS_KEY}" ;
+
+          echo -e "AWS Session Token: ${AWS_SESSION_TOKEN}" ;
+          ##| sed -e 's|\(AWS_SESSION_TOKEN\=\)\(.*\)|\1***|' ;
+
+          echo -e "AWS Token Expires: ${AWS_TOKEN_EXPIRES}" ;
+
+          echo -e "AWS Default Account: ${AWS_DEFAULT_ACCOUNT}" ;
+          echo -e "AWS Default Profile: ${AWS_DEFAULT_PROFILE}" ;
+          echo -e "AWS Default Region: ${AWS_DEFAULT_REGION}" ;
+
+          echo -e "AWS DevOps Account: ${DEVOPS_ACCOUNT_NAME}" ;
+          echo -e "AWS Principal ARN: ${AWS_PRINCIPAL_ARN}" ;
+
+####----------------------------------------------------------------------------
+## Configure Access KeyPair
+
+      - name: Configure Access
+        uses: emvaldes/configure-access@master
+        id: configure-access
+        with:
+
+          private-keypair-file:   ${PRIVATE_KEYPAIR_FILE}
+          private-keypair-name:   ${PRIVATE_KEYPAIR_NAME}
+          private-keypair-secret: ${PRIVATE_KEYPAIR_SECRET}
+
+        continue-on-error: false
+
+####----------------------------------------------------------------------------
+## Display Environment
+
+      - name: Display Controller Environment
+        id: display-controller-environment
+        shell: bash
+        run: |
+
+          echo -e "Displaying Controller Environment Settings ..." ;
+
+          echo -e "Access KeyPair File: '${PRIVATE_KEYPAIR_FILE}'" ;
+          echo -e "Access KeyPair Name: '${PRIVATE_KEYPAIR_NAME}'" ;
+
+          echo -e "Access KeyPair Secret: '$(
+              echo -en "${PRIVATE_KEYPAIR_SECRET}" | base64 --decode
+            )'" ;
+
+####----------------------------------------------------------------------------
+## Terraform Parameters
+
       - name: Terraform Parameters
         id: terraform-parameters
         shell: bash
         run: |
-          remote_origin="$(git config --get remote.origin.url)" ;
-          route53_record="${remote_origin##*\/}" ;
-          oIFS="${IFS}" ; IFS=$'\n' ;
-          declare -a custom_params=(
-              custom_timestamp="${SESSION_TIMESTAMP}"
-              custom_engineer='Eduardo Valdes'
-              custom_contact='emvaldes@hotmail.com'
-              custom_listset='["ami-abc123","ami-def456"]'
-              custom_mapset='{"us-east-1":"ami-abc123","us-east-2":"ami-def456"}'
-              route53_record="${SESSION_TIMESTAMP}.${route53_record}"
-            ) ;
-          ## echo -e "\nListing Encoding entries: ..." ;
-          ## for xitem in ${custom_params[@]}; do
-          ##   encrypted=$(echo -en ${xitem} | base64 -w0 | tr -d '\n\r') ;
-          ##   decrypted=$(echo -en "${encrypted}" | base64 --decode) ;
-          ##   echo -e "${encrypted} -> ${decrypted}" ;
-          ## done ;
-          echo "terraform_input_params=$(
-              for xitem in ${custom_params[@]}; do
-                echo -en "`echo -en ${xitem} | base64 -w0 | tr -d '\n\r'`_" ;
-              done | sed -e 's|\(.*\)\(\_\)$|\1|' ;
-            )" >> ${GITHUB_ENV} ;
+
+          if [[ ${{ env.TERRAFORM_PARAMS }} == false ]]; then
+            remote_origin="$(git config --get remote.origin.url)" ;
+            route53_record="${remote_origin##*\/}" ;
+            terraform_listset="[\"$(
+                echo -e "${{ env.TERRAFORM_LISTSET }}" \
+                   | tr -d '[[:space:]]' \
+                   | sed -e 's|\,|\",\"|g'
+              )\"]" ;
+            terraform_mapset="$(
+                echo -e "${{ env.TERRAFORM_MAPSET }}" \
+                   | tr -d '[[:space:]]' \
+                   | sed -e 's|^{|{\"|' -e 's|}$|\"}|' -e 's|\,|\",\"|g'
+              )" ;
+            oIFS="${IFS}" ; IFS=$'\n' ;
+            declare -a custom_params=(
+                custom_timestamp="${SESSION_TIMESTAMP}"
+                custom_engineer="${{ env.DEVOPS_ENGINEER_NAME }}"
+                custom_contact="${{ env.DEVOPS_ENGINEER_EMAIL }}"
+                custom_listset="${terraform_listset}"
+                custom_mapset="${terraform_mapset}"
+                route53_record="${SESSION_TIMESTAMP}.${route53_record}"
+              ) ;
+            # if [[ ${{ env.VERBOSE_MODE }} == true ]]; then
+            #   for xitem in ${custom_params[@]}; do
+            #     encrypted=$(echo -en ${xitem} | base64 -w0 | tr -d '\n\r') ;
+            #     decrypted=$(echo -en "${encrypted}" | base64 --decode) ;
+            #     echo -e "${encrypted} -> ${decrypted}" ;
+            #   done ;
+            # fi ;
+            TERRAFORM_PARAMS="$(
+                for xitem in ${custom_params[@]}; do
+                  echo -en "`echo -en ${xitem} | base64 -w0 | tr -d '\n\r'`_" ;
+                done | sed -e 's|\(.*\)\(\_\)$|\1|' ;
+              )" ;
+            echo "TERRAFORM_PARAMS=${TERRAFORM_PARAMS}" >> ${GITHUB_ENV} ;
+          fi ;
+          if [[ ${{ env.VERBOSE_MODE }} == true ]]; then
+            echo -e "Terraform Parameters:\n" ;
+            echo -e "${TERRAFORM_PARAMS}" ;
+            echo -e "\nListing Encoding entries: ..." ;
+            for each in $( echo -e "${TERRAFORM_PARAMS}" | tr '_' '\n' ); do
+              echo -e ; echo -e "${each}" | base64 --decode | sed -e 's|\\"|"|g' ;
+            done ;
+          fi ;
           IFS="${oIFS}" ;
           echo "terraform_input_tfvars=configs/${TARGET_WORKSPACE}-configs.tfvars" >> ${GITHUB_ENV} ;
+
         continue-on-error: false
+
 ####----------------------------------------------------------------------------
-      ## Requesting Credentials
-      - name: Requesting Credentials
-        uses: emvaldes/generate-credentials@master
-        id: request-credentials
-        with:
-          aws-access-key-id: ${AWS_ACCESS_KEY_ID}
-          aws-default-account: ${AWS_DEFAULT_ACCOUNT}
-          aws-default-profile: ${AWS_DEFAULT_PROFILE}
-          aws-default-region: ${AWS_DEFAULT_REGION}
-          aws-secret-access-key: ${AWS_SECRET_ACCESS_KEY}
-          devops-access-role: ${DEVOPS_ACCESS_ROLE}
-          devops-account-name: ${DEVOPS_ACCOUNT_NAME}
-          session-timestamp: "DevOpsPipeline--${SESSION_TIMESTAMP}"
-        continue-on-error: false
-####----------------------------------------------------------------------------
-      ## Provisioning Access
-      - name: Provisioning Access
-        uses: emvaldes/configure-access@master
-        id: provision-access
-        with:
-          private-keypair-file: ${PRIVATE_KEYPAIR_FILE}
-          private-keypair-secret: "${PRIVATE_KEYPAIR_SECRET}"
-        continue-on-error: false
-####----------------------------------------------------------------------------
-      ## Provision Terraform
+## Provision Terraform
       - name: Provision Terraform
         uses: ./
         id: provision-terraform
         with:
-          provision-terraform: ${PROVISION_TERRAFORM}
-          terraform-input-params: "${terraform_input_params}"
-          terraform-input-tfvars: "${terraform_input_tfvars}"
-## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
-          terraform-loglevel: false
+
+          validate-terraform:     ${{ env.TERRAFORM_VALIDATE }}
+          provision-terraform:    ${{ env.TERRAFORM_PROVISION }}
+
+          terraform-input-params: "${{ env.TERRAFORM_PARAMS }}"
+          terraform-input-tfvars: "${{ env.terraform_input_tfvars }}"
+
+          ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
+          terraform-loglevel: "${{ env.TERRAFORM_LOGLEVEL}}"
+
         continue-on-error: false
-####----------------------------------------------------------------------------
-      ## Deploy Terraform
-      - name: Deploy Terraform
-        uses: ./
-        id: deploy-terraform
-        with:
-          deploy-terraform: ${DEPLOY_TERRAFORM}
-## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
-          terraform-loglevel: false
-        continue-on-error: false
-####----------------------------------------------------------------------------
-      ## Backup Terraform
-      - name: Backup Terraform
-        uses: emvaldes/provision-terraform@master
-        id: backup-terraform
-        with:
-          backup-terraform: ${BACKUP_TERRAFORM}
-        continue-on-error: false
-####----------------------------------------------------------------------------
-      ## Destroy Terraform
-      - name: Destroy Terraform
-        uses: ./
-        id: destroy-terraform
-        with:
-          destroy-terraform: ${DESTROY_TERRAFORM}
-## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
-          terraform-loglevel: false
-        continue-on-error: false
-###----------------------------------------------------------------------------
+
+# ####----------------------------------------------------------------------------
+# ## Deploy Terraform
+#       - name: Deploy Terraform
+#         uses: ./
+#         id: deploy-terraform
+#         with:
+#           deploy-terraform: ${TERRAFORM_DEPLOY}
+#           ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
+#           terraform-loglevel: false
+#         continue-on-error: false
+# ####----------------------------------------------------------------------------
+# ## Backup Terraform
+#       - name: Backup Terraform
+#         uses: emvaldes/provision-terraform@master
+#         id: backup-terraform
+#         with:
+#           backup-terraform: ${TERRAFORM_BACKUP}
+#         continue-on-error: false
+# ####----------------------------------------------------------------------------
+# ## Destroy Terraform
+#       - name: Destroy Terraform
+#         uses: ./
+#         id: destroy-terraform
+#         with:
+#           destroy-terraform: ${TERRAFORM_DESTROY}
+#           ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
+#           terraform-loglevel: false
+#         continue-on-error: false
+# ###----------------------------------------------------------------------------

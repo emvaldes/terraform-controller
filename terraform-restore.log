@@ -50,7 +50,7 @@ Run actions/checkout@v2
     submodules: false
   env:
     DYNAMODB_DEFAULT_REGION: us-east-1
-    PRIVATE_KEYPAIR_FILE: .ssh/id_rsa
+    PRIVATE_KEYPAIR_FILE: devops.pem
     S3BUCKET_CONTAINER: pipelines
     S3BUCKET_DEFAULT_REGION: us-east-1
 Syncing repository: emvaldes/terraform-controller
@@ -172,7 +172,7 @@ Terraform v0.13.1
 Your version of Terraform is out of date! The latest version
 is 1.0.11. You can update by downloading from https://www.terraform.io/downloads.html
 
-Requesting Credentials - 2s
+Generating Credentials - 2s
 
 Run emvaldes/generate-credentials@master
 Run ####--------------------------------------------------------------------
@@ -187,25 +187,25 @@ Obtaining Caller Identity (Assumed-Role):
 
 Completed!
 
-Provisioning Access - 2s
+Configuring Access - 2s
 
 Run emvaldes/configure-access@master
 Run ####--------------------------------------------------------------------
 Downloading Action-Functions: action.functions ...
 Sourcing Action-Functions ...
--r-------- 1 runner docker 2233 Nov 16 03:15 /home/runner/work/terraform-controller/terraform-controller/.ssh/id_rsa
+-r-------- 1 runner docker 2233 Nov 16 03:15 /home/runner/work/terraform-controller/terraform-controller/.ssh/devops.pem
 
 Listing SSH Private-Key:
--r-------- 1 runner docker 1674 Nov 16 03:15 /home/runner/work/terraform-controller/terraform-controller/.ssh/id_rsa
+-r-------- 1 runner docker 1674 Nov 16 03:15 /home/runner/work/terraform-controller/terraform-controller/.ssh/devops.pem
 
 Generating SSH Public-Key ...
--rw-r--r-- 1 runner docker 381 Nov 16 03:15 /home/runner/work/terraform-controller/terraform-controller/.ssh/id_rsa.pub
+-rw-r--r-- 1 runner docker 381 Nov 16 03:15 /home/runner/work/terraform-controller/terraform-controller/.ssh/devops.pub
 
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCnqYFzfsIDEiGjLdYDwBLng2QhNhN07xSaPi1Ou1SU2mF17ec0vXvEcPeMnNA1vcfJpp0Pz9o2+viClEkRQRz/gJUh9IDpyTogPrxGQpGtwNT4wwTyAZbUFnSKG5C+D5jKelvA3xerEsGY5KxT63SlMCCGAM2Kbe4E6J36f1/GUAimmGn5beuYt0xYFg1IxUG4WbHRN/tqAz+Y2/J1tg9OqWG3pmwlAHJH50Wd36sBk+N1TSmiaOuHx1nHXjDpw4Wqdud5bI0w5Db9DTtCxxkiT2wTl4umxBC+dE6JPt4QN3kYctNJAIRt5E2f7X4inuF6nRbUxsbFM9UEU0gSle6V
 
 /home/runner/work/terraform-controller/terraform-controller/.ssh
-├── id_rsa
-└── id_rsa.pub
+├── devops.pem
+└── devops.pub
 
 0 directories, 2 files
 
@@ -346,8 +346,8 @@ Displaying Terraform file-structure ...
 │       └── terraform-restore.yaml
 ├── .gitignore
 ├── .ssh/
-│   ├── id_rsa
-│   └── id_rsa.pub
+│   ├── devops.pem
+│   └── devops.pub
 ├── LICENSE
 ├── README.md
 ├── _config.yml
@@ -574,10 +574,10 @@ module.bucket.aws_iam_role.allow_instance_s3: Creating...
 2021-11-16T03:16:13.049Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] setting computed for "managed_policy_arns" from ComputedKeys: timestamp=2021-11-16T03:16:13.049Z
 2021-11-16T03:16:13.050Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] setting computed for "inline_policy" from ComputedKeys: timestamp=2021-11-16T03:16:13.050Z
 2021-11-16T03:16:13.051Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:13.051Z
-2021/11/16 03:16:13 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an invalid plan for module.bucket.aws_s3_bucket.web_bucket, but we are tolerating it because it is using the legacy plugin SDK.
+2021/11/16 03:16:13 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an invalid plan for module.bucket.aws_s3_bucket_acl.web_bucket, but we are tolerating it because it is using the legacy plugin SDK.
     The following problems may be the cause of any confusing errors from downstream operations:
       - .versioning: attribute representing nested block must not be unknown itself; set nested attribute values to unknown instead
-module.bucket.aws_s3_bucket.web_bucket: Creating...
+module.bucket.aws_s3_bucket_acl.web_bucket: Creating...
 2021-11-16T03:16:13.059Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:13 [DEBUG] VPC create config: {
   AmazonProvidedIpv6CidrBlock: false,
   CidrBlock: "10.0.0.0/16",
@@ -759,9 +759,9 @@ module.vpc.aws_route_table.public[0]: Creating...
 2021-11-16T03:16:18.318Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:18 [DEBUG] Revoking default egress rule for Security Group for sg-06ce42cbc3e1de8c2: timestamp=2021-11-16T03:16:18.318Z
 module.vpc.aws_route_table.public[0]: Creation complete after 1s [id=rtb-0a0782f82cc53313f]
 2021-11-16T03:16:18.521Z [INFO]  plugin.terraform-provider-aws_v3.65.0_x5: 2021/11/16 03:16:18 [DEBUG] Waiting for state to become: [success]: timestamp=2021-11-16T03:16:18.521Z
-module.bucket.aws_s3_bucket.web_bucket: Creation complete after 6s [id=terraform-dev-49614]
-2021/11/16 03:16:18 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an invalid plan for aws_s3_bucket_object.graphic, but we are tolerating it because it is using the legacy plugin SDK.
-aws_s3_bucket_object.graphic: Creating...
+module.bucket.aws_s3_bucket_acl.web_bucket: Creation complete after 6s [id=terraform-dev-49614]
+2021/11/16 03:16:18 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an invalid plan for aws_s3_object.graphic, but we are tolerating it because it is using the legacy plugin SDK.
+aws_s3_object.graphic: Creating...
     The following problems may be the cause of any confusing errors from downstream operations:
       - .acl: planned value cty.StringVal("private") does not match config value cty.NullVal(cty.String)
       - .force_destroy: planned value cty.False does not match config value cty.NullVal(cty.Bool)
@@ -813,9 +813,9 @@ module.vpc.aws_route.public_internet_gateway[0]: Creating...
     }],
   ToPort: 80
 }}: timestamp=2021-11-16T03:16:19.703Z
-2021/11/16 03:16:19 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an unexpected new value for aws_s3_bucket_object.graphic, but we are tolerating it because it is using the legacy plugin SDK.
+2021/11/16 03:16:19 [WARN] Provider "registry.terraform.io/hashicorp/aws" produced an unexpected new value for aws_s3_object.graphic, but we are tolerating it because it is using the legacy plugin SDK.
     The following problems may be the cause of any confusing errors from downstream operations:
-aws_s3_bucket_object.graphic: Creation complete after 1s [id=/website/corporate.jpg]
+aws_s3_object.graphic: Creation complete after 1s [id=/website/corporate.jpg]
       - .content_encoding: was null, but now cty.StringVal("")
       - .object_lock_mode: was null, but now cty.StringVal("")
       - .object_lock_retain_until_date: was null, but now cty.StringVal("")
@@ -1368,8 +1368,8 @@ resource "aws_instance" "nginx" {
     }
 }
 
-# aws_s3_bucket_object.graphic:
-resource "aws_s3_bucket_object" "graphic" {
+# aws_s3_object.graphic:
+resource "aws_s3_object" "graphic" {
     acl                = "private"
     bucket             = "terraform-dev-49614"
     bucket_key_enabled = false
@@ -1684,8 +1684,8 @@ resource "aws_iam_role_policy" "allow_s3_all" {
     role   = "terraform-dev-49614_allow_instance_s3"
 }
 
-# module.bucket.aws_s3_bucket.web_bucket:
-resource "aws_s3_bucket" "web_bucket" {
+# module.bucket.aws_s3_bucket_acl.web_bucket:
+resource "aws_s3_bucket_acl" "web_bucket" {
     acl                         = "private"
     arn                         = "arn:aws:s3:::terraform-dev-49614"
     bucket                      = "terraform-dev-49614"

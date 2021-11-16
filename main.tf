@@ -278,13 +278,13 @@ module "bucket" {
 # An argument named "common_tags" is not expected here.
 
 
-# resource "aws_s3_bucket_object" "website" {
+# resource "aws_s3_object" "website" {
 #   bucket = module.bucket.bucket.id
 #   key    = "/website/index.html"
 #   source = "./website/index.html"
 # }
 
-resource "aws_s3_bucket_object" "graphic" {
+resource "aws_s3_object" "graphic" {
   bucket = module.bucket.bucket.id
   key    = "/website/${local.corporate_image}"
   source = "./website/${local.corporate_image}"

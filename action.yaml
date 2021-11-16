@@ -2,190 +2,245 @@ name: Terraform Controller
 description: 'Terraform Controller (DevOps)'
 
 ####----------------------------------------------------------------------------
+
 inputs:
+
   aws-access-key-id:
     description: 'Terraform AWS Access Key-ID'
     required: false
     default: false
+
   aws-default-account:
     description: 'Terraform AWS Default Account'
     required: false
     default: false
+
   aws-default-profile:
     description: 'Terraform AWS Default Profile'
     required: false
     default: false
+
   aws-default-region:
     description: 'Terraform AWS Default Region'
     required: false
     default: false
+
   aws-secret-access-key:
     description: 'Terraform AWS Secret Access Key'
     required: false
     default: false
+
   backup-terraform:
     description: 'Backup Terraform Infrastructure'
     required: false
     default: false
+
   controller-functions:
     description: 'Terraform-Controller functions'
     required: false
     default: 'action.functions'
+
   deploy-terraform:
     description: 'Deploy Terraform Infrastructure'
     required: false
     default: false
+
   destroy-terraform:
     description: 'Destroy Terraform Infrastructure'
     required: false
     default: false
+
   dynamodb-default-region:
     description: 'Define AWS DynamoDB Default Region'
     required: false
     default: 'us-east-1'
+
   dynamodb-github-table:
     description: 'Define AWS DynamoDB GitHub Table'
     required: false
     default: 'github-pipelines'
+
   dynamodb-terraform-table:
     description: 'Define AWS DynamoDB Terraform Table'
     required: false
     default: 'terraform-pipelines'
+
   manage-terraform-script:
     description: 'Manage-Terraform template (script)'
     required: false
     default: 'manage-terraform.shell'
+
   private-keypair-file:
     description: 'Terraform Private KeyPair-File'
     required: false
-    default: .ssh/id_rsa
+    default: devops.pem
+
   private-keypair-name:
     description: 'Terraform Private Key-Name'
     required: false
     default: false
+
   provision-terraform:
     description: 'Provision Terraform Provisioning'
     required: false
     default: false
+
   repository--manage-profiles:
     description: 'Manage-Profile GitHub Repository'
     required: false
     default: 'emvaldes/manage-profiles'
+
   repository--terraform-controller:
     description: 'Terraform-Controller GitHub Repository'
     required: false
     default: 'emvaldes/terraform-controller'
+
   restore-account:
     description: 'Restore Terraform AWS Account'
     required: false
     default: false
+
   restore-index:
     description: 'Restore Terraform SHA-Index'
     required: false
     default: false
+
   restore-keypair-file:
     description: 'Restore Terraform KeyPair-File'
     required: false
-    default: .ssh/id_rsa
+    default: devops.pem
+
   restore-project:
     description: 'Restore Terraform Project'
     required: false
     default: false
+
   restore-region:
     description: 'Restore Terraform AWS Region'
     required: false
     default: false
+
   restore-shaindex:
     description: 'Restore Terraform SHA Index'
     required: false
     default: ''
+
   restore-terraform:
     description: 'Restore Terraform Infrastructure'
     required: false
     default: false
+
   restore-workspace:
     description: 'Restore Terraform Workspace'
     required: false
     default: false
+
   route53-subdomain:
     description: 'Define Route53 Sub-Domain'
     required: false
     default: false
+
   s3bucket-nameset:
     description: 'Default AWS S3 Bucket Name-Prefix'
     default: 'terraform--states--'
+
   s3bucket-default-region:
     description: 'Default AWS S3 Default Region'
     default: 'us-east-1'
+
   target-container:
     description: 'Define Terraform Container'
     required: false
     default: false
+
   target-timestamp:
     description: 'Define Terraform Time-Stamp'
     required: false
     default: false
+
   target-workspace:
     description: 'Define Terraform Workspace'
     required: false
     default: false
+
   terraform-config:
     description: 'Define Terraform Configuration'
     required: false
     default: false
+
   terraform-input-params:
     description: 'Define Terraform Input Parameters'
     required: false
     default: false
+
   terraform-input-tfvars:
     description: 'Define Terraform Input Variables'
     required: false
     default: false
+
   terraform-planfile:
     description: 'Define Terraform Planfile Name'
     required: false
     default: 'terraform'
+
   terraform-tfstate:
     description: 'Define Terraform System-State'
     required: false
     default: false
+
   upgrade-providers:
     description: 'Upgrade Terraform Providers'
     default: false
-  validate-formatting:
+
+  validate-terraform:
     description: 'Validate Terraform Formatting'
     default: true
+
   terraform-loglevel:
     description: 'Define Terraform Loglevel'
     required: false
     default: false
+
 ####----------------------------------------------------------------------------
+
 runs:
   using: "composite"
   steps:
-    ####------------------------------------------------------------------------
+
     - name: Terraform Controller
       id: terraform-controller
       shell: bash
       run: |
+
         ####--------------------------------------------------------------------
         completion="Skipping ...! " ;
         ####--------------------------------------------------------------------
-        github_workspace="${{ github.workspace }}";
-        ####--------------------------------------------------------------------
+
         github_usercontent="https://raw.githubusercontent.com" ;
         usercontent_repository="${github_usercontent}/${{ inputs.repository--manage-profiles }}/master" ;
         usercontent_controller="${github_usercontent}/${{ inputs.repository--terraform-controller }}/master" ;
+
         ####--------------------------------------------------------------------
+
         manage_terraform_script="${{ inputs.manage-terraform-script }}" ;
-        manage_terraform_template="${github_workspace}/${manage_terraform_script}" ;
-        echo -e "Downloading Terraform Management Script: ${manage_terraform_template} ..." ;
+        manage_terraform_template="${{ github.workspace }}/${manage_terraform_script}" ;
+        echo -e "\nDownloading Terraform Management Script: ${manage_terraform_template} ..." ;
         wget --quiet --output-document=${manage_terraform_template} ${usercontent_controller}/.github/templates/${manage_terraform_script} ;
+
         ####--------------------------------------------------------------------
+
         echo -e "\nDownloading Terraform Controller Functions: ${{ inputs.controller-functions }} ..." ;
         wget --quiet --output-document=./${{ inputs.controller-functions }} ${usercontent_controller}/${{ inputs.controller-functions }} ;
-        echo -e "Sourcing Terraform Controller Functions ..." ;
+        echo -e "\nSourcing Terraform Controller Functions ..." ;
         source ${{ inputs.controller-functions }} ;
+        echo -e ;
+
+        ####--------------------------------------------------------------------
+
+        tree -FCla --prune -I .git ${{ github.workspace }} ;
+
+        ####--------------------------------------------------------------------
+
         ####--------------------------------------------------------------------
         remote_origin="$(git config --get remote.origin.url)" ;
         github_repository="${remote_origin##*\/}" ;
@@ -217,7 +272,7 @@ runs:
         custom_filepath="${target_timestamp:0:2}/${target_timestamp:2:2}/${target_timestamp:4:2}/${target_timestamp:6:6}" ;
         target_buildset="${target_workspace}/${custom_filepath}/$(git rev-parse --short HEAD)" ;
         ####--------------------------------------------------------------------
-        terraform_tfstate="${github_workspace}/terraform.tfstate.d" ;
+        terraform_tfstate="${{ github.workspace }}/terraform.tfstate.d" ;
         terraform_tfplan="${terraform_tfstate}/${target_workspace}/${{ inputs.terraform-planfile }}.tfplan" ;
         ####--------------------------------------------------------------------
         terraform_verbosity="${{ inputs.terraform-loglevel }}" ;
@@ -235,7 +290,7 @@ runs:
           } ;
         [[  ${#AWS_DEFAULT_ACCOUNT} -eq 0 ]] && {
             export AWS_DEFAULT_ACCOUNT="$(
-                grep 'x_principal_arn'  ${github_workspace}/.aws/credentials | cut -d':' -f5
+                grep 'x_principal_arn'  ${{ github.workspace }}/.aws/credentials | cut -d':' -f5
               )" ;
           } ;
         aws_default_account="${{ inputs.aws-default-account }}" ;
@@ -271,12 +326,12 @@ runs:
         restore_script_location="${scripts_location}/restore.shell" ;
         destroy_script_location="${scripts_location}/destroy.shell" ;
         ####--------------------------------------------------------------------
-        keypair_file="${{ inputs.private-keypair-file }}" ;
+        keypair_file=".ssh/${{ inputs.private-keypair-file }}" ;
         [[ "${keypair_file}" == false ]] && {
-            keypair_file="${PRIVATE_KEYPAIR_FILE}" ;
+            keypair_file=".ssh/${PRIVATE_KEYPAIR_FILE}" ;
           } ;
         target_keypair_file="$(
-            echo ${keypair_file} | sed -e "s|${github_workspace}/||g"
+            echo ${keypair_file} | sed -e "s|${{ github.workspace }}/||g"
           )" ;
         keypair_name="${{ inputs.private-keypair-name }}" ;
         [[ "${keypair_name}" == false ]] && {
@@ -305,16 +360,24 @@ runs:
           fi;
           eval ${terraform_verbosity} \
                terraform init ;
+          ####------------------------------------------------------------------
+          ## Patching .terraform/modules/vpc/main.tf
+          patch ${{ github.workspace }}/.terraform/modules/vpc/main.tf \
+                < ${{ github.workspace }}/patches/terraform/modules/vpc/main.patch ;
+          ####------------------------------------------------------------------
           eval ${terraform_verbosity} \
-               terraform workspace new ${target_workspace} ;
-          if [[ ${{ inputs.validate-formatting }} == true ]]; then
+               terraform workspace list ;
+          eval ${terraform_verbosity} \
+               terraform workspace new ${target_workspace} 2>/dev/null ;
+          if [[ ${{ inputs.validate-terraform }} == true ]]; then
             eval ${terraform_verbosity} \
                  terraform fmt -check ;
           fi;
           eval ${terraform_verbosity} \
-               terraform validate ;
+               terraform validate 2>/dev/null ;
           completion="Completed! " ;
         fi;
+
         ####--------------------------------------------------------------------
         if [[ "${{ inputs.provision-terraform }}" == true ]]; then
           input_params="${{ inputs.terraform-input-params }}" ;
@@ -331,7 +394,7 @@ runs:
           input_tfvars="${{ inputs.terraform-input-tfvars }}" ;
           [[ "${input_tfvars}" == false ]] && input_tfvars='' ;
           if [[ ${#input_tfvars} -gt 0 ]]; then
-            tfvars_file="${github_workspace}/${input_tfvars}" ;
+            tfvars_file="${{ github.workspace }}/${input_tfvars}" ;
             custom_message="Custom Terraform Variables file [${input_tfvars}]" ;
             if [[ -e ${tfvars_file} ]]; then
                     echo -e "Listing ${custom_message}:" ;
@@ -350,12 +413,12 @@ runs:
           echo -e "Private-KeyPair File: ${keypair_file}" ; echo -e ;
           echo -e "Private-KeyPair Name: ${keypair_name}" ; echo -e ;
           target_custom_tfvars="$(
-              echo ${tfvars_file} | sed -e "s|${github_workspace}/||g"
+              echo ${tfvars_file} | sed -e "s|${{ github.workspace }}/||g"
             )" ;
           custom_tfvars='';
           [[ ${#target_custom_tfvars} -gt 0 ]] && custom_tfvars="-var-file=\"${target_custom_tfvars}\"" ;
           target_terraform_tfplan="$(
-              echo ${terraform_tfplan} | sed -e "s|${github_workspace}/||g"
+              echo ${terraform_tfplan} | sed -e "s|${{ github.workspace }}/||g"
             )" ;
           declare -a terraform_parameters=();
           terraform_parameters+=("-var=\"region=${aws_default_region}\"") ;
@@ -368,20 +431,40 @@ runs:
             terraform_parameters+=("-var=\"$(echo -en ${param} | base64 --decode)\"") ;
           done ;
           IFS="${oIFS}" ;
-          echo -e "Listing Terraform Plan command:\n" ;
+
+          cat "${{ github.workspace }}/.aws/config" ;
+          echo -e ;
+          cat "${{ github.workspace }}/.aws/credentials" ;
+
+          echo -e "\nListing Terraform Plan command:\n" ;
           echo ${terraform_verbosity} \
                terraform plan \
                          ${terraform_parameters[*]} \
                          ${custom_tfvars} \
                          -out ${target_terraform_tfplan} ; echo -e ;
 
+          which aws ;
+          aws --version ;
+          
+          aws --profile default --region us-east-1 ec2 describe-key-pairs --key-name devops
+          aws --profile default --region us-east-1 iam list-users --query 'Users[?UserName==`devops`]'
+          
+          echo -e "TF Parameters:\n${terraform_parameters[*]}" ;
+
+          echo -e "\nTF Configs Vars\n${{ github.workspace }}/configs/${target_workspace}-configs.tfvars" ;
+          cat -n ${{ github.workspace }}/configs/${target_workspace}-configs.tfvars ;
+
+          echo -e "\nTerraform Plan:\n${target_terraform_tfplan}" ;
+
           eval ${terraform_verbosity} \
                terraform plan \
                          ${terraform_parameters[*]} \
                          ${custom_tfvars} \
                          -out ${target_terraform_tfplan} ;
+
           completion="Completed! " ;
         fi ;
+
         ####--------------------------------------------------------------------
         if [[ "${{ inputs.provision-terraform }}" == true ]]; then
           github_author_name="${{ github.actor }}" ;

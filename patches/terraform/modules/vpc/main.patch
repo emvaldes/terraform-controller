@@ -1,0 +1,44 @@
+--- .terraform/modules/vpc/main-default.tf	2023-08-13 01:01:26
++++ .terraform/modules/vpc/main-delta.tf	2023-08-13 01:04:41
+@@ -29,12 +29,12 @@
+ resource "aws_vpc" "this" {
+   count = var.create_vpc ? 1 : 0
+
+-  cidr_block                       = var.cidr
+-  instance_tenancy                 = var.instance_tenancy
+-  enable_dns_hostnames             = var.enable_dns_hostnames
+-  enable_dns_support               = var.enable_dns_support
+-  enable_classiclink               = var.enable_classiclink
+-  enable_classiclink_dns_support   = var.enable_classiclink_dns_support
++  cidr_block           = var.cidr
++  instance_tenancy     = var.instance_tenancy
++  enable_dns_hostnames = var.enable_dns_hostnames
++  enable_dns_support   = var.enable_dns_support
++  # enable_classiclink               = var.enable_classiclink
++  # enable_classiclink_dns_support   = var.enable_classiclink_dns_support
+   assign_generated_ipv6_cidr_block = var.enable_ipv6
+
+   tags = merge(
+@@ -845,7 +845,7 @@
+ resource "aws_eip" "nat" {
+   count = var.create_vpc && var.enable_nat_gateway && false == var.reuse_nat_ips ? local.nat_gateway_count : 0
+
+-  vpc = true
++  domain = "vpc"
+
+   tags = merge(
+     {
+@@ -1036,7 +1036,7 @@
+
+   enable_dns_support   = var.default_vpc_enable_dns_support
+   enable_dns_hostnames = var.default_vpc_enable_dns_hostnames
+-  enable_classiclink   = var.default_vpc_enable_classiclink
++  # enable_classiclink   = var.default_vpc_enable_classiclink
+
+   tags = merge(
+     {
+@@ -1046,4 +1046,3 @@
+     var.default_vpc_tags,
+   )
+ }
+-
