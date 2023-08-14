@@ -517,16 +517,20 @@ jobs:
 
         continue-on-error: false
 
-# ####----------------------------------------------------------------------------
-# ## Deploy Terraform
-#       - name: Deploy Terraform
-#         uses: ./
-#         id: deploy-terraform
-#         with:
-#           deploy-terraform: ${TERRAFORM_DEPLOY}
-#           ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
-#           terraform-loglevel: false
-#         continue-on-error: false
+####----------------------------------------------------------------------------
+## Deploy Terraform
+      - name: Deploy Terraform
+        uses: ./
+        id: deploy-terraform
+        with:
+
+          deploy-terraform: ${TERRAFORM_DEPLOY}
+
+          ## Terraform Log-levels: TRACE, DEBUG, INFO, WARN or ERROR
+          terraform-loglevel: false
+
+        continue-on-error: false
+
 # ####----------------------------------------------------------------------------
 # ## Backup Terraform
 #       - name: Backup Terraform
