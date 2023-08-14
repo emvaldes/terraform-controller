@@ -25,7 +25,7 @@ function configure_terraform_template () {
                     -e "s|{{ console.Remote_Path }}|${target_location}|g" \
                     -e "s|{{ console.Verbosity }}|${terraform_verbosity}|g" \
                     -e "s|{{ console.Target_Workspace }}|${target_workspace}|g" \
-                    -e "s|{{ github.workspace }}|${github_workspace}|g" \
+                    -e "s|{{ github.workspace }}|${{ github.workspace }}|g" \
               > ${managed_script};
             done ;
             sed -i -e "s|{{ console.Terraform_Action }}|apply -auto-approve \${terraform_restore}/terraform.tfstate.d/${target_workspace}/terraform.tfplan|g" ${restore_script} ;
@@ -64,7 +64,7 @@ function setup_dynamodb_github () {
       eval "${awscli_command}" ;
     fi; unset table_exists ;
     dynamodb_github="${usercontent_repository}/service/dynamodb/github/pipelines/template.json" ;
-    dynamodb_github_template="${github_workspace}/${dynamodb_github_table}.json" ;
+    dynamodb_github_template="${{ github.workspace }}/${dynamodb_github_table}.json" ;
     cat /dev/null > ${dynamodb_github_template} ;
     wget --quiet --output-document=${dynamodb_github_template} ${dynamodb_github} ;
     sed -i -e "s|{{ console.Repo_SHAIndex }}|${commit_shaid}|g" \
@@ -129,7 +129,7 @@ function setup_dynamodb_terraform () {
       eval "${awscli_command}" ;
     fi; unset table_exists ;
     dynamodb_terraform="${usercontent_repository}/service/dynamodb/terraform/pipelines/template.json" ;
-    dynamodb_terraform_template="${github_workspace}/${dynamodb_terraform_table}.json" ;
+    dynamodb_terraform_template="${{ github.workspace }}/${dynamodb_terraform_table}.json" ;
     cat /dev/null > ${dynamodb_terraform_template} ;
     wget --quiet --output-document=${dynamodb_terraform_template} ${dynamodb_terraform} ;
     declare -a terraform_variables=();
@@ -271,7 +271,7 @@ function backup_terraform_state () {
   };
 
 function backup_terraform_configs () {
-    terraform_modules="${github_workspace}/.terraform" ;
+    terraform_modules="${{ github.workspace }}/.terraform" ;
     echo -e "\nCreating Target Build-Set Container ... [ ${target_buildset} ]" ;
     mkdir -p ${target_buildset}/scripts ;
     echo -e "\nTransferring terraform configurations to container ...\n" ;
@@ -350,7 +350,7 @@ function restore_terraform_state () {
     fi;
 		##--------------------------------------------------------------------------
     echo -e "\nRestoring Terraform State @ ${organization}/${repository} -> ${restore_shaindex} [${target_workspace}] = ${target_location} :\n" ;
-    export target_path="${github_workspace}";
+    export target_path="${{ github.workspace }}";
     export restore_folder="${target_path}/restore/${restore_shaindex:0:7}" ;
     mkdir -p ${restore_folder} ;
     export restore_script="${target_path}/restore.shell" ;
