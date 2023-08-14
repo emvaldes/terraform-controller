@@ -209,8 +209,10 @@ runs:
 
     - name: Terraform Controller
       id: terraform-controller
-      shell: bash -x
+      shell: bash
       run: |
+
+        bash -x
 
         ####--------------------------------------------------------------------
         completion="Skipping ...! " ;
