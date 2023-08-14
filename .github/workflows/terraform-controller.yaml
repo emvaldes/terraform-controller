@@ -167,6 +167,8 @@ env:
   UPDATE_PYTHON: ${{ vars.UPDATE_PYTHON }}
   UPDATE_PIP:    ${{ vars.UPDATE_PIP }}
 
+  ## Debugger & Verbosity Mode
+  DEBUGER_MODE: ${{ vars.DEBUGER_MODE }}
   VERBOSE_MODE: ${{ vars.VERBOSE_MODE }}
 
 ####----------------------------------------------------------------------------
@@ -283,6 +285,7 @@ jobs:
         uses: emvaldes/system-requirements@master
         with:
 
+          debuger-mode: ${DEBUGER_MODE}
           verbose-mode: ${VERBOSE_MODE}
 
           update-system:  ${UPDATE_SYSTEM}
