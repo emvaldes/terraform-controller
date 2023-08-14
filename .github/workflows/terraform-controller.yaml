@@ -141,6 +141,9 @@ env:
   TERRAFORM_CLI:     ${{ vars.TERRAFORM_CLI }}
   TERRAFORM_VERSION: ${{ vars.TERRAFORM_VERSION }}
 
+  ## Terraform Configurations
+  TERRAFORM_LOGLEVEL: ${{ vars.TERRAFORM_LOGLEVEL }}
+
   ## Terraform Operations: Backup, Deploy, Destroy, Inspect, Provision
   TERRAFORM_BACKUP:    ${{ vars.TERRAFORM_BACKUP }}
 
@@ -155,10 +158,6 @@ env:
 
   TERRAFORM_LISTSET: ${{ vars.TERRAFORM_LISTSET }}
   TERRAFORM_MAPSET:  ${{ vars.TERRAFORM_MAPSET }}
-
-  ## Terraform Configurations
-  TERRAFORM_LOGLEVEL: ${{ vars.TERRAFORM_LOGLEVEL }}
-  TERRAFORM_VERSION: ${{ vars.TERRAFORM_VERSION }}
 
   ## Update/Upgrade -> System Components
   UPDATE_SYSTEM:  ${{ vars.UPDATE_SYSTEM }}
