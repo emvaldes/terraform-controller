@@ -1229,7 +1229,7 @@ State path: terraform.tfstate
 Outputs:
 
 aws_elb_public_dns = dev-nginx-elb-49614-1172827116.us-east-1.elb.amazonaws.com
-cname_record_url = http://211116022346.terraform-controller.emvaldes.name
+cname_record_url = http://211116022346.terraform-controller.devops-sandbox.com
 custom_contact = Updated - emvaldes@yahoo.com
 custom_engineer = Updated - DevOps Team
 custom_listset = Updated - Proving Nothing
@@ -1828,7 +1828,7 @@ resource "aws_vpc" "this" {
 Outputs:
 
 aws_elb_public_dns = "dev-nginx-elb-49614-1172827116.us-east-1.elb.amazonaws.com"
-cname_record_url = "http://211116022346.terraform-controller.emvaldes.name"
+cname_record_url = "http://211116022346.terraform-controller.devops-sandbox.com"
 custom_contact = "Updated - emvaldes@yahoo.com"
 custom_engineer = "Updated - DevOps Team"
 custom_listset = "Updated - Proving Nothing"

@@ -35,7 +35,7 @@ instance_count = {
 }
 
 zone_id        = "Z09260193670083SUUE4F"
-domain_name    = "emvaldes.name"
+domain_name    = "devops-sandbox.com"
 route53_record = "prototype"
 
 custom_timestamp = "Today Is A Good Day To ..."

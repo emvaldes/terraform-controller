@@ -507,7 +507,7 @@ State path: terraform.tfstate
 Outputs:
 
 aws_elb_public_dns = dev-nginx-elb-36748-1893652761.us-east-1.elb.amazonaws.com
-cname_record_url = http://prototype.emvaldes.name
+cname_record_url = http://prototype.devops-sandbox.com
 custom_contact = Updated - emvaldes@yahoo.com
 custom_engineer = Updated - DevOps Team
 custom_listset = Updated - Proving Nothing
@@ -641,7 +641,7 @@ Plan: 0 to add, 0 to change, 16 to destroy.
 
 Changes to Outputs:
   - aws_elb_public_dns   = "dev-nginx-elb-36748-1893652761.us-east-1.elb.amazonaws.com" -> null
-  - cname_record_url     = "http://prototype.emvaldes.name" -> null
+  - cname_record_url     = "http://prototype.devops-sandbox.com" -> null
   - custom_contact       = "Updated - emvaldes@yahoo.com" -> null
   - custom_engineer      = "Updated - DevOps Team" -> null
   - custom_listset       = "Updated - Proving Nothing" -> null

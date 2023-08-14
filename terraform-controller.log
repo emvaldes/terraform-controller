@@ -1157,7 +1157,7 @@ State path: terraform.tfstate
 Outputs:
 
 aws_elb_public_dns = dev-nginx-elb-75207-460671641.us-east-1.elb.amazonaws.com
-cname_record_url = http://211116022346.terraform-controller.emvaldes.name
+cname_record_url = http://211116022346.terraform-controller.devops-sandbox.com
 custom_contact = Updated - emvaldes@yahoo.com
 custom_engineer = Updated - DevOps Team
 custom_listset = Updated - Proving Nothing
@@ -1176,7 +1176,7 @@ AWS DynamoDB Expression Attribute-Values:
         "S": "aws_elb_public_dns='dev-nginx-elb-75207-460671641.us-east-1.elb.amazonaws.com'"
       },
       {
-        "S": "cname_record_url='http://211116022346.terraform-controller.emvaldes.name'"
+        "S": "cname_record_url='http://211116022346.terraform-controller.devops-sandbox.com'"
       },
       {
         "S": "custom_contact='Updated - emvaldes@yahoo.com'"

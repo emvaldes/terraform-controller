@@ -1,4 +1,9 @@
 
+## Enabling Debuger-mode:
+## [[ ${{ inputs.debuger-mode }} == true ]] && set -x ;
+
+set -x ;
+
 ## https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html
 
 function configure_terraform_template () {
