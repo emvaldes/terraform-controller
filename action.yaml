@@ -216,6 +216,10 @@ runs:
         completion="Skipping ...! " ;
         ####--------------------------------------------------------------------
 
+        ####--------------------------------------------------------------------
+        export github_workspace="${{ github.workspace }}";
+        ####--------------------------------------------------------------------
+
         github_usercontent="https://raw.githubusercontent.com" ;
         usercontent_repository="${github_usercontent}/${{ inputs.repository--manage-profiles }}/master" ;
         usercontent_controller="${github_usercontent}/${{ inputs.repository--terraform-controller }}/master" ;
