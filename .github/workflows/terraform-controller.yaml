@@ -80,8 +80,8 @@ env:
   ## Secrets: ------------------------------------------------------------------
 
   ## AWS Access/Secret (Credentials)
-  AWS_ACCESS_KEY_ID:     ${{ vars.__AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ vars.__AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   ## AWS Default Account (Number)
   AWS_DEFAULT_ACCOUNT: ${{ secrets.AWS_DEFAULT_ACCOUNT }}
@@ -93,8 +93,6 @@ env:
 
   ## Configure AWS CLI:
   AWSCLI_CLI:      ${{ vars.AWSCLI_CLI }}
-  AWSCLI_DOWNLOAD: ${{ vars.AWSCLI_DOWNLOAD }}
-  AWSCLI_PACKAGE:  ${{ vars.AWSCLI_PACKAGE }}
 
   ## AWS Default [Account, Profile, Region]
   AWS_DEFAULT_PROFILE: ${{ vars.AWS_DEFAULT_PROFILE }}
@@ -105,8 +103,8 @@ env:
   DEFAULT_TOOLS: ${{ vars.DEFAULT_TOOLS }}
 
   ## AWS IAM Access: Policy, Role
-  DEVOPS_ACCESS_POLICY:  ${{ vars.DEVOPS_ACCESS_POLICY }}
-  DEVOPS_ACCESS_ROLE:  ${{ vars.DEVOPS_ACCESS_ROLE }}
+  DEVOPS_ACCESS_POLICY: ${{ vars.DEVOPS_ACCESS_POLICY }}
+  DEVOPS_ACCESS_ROLE:   ${{ vars.DEVOPS_ACCESS_ROLE }}
 
   ## AWS DevOps Account: Name (devops)
   DEVOPS_ACCOUNT_NAME: ${{ vars.DEVOPS_ACCOUNT_NAME }}
@@ -126,6 +124,9 @@ env:
   ## Python (Packages) Requirements
   PYTHON_REQUIREMENTS:  ${{ vars.PYTHON_REQUIREMENTS }}
 
+  ## Content Output Management
+  SANITIZE_OUTPUT: ${{ vars.SANITIZE_OUTPUT }}
+
   ## AWS Service DynamoDB: Region
   SERVICE_DYNAMODB_REGION: ${{ vars.SERVICE_DYNAMODB_REGION }}
 
@@ -135,6 +136,10 @@ env:
 
   ## Target Deployment workspace
   TARGET_WORKSPACE: ${{ vars.TARGET_WORKSPACE }}
+
+  ## Terraform Application
+  TERRAFORM_CLI:     ${{ vars.TERRAFORM_CLI }}
+  TERRAFORM_VERSION: ${{ vars.TERRAFORM_VERSION }}
 
   ## Terraform Operations: Backup, Deploy, Destroy, Inspect, Provision
   TERRAFORM_BACKUP:    ${{ vars.TERRAFORM_BACKUP }}
@@ -179,8 +184,8 @@ jobs:
 ####----------------------------------------------------------------------------
 ## Session Timestamp
 
-      - name: Session Timestamp
-        id: session-timestamp
+      - name: Controller Session Timestamp
+        id: controller-session-timestamp
         shell: bash
         run: |
 
@@ -192,8 +197,8 @@ jobs:
 ####----------------------------------------------------------------------------
 ## Environment Variables
 
-      - name: Environment Variables
-        id: environment-variables
+      - name: Controller Environment Variables
+        id: controller-environment-variables
         run: |
 
           ####------------------------------------------------------------------
@@ -247,6 +252,15 @@ jobs:
           ####------------------------------------------------------------------
 
           ####------------------------------------------------------------------
+          terraform_version="${{ github.event.inputs.terraform-version }}" ;
+          if [[ (${#terraform_version} -gt 0 ) && (${terraform_version} != true) ]]; then
+                  echo -e "       Terraform Version [iput-based]: '${terraform_version}'" ;
+                  echo "TERRAFORM_VERSION=${terraform_version}" >> ${GITHUB_ENV} ;
+            else  echo "TERRAFORM_VERSION=${{ env.TERRAFORM_VERSION }}" >> ${GITHUB_ENV} ;
+          fi;
+          ####------------------------------------------------------------------
+
+          ####------------------------------------------------------------------
           deploy_terraform="${{ github.event.inputs.deploy-terraform }}" ;
           if [[ (${#deploy_terraform} -gt 0 ) && (${deploy_terraform} != false) ]]; then
                   echo -e "       Deploy Terraform [input-based]: '${deploy_terraform}'" ;
@@ -262,21 +276,12 @@ jobs:
             else  echo "TERRAFORM_DESTROY=${{ env.TERRAFORM_DESTROY }}" >> ${GITHUB_ENV} ;
           fi;
 
-          ####------------------------------------------------------------------
-          terraform_version="${{ github.event.inputs.terraform-version }}" ;
-          if [[ (${#terraform_version} -gt 0 ) && (${terraform_version} != true) ]]; then
-                  echo -e "       Terraform Version [iput-based]: '${terraform_version}'" ;
-                  echo "TERRAFORM_VERSION=${terraform_version}" >> ${GITHUB_ENV} ;
-            else  echo "TERRAFORM_VERSION=${{ env.TERRAFORM_VERSION }}" >> ${GITHUB_ENV} ;
-          fi;
-          ####------------------------------------------------------------------
-
 ####----------------------------------------------------------------------------
 ## System Requirements
 
-      - name: System Requirements
+      - name: Controller System Requirements
+        id: controller-system-requirements
         uses: emvaldes/system-requirements@master
-        id: system-requirements
         with:
 
           verbose-mode: ${VERBOSE_MODE}
@@ -290,18 +295,18 @@ jobs:
           install-default-tools: ${DEFAULT_TOOLS}
           install-custom-tools:  ${CUSTOM_TOOLS}
 
-          install-awscli-cli: ${AWSCLI_CLI}
+          install-awscli-cli:    ${AWSCLI_CLI}
+          install-terraform-cli: ${TERRAFORM_CLI}
 
-          install-terraform-cli:    ${TERRAFORM_CLI}
-          target-terraform-version: ${TERRAFORM_VERSION}
+          terraform-version: ${TERRAFORM_VERSION}
 
         continue-on-error: false
 
 ####----------------------------------------------------------------------------
 ## Installed Packages
 
-      - name: Installed Packages
-        id: installed-packages
+      - name: Controller Installed Packages
+        id: controller-installed-packages
         shell: bash
         run: |
 
@@ -336,9 +341,9 @@ jobs:
 ####----------------------------------------------------------------------------
 ## Generating Credentials
 
-      - name: Generating Credentials
+      - name: Controller Generating Credentials
+        id: controller-generate-credentials
         uses: emvaldes/generate-credentials@master
-        id: generate-credentials
         with:
 
           aws-access-key-id:     ${AWS_ACCESS_KEY_ID}
@@ -353,13 +358,15 @@ jobs:
 
           session-timestamp: "DevOpsPipeline--${{ env.SESSION_TIMESTAMP }}"
 
+          sanitize-output: ${SANITIZE_OUTPUT}
+
         continue-on-error: false
 
 ####----------------------------------------------------------------------------
 ## Display IAM List-Users
 
-      - name: Display IAM List-Users
-        id: display-listusers
+      - name: Controller IAM List-Users
+        id: controller-awsiam-listusers
         run: |
 
           aws --profile ${AWS_DEFAULT_PROFILE} \
@@ -373,8 +380,8 @@ jobs:
 ####----------------------------------------------------------------------------
 ## Display Environment
 
-      - name: Display Credentials Environment
-        id: display-credentials-environment
+      - name: Controller Credentials Environment
+        id: controller-credentials-environment
         run: |
 
           # echo "::add-mask::$AWS_ACCESS_KEY_ID" ;
@@ -390,8 +397,8 @@ jobs:
           echo -e "AWS Access Key-ID: ${AWS_ACCESS_KEY_ID}" ;
           echo -e "AWS Secret Access Key: ${AWS_SECRET_ACCESS_KEY}" ;
 
-          echo -e "AWS Session Token: ${AWS_SESSION_TOKEN}" ;
-          ##| sed -e 's|\(AWS_SESSION_TOKEN\=\)\(.*\)|\1***|' ;
+          echo -e "AWS Session Token: ${AWS_SESSION_TOKEN}" \
+             | sed -e 's|\(AWS_SESSION_TOKEN\=\)\(.*\)|\1***|' ;
 
           echo -e "AWS Token Expires: ${AWS_TOKEN_EXPIRES}" ;
 
@@ -405,9 +412,9 @@ jobs:
 ####----------------------------------------------------------------------------
 ## Configure Access KeyPair
 
-      - name: Configure Access
+      - name: Controller Configure Access
+        id: controller-configure-access
         uses: emvaldes/configure-access@master
-        id: configure-access
         with:
 
           private-keypair-file:   ${PRIVATE_KEYPAIR_FILE}
@@ -419,8 +426,8 @@ jobs:
 ####----------------------------------------------------------------------------
 ## Display Environment
 
-      - name: Display Controller Environment
-        id: display-controller-environment
+      - name: Controller Access Environment
+        id: controller-access-environment
         shell: bash
         run: |
 
