@@ -201,6 +201,16 @@ inputs:
     required: false
     default: false
 
+  debuger-mode:
+    description: 'Enabling Shell Debugger'
+    required: false
+    default: false
+
+  verbose-mode:
+    description: 'Enabling Verbosity'
+    required: false
+    default: false
+
 ####----------------------------------------------------------------------------
 
 runs:
@@ -212,7 +222,10 @@ runs:
       shell: bash
       run: |
 
-        set -x
+        ####--------------------------------------------------------------------
+        ## Enabling Debuger-mode:
+        [[ ${{ inputs.debuger-mode }} == true ]] && set -x ;
+        ####--------------------------------------------------------------------
 
         ####--------------------------------------------------------------------
         completion="Skipping ...! " ;
@@ -541,8 +554,12 @@ runs:
           restore_terraform_state ;
           completion="Completed! " ;
         fi ;
+
         ####--------------------------------------------------------------------
         echo -e "\n${completion}\n" ;
         ####--------------------------------------------------------------------
 
-        set +x
+        ####--------------------------------------------------------------------
+        ## Disabling Debuger-mode:
+        [[ ${{ inputs.debuger-mode }} == true ]] && set +x ;
+        ####--------------------------------------------------------------------
