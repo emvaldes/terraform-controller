@@ -209,7 +209,7 @@ runs:
 
     - name: Terraform Controller
       id: terraform-controller
-      shell: bash
+      shell: bash -x
       run: |
 
         ####--------------------------------------------------------------------
