@@ -4,8 +4,8 @@ aws_secret_key = ""
 private_keypair_file = ""
 private_keypair_name = ""
 
-bucket_name_prefix = "terraform"
-billing_code_tag   = "ACCT8675309"
+bucket_name_prefix = ""
+billing_code_tag   = ""
 
 corporate_title = "DevOps Team"
 corporate_image = "corporate.jpg"
@@ -34,14 +34,14 @@ instance_count = {
   prod = 4
 }
 
-zone_id        = "Z09260193670083SUUE4F"
-domain_name    = "devops-sandbox.com"
-route53_record = "prototype"
+zone_id        = ""
+domain_name    = ""
+route53_record = ""
 
-custom_timestamp = "Today Is A Good Day To ..."
-custom_engineer  = "DevOps Team"
-custom_contact   = "emvaldes@yahoo.com"
-custom_listset   = "Proving Nothing"
-custom_mapset    = "Testing Something"
+custom_timestamp = ""
+custom_engineer  = ""
+custom_contact   = ""
+custom_listset   = ""
+custom_mapset    = ""
 
 filebased_parameters = ""

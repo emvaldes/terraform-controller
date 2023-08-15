@@ -14,6 +14,10 @@ output "cname_record_url" {
   value = "http://${local.route53_record}.${var.domain_name}"
 }
 
+output "s3_bucket_name" {
+  value = local.s3_bucket_name
+}
+
 output "custom_timestamp" {
   value = var.custom_timestamp
 }

@@ -133,6 +133,11 @@ env:
   ## AWS Service S3 Bucket: Region, Container
   SERVICE_S3BUCKET_REGION: ${{ vars.SERVICE_S3BUCKET_REGION }}
   SERVICE_S3BUCKET_CONTAINER: ${{ vars.SERVICE_S3BUCKET_CONTAINER }}
+  SERVICE_S3BUCKET_PREFIX: ${{ vars.SERVICE_S3BUCKET_PREFIX }}
+
+  ## AWS Service Route53: Zone-ID, Domain
+  SERVICE_ROUTER53_ZONEID: ${{ vars.SERVICE_ROUTER53_ZONEID }}
+  SERVICE_ROUTER53_DOMAIN: ${{ vars.SERVICE_ROUTER53_DOMAIN }}
 
   ## Target Deployment workspace
   TARGET_WORKSPACE: ${{ vars.TARGET_WORKSPACE }}
@@ -170,6 +175,8 @@ env:
   ## Debugger & Verbosity Mode
   DEBUGER_MODE: ${{ vars.DEBUGER_MODE }}
   VERBOSE_MODE: ${{ vars.VERBOSE_MODE }}
+
+  BILLING_CODETAG: ${{ vars.BILLING_CODETAG }}
 
 ####----------------------------------------------------------------------------
 
@@ -470,7 +477,12 @@ jobs:
                 custom_contact="${{ env.DEVOPS_ENGINEER_EMAIL }}"
                 custom_listset="${terraform_listset}"
                 custom_mapset="${terraform_mapset}"
+                billing_code_tag="${{ env.BILLING_CODETAG }}"
+                bucket_name_prefix="${{ env.SERVICE_S3BUCKET_PREFIX }}"
+                domain_name="${{ env.SERVICE_ROUTER53_DOMAIN }}"
                 route53_record="${SESSION_TIMESTAMP}.${route53_record}"
+                zone_id="${{ env.SERVICE_ROUTER53_ZONEID }}"
+                filebased_parameters="${SESSION_TIMESTAMP}"
               ) ;
             # if [[ ${{ env.VERBOSE_MODE }} == true ]]; then
             #   for xitem in ${custom_params[@]}; do

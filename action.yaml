@@ -253,12 +253,6 @@ runs:
         echo -e ;
 
         ####--------------------------------------------------------------------
-
-        tree -FCla --prune -I .git ${{ github.workspace }} ;
-
-        ####--------------------------------------------------------------------
-
-        ####--------------------------------------------------------------------
         remote_origin="$(git config --get remote.origin.url)" ;
         github_repository="${remote_origin##*\/}" ;
         commit_shaid="$(git rev-parse HEAD)" ;
@@ -462,10 +456,10 @@ runs:
 
           which aws ;
           aws --version ;
-          
+
           aws --profile default --region us-east-1 ec2 describe-key-pairs --key-name devops
           aws --profile default --region us-east-1 iam list-users --query 'Users[?UserName==`devops`]'
-          
+
           echo -e "TF Parameters:\n${terraform_parameters[*]}" ;
 
           echo -e "\nTF Configs Vars\n${{ github.workspace }}/configs/${target_workspace}-configs.tfvars" ;
@@ -473,10 +467,14 @@ runs:
 
           echo -e "\nTerraform Plan:\n${target_terraform_tfplan}" ;
 
+          # eval ${terraform_verbosity} \
+          #      terraform plan \
+          #                ${terraform_parameters[*]} \
+          #                ${custom_tfvars} \
+          #                -out ${target_terraform_tfplan} ;
           eval ${terraform_verbosity} \
                terraform plan \
                          ${terraform_parameters[*]} \
-                         ${custom_tfvars} \
                          -out ${target_terraform_tfplan} ;
 
           completion="Completed! " ;
@@ -491,6 +489,10 @@ runs:
           setup_dynamodb_terraform ;
           completion="Completed! " ;
         fi ;
+        ####--------------------------------------------------------------------
+
+        tree -FCla --prune -I .git ${{ github.workspace }} ;
+
         ####--------------------------------------------------------------------
         if [[ "${{ inputs.deploy-terraform }}" == true ]]; then
           custom_message="Terraform Input Plan: [${terraform_tfplan}]" ;
